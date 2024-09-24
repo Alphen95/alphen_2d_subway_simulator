@@ -128,7 +128,7 @@ class Train():
             time.sleep(1/120)
 
 class Consist():
-    def __init__(self,train_type,params,consist_info,self_id,world):
+    def __init__(self,train_type,params,consist_info,self_id,world,spawn_pos):
         global trains
 
         self.linked_to = []
@@ -159,7 +159,7 @@ class Consist():
         self.traction_direction = 0
         self.velocity_direction = 0
 
-        pos = [128,256]
+        pos = spawn_pos
         self.train_amount = 3
         for i in range(self.train_amount):
             train_id = random.randint(0,99999)
@@ -184,9 +184,10 @@ class Consist():
                 if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel":
                     self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
                     self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
-                    if self.velocity_direction == 0: self.velocity_direction = self.traction_direction
+                    if self.velocity_direction == 0: 
+                        self.velocity_direction = self.traction_direction
                     self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
-                    engine_power = self.engine_voltage*self.engine_current
+                    engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction)
                 
                 if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
                     if self.pressure != self.consist_info["tk_mapouts"][str(self.tk)]["target"]:
@@ -202,7 +203,7 @@ class Consist():
                 friction_energy = 0.004*self.wheel_mass*9.81*self.angular_velocity
                 break_friction_energy = wheels*1*self.angular_velocity*(self.pressure*100000*self.break_cyllinder_surface)
 
-                self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120*(self.velocity_direction*self.traction_direction)-friction_energy/120-break_friction_energy/120,5)
+                self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-break_friction_energy/120,5)
                 self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
                 self.velocity = round(complex(self.velocity).real,5)
                 self.angular_velocity = round(self.velocity*self.wheel_radius,5)
@@ -214,7 +215,7 @@ class Consist():
 
             for train_id in self.linked_to:
                 trains[train_id].velocity = self.velocity
-                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.velocity*speed_modifier,2)
-                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.velocity*speed_modifier,2)
+                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.velocity*speed_modifier*self.velocity_direction,2)
+                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.velocity*speed_modifier*self.velocity_direction,2)
 
             time.sleep(1/120)

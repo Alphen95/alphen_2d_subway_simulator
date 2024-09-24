@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "0.1.3.9 TEMP ща поправлю обратную тягу"
+version = "v0.1.4 первая очередь Строительная-Белогорская"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -38,10 +38,18 @@ sprite_loading_info = [
     {"name":"tsb1","filename":"tracks","params":[192,0,64,256,0,True,False]},
     {"name":"tsb2","filename":"tracks","params":[256,0,64,256,0,True,False]},
     {"name":"eto_platforma","filename":"platform","params":[0,0,64,256,0,False,False]},
-    {"name":"duslik_track_l_tstr","filename":"platform","params":[64,0,64,256,0,False,False]},
-    {"name":"duslik_track_r_tstr","filename":"platform","params":[64,0,64,256,0,True,False]},
-    {"name":"duslik_platform_l","filename":"platform","params":[128,0,64,256,0,False,False]},
-    {"name":"duslik_platform_r","filename":"platform","params":[128,0,64,256,0,True,False]},
+    {"name":"barekamutyn_track_l_tstr","filename":"platform","params":[64,0,64,256,0,False,False]},
+    {"name":"barekamutyn_track_r_tstr","filename":"platform","params":[64,0,64,256,0,True,False]},
+    {"name":"barekamutyn_platform_l","filename":"platform","params":[128,0,64,256,0,False,False]},
+    {"name":"barekamutyn_platform_r","filename":"platform","params":[128,0,64,256,0,True,False]},
+    {"name":"tozolosh_track_l_tstr","filename":"platform","params":[64*4,0,64,256,0,False,False]},
+    {"name":"tozolosh_track_r_tstr","filename":"platform","params":[64*4,0,64,256,0,True,False]},
+    {"name":"tozolosh_platform_l","filename":"platform","params":[64*3,0,64,256,0,False,False]},
+    {"name":"tozolosh_platform_r","filename":"platform","params":[64*3,0,64,256,0,True,False]},
+    {"name":"aktau_track_l_tstr","filename":"platform","params":[64*6,0,64,256,0,False,False]},
+    {"name":"aktau_track_r_tstr","filename":"platform","params":[64*6,0,64,256,0,True,False]},
+    {"name":"aktau_platform_l","filename":"platform","params":[64*5,0,64,256,0,False,False]},
+    {"name":"aktau_platform_r","filename":"platform","params":[64*5,0,64,256,0,True,False]},
 ]
 ground_sprites = {}
 
@@ -113,6 +121,20 @@ for folder in train_folders:
                 base_control_panel_sprite.subsurface(controls_info["tk"]["x"],controls_info["tk"]["y"],controls_info["tk"]["w"],controls_info["tk"]["h"]),
                 (controls_info["tk"]["w"]*controls_info["tk"]["scale"],controls_info["tk"]["h"]*controls_info["tk"]["scale"]))
             
+            train_sprites[key]["controls"]["rr"] = {}
+
+            train_sprites[key]["controls"]["rr"][1] = pg.transform.scale(
+                base_control_panel_sprite.subsurface(controls_info["rr_1"]["x"],controls_info["rr_1"]["y"],controls_info["rr_1"]["w"],controls_info["rr_1"]["h"]),
+                (controls_info["rr_1"]["w"]*controls_info["rr_1"]["scale"],controls_info["rr_1"]["h"]*controls_info["rr_1"]["scale"]))
+            
+            train_sprites[key]["controls"]["rr"][0] = pg.transform.scale(
+                base_control_panel_sprite.subsurface(controls_info["rr_0"]["x"],controls_info["rr_0"]["y"],controls_info["rr_0"]["w"],controls_info["rr_0"]["h"]),
+                (controls_info["rr_0"]["w"]*controls_info["rr_0"]["scale"],controls_info["rr_0"]["h"]*controls_info["rr_0"]["scale"]))
+            
+            train_sprites[key]["controls"]["rr"][-1] = pg.transform.scale(
+                base_control_panel_sprite.subsurface(controls_info["rr_-1"]["x"],controls_info["rr_-1"]["y"],controls_info["rr_-1"]["w"],controls_info["rr_-1"]["h"]),
+                (controls_info["rr_-1"]["w"]*controls_info["rr_-1"]["scale"],controls_info["rr_-1"]["h"]*controls_info["rr_-1"]["scale"]))
+            
             train_sprites[key]["controls"]["overlay"] = pg.transform.scale(
                 base_control_panel_sprite.subsurface(controls_info["overlay"]["x"],controls_info["overlay"]["y"],controls_info["overlay"]["w"],controls_info["overlay"]["h"]),
                 (controls_info["overlay"]["w"]*controls_info["overlay"]["scale"],controls_info["overlay"]["h"]*controls_info["overlay"]["scale"]))
@@ -124,30 +146,31 @@ for folder in train_folders:
 world = {
     (0,2):"tstr",
     (0,1):"tsb1",(-1,1):"tcb2",
-    (1,0):"duslik_platform_r",(0,0):"duslik_track_r_tstr",(-1,0):"duslik_track_l_tstr",(-2,0):"duslik_platform_l",
-    (0,-1):"tca1",(-1,-1):"tcb1",
-    (1,-1):"tca2",(-2,-1):"tcb2",
-    (1,-2):"tstr",(-2,-2):"tstr",
-    (1,-3):"tstr",(-2,-3):"tstr",
+    (1,0):"tozolosh_platform_r",(0,0):"tozolosh_track_r_tstr",(-1,0):"tozolosh_track_l_tstr",(-2,0):"tozolosh_platform_l",
+    (0,-1):"tstr",(-1,-1):"tstr",
+    (0,-2):"tstr",(-1,-2):"tstr",
+    (1,-3):"tca2",(0,-3):"tca1",(-1,-3):"tcb1",(-2,-3):"tcb2",
     (1,-4):"tstr",(-2,-4):"tstr",
-    (1,-5):"tcb1",(-2,-5):"tca1",
-    (0,-5):"tcb2",(-1,-5):"tca2",
-    (1,-6):"eto_platforma",(0,-6):"tstr",(-1,-6):"tstr",(-2,-6):"eto_platforma",
-    (0,-7):"tsa2",(-1,-7):"tsa1",
-    (0,-8):"tstr",(-1,-8):"tstr",
+    (1,-5):"tstr",(-2,-5):"tstr",
+    (1,-6):"aktau_track_l_tstr",(0,-6):"aktau_platform_l",(-1,-6):"aktau_platform_r",(-2,-6):"aktau_track_r_tstr",
+    (1,-7):"tstr",(-2,-7):"tstr",
+    (1,-8):"tcb1",(0,-8):"tcb2",(-1,-8):"tca2",(-2,-8):"tca1",
+    (0,-9):"tstr",(-1,-9):"tstr",
+    (0,-10):"tsa2",(-1,-10):"tsa1",
+    (0,-11):"tstr",(-1,-11):"tstr",
 }
 switches = {
-    (0,1):True,
-    (0,-7):True,
-    (-1,-7):True
+    (0,1):False,
+    (0,-10):True,
+    (-1,-10):True
 }
 
 #trains = {}
 consists = {}
 consist_key = random.randint(0,999)
-consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world)
+consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*0.5,1024*2.5])
 
-print(trains)
+player_pos = [256*0.5,1024*2.5]
 
 while working:
     valid = []
@@ -240,6 +263,13 @@ while working:
                 controlling_consist = trains[controlling].consist
     if controlling != -1:
         panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
+        
+        rr_direction = int(consists[controlling_consist].controlling_direction*(1-2*trains[controlling].reversed))
+        rr = train_sprites[consists[controlling_consist].train_type]["controls"]["rr"][rr_direction]
+        x,y = consists[controlling_consist].consist_info["rr_draw_mapouts"][str(rr_direction)]
+        scale = consists[controlling_consist].consist_info["rr_draw_mapouts"]["scale"]
+        screen.blit(rr,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+
         screen.blit(panel,(screen_size[0]/2-panel.get_width()/2,screen_size[1]-panel.get_height()))
 
         km = train_sprites[consists[controlling_consist].train_type]["controls"]["km"]
@@ -251,7 +281,6 @@ while working:
         x,y = consists[controlling_consist].consist_info["tk_draw_mapouts"][str(consists[controlling_consist].tk)]
         scale = consists[controlling_consist].consist_info["tk_draw_mapouts"]["scale"]
         screen.blit(tk,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
-
         
         overlay = train_sprites[consists[controlling_consist].train_type]["controls"]["overlay"]
         screen.blit(overlay,(screen_size[0]/2-overlay.get_width()/2,screen_size[1]-overlay.get_height()))
@@ -280,17 +309,23 @@ while working:
         elif pg.K_r in keydowns and consists[controlling_consist].tk > consists[controlling_consist].consist_info["min_tk"]:
             consists[controlling_consist].tk -= 1
 
-        if pg.K_0 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction < 1:
-            consists[controlling_consist].controlling_direction += 1
-        elif pg.K_9 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction > -1:
-            consists[controlling_consist].controlling_direction -= 1
+        if not trains[controlling].reversed:
+            if pg.K_0 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction < 1:
+                consists[controlling_consist].controlling_direction += 1
+            elif pg.K_9 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction > -1:
+                consists[controlling_consist].controlling_direction -= 1
+        else:
+            if pg.K_9 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction < 1:
+                consists[controlling_consist].controlling_direction += 1
+            elif pg.K_0 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction > -1:
+                consists[controlling_consist].controlling_direction -= 1
         #print(consists[trains[controlling].consist].velocity)
         
         if pressed[pg.K_ESCAPE]: controlling = -1
 
     info_blit_list = []
     text_color = (200,200,200)
-    info_blit_list.append(font.render("alphen's subway simulator v. "+version,True,text_color))
+    info_blit_list.append(font.render("alphen's subway simulator "+version,True,text_color))
     info_blit_list.append(font.render("fps: "+str(int(clock.get_fps())), False, ((255 if clock.get_fps() < 45 else 0), (255 if clock.get_fps() > 15 else 0), 0)))
     if debug > 0:
         info_blit_list.append(font.render(f"tramcars: {len(trains)}",True,text_color))
