@@ -5,6 +5,8 @@ import random
 
 trains = {}
 
+sign = lambda x: math.copysign(1, x)
+
 class Train():
     def __init__(self,pos,type, reversed,size,consist,world):
         self.pos = pos
@@ -130,6 +132,7 @@ class Consist():
         global trains
 
         self.linked_to = []
+        self.pressure = 0
         self.velocity = 0
         self.angular_velocity = 0
         self.train_type = train_type
@@ -149,6 +152,12 @@ class Consist():
         self.electromotive_force = 0
         self.engine_constant = consist_info["engine_constant"]
         self.engine_resistance = consist_info["engine_resistance"]
+        self.transmissional_number = consist_info["transmissional_number"]
+        self.break_cyllinder_surface = consist_info["break_cyllinder_surface"]
+
+        self.controlling_direction = 0
+        self.traction_direction = 0
+        self.velocity_direction = 0
 
         pos = [128,256]
         self.train_amount = 3
@@ -170,31 +179,42 @@ class Consist():
         while self.exists:
 
             if self.consist_info["control_system_type"] == "direct":
-                self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi
+                self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number
                 engine_power = 0
                 if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel":
                     self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
-                    self.engine_current = (self.engine_voltage-self.electromotive_force)/self.engine_resistance
+                    self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
+                    if self.velocity_direction == 0: self.velocity_direction = self.traction_direction
+                    self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
                     engine_power = self.engine_voltage*self.engine_current
                 
+                if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
+                    if self.pressure != self.consist_info["tk_mapouts"][str(self.tk)]["target"]:
+                        if abs(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) < self.consist_info["tk_mapouts"][str(self.tk)]["speed"]:
+                            self.pressure = self.consist_info["tk_mapouts"][str(self.tk)]["target"]
+                        else:
+                            self.pressure+=-sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"])*self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
+
                 engine_power*=engines
 
                 kinetic_energy = self.mass*self.velocity**2/2*self.train_amount
                 revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
-                friction_energy = 0.03*self.wheel_mass*9.81*self.angular_velocity
+                friction_energy = 0.004*self.wheel_mass*9.81*self.angular_velocity
+                break_friction_energy = wheels*1*self.angular_velocity*(self.pressure*100000*self.break_cyllinder_surface)
 
-                self.energy = kinetic_energy+revolutional_energy+engine_power/120-friction_energy/120
+                self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120*(self.velocity_direction*self.traction_direction)-friction_energy/120-break_friction_energy/120,5)
                 self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
-                self.velocity = complex(self.velocity).real
-                self.angular_velocity = self.velocity*self.wheel_radius
+                self.velocity = round(complex(self.velocity).real,5)
+                self.angular_velocity = round(self.velocity*self.wheel_radius,5)
+                if self.velocity == 0: self.velocity_direction = 0
 
 
-
-            self.humainzed_velocity = self.velocity*120*0.125
+            speed_modifier = 1.0
+            self.humainzed_velocity = round(self.velocity*120*0.15/4*speed_modifier,5)
 
             for train_id in self.linked_to:
                 trains[train_id].velocity = self.velocity
-                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.velocity*2,2)
-                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.velocity*2,2)
+                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.velocity*speed_modifier,2)
+                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.velocity*speed_modifier,2)
 
             time.sleep(1/120)

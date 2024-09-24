@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "0.1.3.1 тест тяги на НСУ"
+version = "0.1.3.9 TEMP ща поправлю обратную тягу"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -23,7 +23,7 @@ debug = 0
 
 pg.init()
 clock = pg.time.Clock()
-screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
+screen = pg.display.set_mode((1920, 1080), )
 pg.display.set_caption(f"Alphen's Subway Simulator v{version}")
 font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),20)
 
@@ -38,6 +38,10 @@ sprite_loading_info = [
     {"name":"tsb1","filename":"tracks","params":[192,0,64,256,0,True,False]},
     {"name":"tsb2","filename":"tracks","params":[256,0,64,256,0,True,False]},
     {"name":"eto_platforma","filename":"platform","params":[0,0,64,256,0,False,False]},
+    {"name":"duslik_track_l_tstr","filename":"platform","params":[64,0,64,256,0,False,False]},
+    {"name":"duslik_track_r_tstr","filename":"platform","params":[64,0,64,256,0,True,False]},
+    {"name":"duslik_platform_l","filename":"platform","params":[128,0,64,256,0,False,False]},
+    {"name":"duslik_platform_r","filename":"platform","params":[128,0,64,256,0,True,False]},
 ]
 ground_sprites = {}
 
@@ -120,7 +124,7 @@ for folder in train_folders:
 world = {
     (0,2):"tstr",
     (0,1):"tsb1",(-1,1):"tcb2",
-    (1,0):"eto_platforma",(0,0):"tstr",(-1,0):"tstr",(-2,0):"eto_platforma",
+    (1,0):"duslik_platform_r",(0,0):"duslik_track_r_tstr",(-1,0):"duslik_track_l_tstr",(-2,0):"duslik_platform_l",
     (0,-1):"tca1",(-1,-1):"tcb1",
     (1,-1):"tca2",(-2,-1):"tcb2",
     (1,-2):"tstr",(-2,-2):"tstr",
@@ -141,7 +145,7 @@ switches = {
 #trains = {}
 consists = {}
 consist_key = random.randint(0,999)
-consists[consist_key] = Consist("nomernoy",train_types["nomernoy"],consists_info["nomernoy"],consist_key,world)
+consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world)
 
 print(trains)
 
@@ -275,12 +279,17 @@ while working:
             consists[controlling_consist].tk += 1
         elif pg.K_r in keydowns and consists[controlling_consist].tk > consists[controlling_consist].consist_info["min_tk"]:
             consists[controlling_consist].tk -= 1
+
+        if pg.K_0 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction < 1:
+            consists[controlling_consist].controlling_direction += 1
+        elif pg.K_9 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction > -1:
+            consists[controlling_consist].controlling_direction -= 1
         #print(consists[trains[controlling].consist].velocity)
         
         if pressed[pg.K_ESCAPE]: controlling = -1
 
     info_blit_list = []
-    text_color = (100,100,100)
+    text_color = (200,200,200)
     info_blit_list.append(font.render("alphen's subway simulator v. "+version,True,text_color))
     info_blit_list.append(font.render("fps: "+str(int(clock.get_fps())), False, ((255 if clock.get_fps() < 45 else 0), (255 if clock.get_fps() > 15 else 0), 0)))
     if debug > 0:
@@ -288,12 +297,19 @@ while working:
         info_blit_list.append(font.render(f"consists: {len(consists)}",True,text_color))
         if controlling > -1:
             info_blit_list.append(font.render(f"controlling traincar {controlling}",True,text_color))
-            info_blit_list.append(font.render(f"velocity {consists[controlling_consist].velocity} px",True,text_color))
-            info_blit_list.append(font.render(f"velocity {consists[controlling_consist].humainzed_velocity} m/s",True,text_color))
+            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].velocity,5)} px",True,text_color))
+            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].humainzed_velocity,2)} m/s",True,text_color))
+            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].humainzed_velocity*3.6,2)} km/h",True,text_color))
+            info_blit_list.append(font.render(f"pressure {round(consists[controlling_consist].pressure)} aT",True,text_color))
             info_blit_list.append(font.render(f"km {consists[controlling_consist].km}",True,text_color))
+            info_blit_list.append(font.render(f"tk {consists[controlling_consist].tk}",True,text_color))
             info_blit_list.append(font.render(f"energy {consists[controlling_consist].energy}",True,text_color))
             info_blit_list.append(font.render(f"emf {consists[controlling_consist].electromotive_force}",True,text_color))
             info_blit_list.append(font.render(f"volts {consists[controlling_consist].engine_voltage}",True,text_color))
+            info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))
+            info_blit_list.append(font.render(f"traction {consists[controlling_consist].traction_direction}",True,text_color))
+            info_blit_list.append(font.render(f"movement {consists[controlling_consist].velocity_direction}",True,text_color))
+            
 
     for i, line in enumerate(info_blit_list):
             screen.blit(line, (0, 20*i))

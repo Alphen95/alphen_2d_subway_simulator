@@ -19,19 +19,28 @@
         "min_tk":1,
         "default_tk":2,
         "default_km":-1,
-        "engine_constant":40,
-        "engine_resistance":5,
+        "engine_constant":90,
+        "engine_resistance":25,
         "mass":517000,
         "wheel_mass":200,
         "wheel_radius":0.95,
+        "transmissional_number":3.94,
+        "break_cyllinder_surface":0.1,
         "km_mapouts":{
-            "3":{"type":"accel","voltage":500},
+            "3":{"type":"accel","voltage":750},
             "2":{"type":"accel","voltage":400},
             "1":{"type":"accel","voltage":300},
             "0":{"type":"accel","voltage":200},
             "-1":{"type":"neutral","voltage":0},
             "-2":{"type":"neutral","voltage":0},
             "-3":{"type":"neutral","voltage":0}
+        },
+        "tk_mapouts":{
+            "1":{"type":"press","speed":0.05,"target":0},
+            "2":{"type":"press","speed":0.025,"target":0},
+            "3":{"type":"neutral"},
+            "4":{"type":"press","speed":0.025,"target":3},
+            "5":{"type":"press","speed":0.05,"target":3}
         },
         "km_draw_mapouts":{
             "3":[19,16],
@@ -44,11 +53,11 @@
             "scale":4
         },
         "tk_draw_mapouts":{
-            "1":[82,15],
-            "2":[82,20],
-            "3":[82,25],
-            "4":[82,30],
-            "5":[82,35],
+            "1":[75,20],
+            "2":[77,24],
+            "3":[80,29],
+            "4":[83,34],
+            "5":[85,38],
             "scale":4
         }
     },
@@ -69,9 +78,9 @@
         },
         "tk":{
             "x":130,
-            "y":10,
+            "y":21,
             "w":30,
-            "h":10,
+            "h":20,
             "scale":4
         },
         "overlay":{
