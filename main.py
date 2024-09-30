@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.1.4 первая очередь Строительная-Белогорская"
+version = "v0.1.5 смари скоростемер и реле перегруза ничего себе"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -15,7 +15,6 @@ from train import *
 player_pos = [0,0]
 block_pos = [0,0]
 block_size = (256,1024)
-screen_size = (1920,1080)
 working = True
 controlling = -1
 following = -1
@@ -23,9 +22,12 @@ debug = 0
 
 pg.init()
 clock = pg.time.Clock()
-screen = pg.display.set_mode((1920, 1080), )
-pg.display.set_caption(f"Alphen's Subway Simulator v{version}")
+screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
 font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),20)
+annotation_font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),12)
+screen_size = screen.get_size()
+screen = pg.display.set_mode(screen_size)
+pg.display.set_caption(f"Alphen's Subway Simulator v{version}")
 
 sprite_loading_info = [
     {"name":"tstr","filename":"tracks","params":[0,0,64,256,0,False,False]},
@@ -77,7 +79,7 @@ for folder in train_folders:
     folder_contents = os.listdir(os.path.join(current_dir,"trains",folder))
     if "train.json" in folder_contents:
         
-        with open(os.path.join(CURRENT_DIRECTORY,"trains",folder,"train.json")) as file:
+        with open(os.path.join(CURRENT_DIRECTORY,"trains",folder,"train.json"),encoding="utf-8") as file:
             train_parameters = json.loads(file.read())
             base_train_sprite = pg.image.load(os.path.join(*([current_dir,"trains",folder,"sprite.png"]))).convert_alpha()
             base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"trains",folder,"controls.png"]))).convert_alpha()
@@ -109,35 +111,10 @@ for folder in train_folders:
 
             controls_info = train_parameters["control_panel_info"]
             train_sprites[key]["controls"] = {}
-            train_sprites[key]["controls"]["panel"] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["panel"]["x"],controls_info["panel"]["y"],controls_info["panel"]["w"],controls_info["panel"]["h"]),
-                (controls_info["panel"]["w"]*controls_info["panel"]["scale"],controls_info["panel"]["h"]*controls_info["panel"]["scale"]))
-            
-            train_sprites[key]["controls"]["km"] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["km"]["x"],controls_info["km"]["y"],controls_info["km"]["w"],controls_info["km"]["h"]),
-                (controls_info["km"]["w"]*controls_info["km"]["scale"],controls_info["km"]["h"]*controls_info["km"]["scale"]))
-            
-            train_sprites[key]["controls"]["tk"] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["tk"]["x"],controls_info["tk"]["y"],controls_info["tk"]["w"],controls_info["tk"]["h"]),
-                (controls_info["tk"]["w"]*controls_info["tk"]["scale"],controls_info["tk"]["h"]*controls_info["tk"]["scale"]))
-            
-            train_sprites[key]["controls"]["rr"] = {}
-
-            train_sprites[key]["controls"]["rr"][1] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["rr_1"]["x"],controls_info["rr_1"]["y"],controls_info["rr_1"]["w"],controls_info["rr_1"]["h"]),
-                (controls_info["rr_1"]["w"]*controls_info["rr_1"]["scale"],controls_info["rr_1"]["h"]*controls_info["rr_1"]["scale"]))
-            
-            train_sprites[key]["controls"]["rr"][0] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["rr_0"]["x"],controls_info["rr_0"]["y"],controls_info["rr_0"]["w"],controls_info["rr_0"]["h"]),
-                (controls_info["rr_0"]["w"]*controls_info["rr_0"]["scale"],controls_info["rr_0"]["h"]*controls_info["rr_0"]["scale"]))
-            
-            train_sprites[key]["controls"]["rr"][-1] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["rr_-1"]["x"],controls_info["rr_-1"]["y"],controls_info["rr_-1"]["w"],controls_info["rr_-1"]["h"]),
-                (controls_info["rr_-1"]["w"]*controls_info["rr_-1"]["scale"],controls_info["rr_-1"]["h"]*controls_info["rr_-1"]["scale"]))
-            
-            train_sprites[key]["controls"]["overlay"] = pg.transform.scale(
-                base_control_panel_sprite.subsurface(controls_info["overlay"]["x"],controls_info["overlay"]["y"],controls_info["overlay"]["w"],controls_info["overlay"]["h"]),
-                (controls_info["overlay"]["w"]*controls_info["overlay"]["scale"],controls_info["overlay"]["h"]*controls_info["overlay"]["scale"]))
+            for control in controls_info:
+                train_sprites[key]["controls"][control] = pg.transform.scale(
+                    base_control_panel_sprite.subsurface(controls_info[control]["x"],controls_info[control]["y"],controls_info[control]["w"],controls_info[control]["h"]),
+                    (controls_info[control]["w"]*controls_info[control]["scale"],controls_info[control]["h"]*controls_info[control]["scale"]))
 
             train_types[key] = {}
             train_types[key]["size"] = (*train_parameters["clickable_size"],sprite_params["layers"]*sprite_stack_factor-1)
@@ -251,26 +228,89 @@ while working:
 
     
     for train_params in sorted(valid,key=lambda x:x[1]):
-        localized_m_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,player_pos[1]+m_pos[1]-screen_size[1]/2)
-        train = trains[train_params[0]]
-        trains[train_params[0]].switches = switches
-        width = abs(train.size[0]*math.cos(math.radians(train.angle))/2-train.size[1]*math.sin(math.radians(train.angle))/2) 
-        height = abs(train.size[1]*math.cos(math.radians(train.angle))/2-train.size[0]*math.sin(math.radians(train.angle))/2)
-        if train.pos[0]-width< localized_m_pos[0] < train.pos[0]+width and train.pos[1]-height-train.size[2] < localized_m_pos[1] < train.pos[1]+height:
-            #pg.draw.rect(screen,(255,0,0),(train.pos[0]-width-player_pos[0]+screen_size[0]/2,train.pos[1]-height-player_pos[1]+screen_size[1]/2-train.size[2],width*2,height*2+train.size[2]))
-            if mouse_clicked and m_btn[0]:
-                controlling = train_params[0]
-                controlling_consist = trains[controlling].consist
+        if controlling == -1:
+            localized_m_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,player_pos[1]+m_pos[1]-screen_size[1]/2)
+            train = trains[train_params[0]]
+            trains[train_params[0]].switches = switches
+            width = abs(train.size[0]*math.cos(math.radians(train.angle))/2-train.size[1]*math.sin(math.radians(train.angle))/2) 
+            height = abs(train.size[1]*math.cos(math.radians(train.angle))/2-train.size[0]*math.sin(math.radians(train.angle))/2)
+            if train.pos[0]-width< localized_m_pos[0] < train.pos[0]+width and train.pos[1]-height-train.size[2] < localized_m_pos[1] < train.pos[1]+height:
+                #pg.draw.rect(screen,(255,0,0),(train.pos[0]-width-player_pos[0]+screen_size[0]/2,train.pos[1]-height-player_pos[1]+screen_size[1]/2-train.size[2],width*2,height*2+train.size[2]))
+                if mouse_clicked and m_btn[0]:
+                    controlling = train_params[0]
+                    controlling_consist = trains[controlling].consist
+        annotation = None
+        if controlling != -1:
+            panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
+            if (screen_size[0]/2+panel.get_width()/2 >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2 and 
+                screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()):
+                for elem_id, element in enumerate(consists[controlling_consist].consist_info["element_mapouts"]):
+                    if element["type"] != "speedometer_analog":
+                        info = element["draw_mappings"][element["state"]]
+                        x,y,w,h = info[0], info[1],info[4], info[5]
+                        scale = info[2]
+                        if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
+                                screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale):
+                            if element["type"] in ["button","switch"]:
+                                if (m_btn[0] or mouse_clicked):
+                                    if element["type"] == "button" and m_btn[0]:
+                                        consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(element["default"])
+                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                                    elif element["type"] == "switch" and mouse_clicked:
+                                        consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"])
+                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] 
+                                else:
+                                    if element["type"] == "button":
+                                        consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = element["default"]
+                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                            annotation = annotation_font.render(element["name"],True,(255,255,255))
+                    
+
+                    
+
     if controlling != -1:
         panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
+
+        if "underlay_draw_params" in consists[controlling_consist].consist_info:
+            underlay = train_sprites[consists[controlling_consist].train_type]["controls"]["underlay"]
+            x,y,scale = consists[controlling_consist].consist_info["underlay_draw_params"]
+            screen.blit(underlay,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+
         
         rr_direction = int(consists[controlling_consist].controlling_direction*(1-2*trains[controlling].reversed))
-        rr = train_sprites[consists[controlling_consist].train_type]["controls"]["rr"][rr_direction]
+        rr = train_sprites[consists[controlling_consist].train_type]["controls"][f"rr_{rr_direction}"]
         x,y = consists[controlling_consist].consist_info["rr_draw_mapouts"][str(rr_direction)]
         scale = consists[controlling_consist].consist_info["rr_draw_mapouts"]["scale"]
         screen.blit(rr,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
 
         screen.blit(panel,(screen_size[0]/2-panel.get_width()/2,screen_size[1]-panel.get_height()))
+
+        for element in consists[controlling_consist].consist_info["element_mapouts"]:
+            if element["type"] != "speedometer_analog":
+                info = element["draw_mappings"][element["state"]]
+                sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
+                x,y = info[0], info[1]
+                scale = info[2]
+                screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+            else:
+                info = element["draw_mappings"][0]
+                sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
+                x,y = info[0], info[1]
+                scale = info[2]
+                screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+                
+                info = element["draw_mappings"][1]
+                sprite = pg.transform.rotate(train_sprites[consists[controlling_consist].train_type]["controls"][info[3]],round(element["base_angle"]-element["km_angle"]*consists[controlling_consist].velocity*3.6,2))
+                x,y = info[0], info[1]
+                scale = info[2]
+                screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+x*scale-sprite.get_width()/2,2),round(screen_size[1]-panel.get_height()+y*scale-sprite.get_height()/2,2)))
+
+                info = element["draw_mappings"][2]
+                sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
+                x,y = info[0], info[1]
+                scale = info[2]
+                screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+
 
         km = train_sprites[consists[controlling_consist].train_type]["controls"]["km"]
         x,y = consists[controlling_consist].consist_info["km_draw_mapouts"][str(consists[controlling_consist].km)]
@@ -284,6 +324,13 @@ while working:
         
         overlay = train_sprites[consists[controlling_consist].train_type]["controls"]["overlay"]
         screen.blit(overlay,(screen_size[0]/2-overlay.get_width()/2,screen_size[1]-overlay.get_height()))
+
+        if annotation:
+            s = pg.Surface((annotation.get_width()+8,annotation.get_height()+8))
+            s.set_alpha(128)
+            s.fill((0,0,0))
+            screen.blit(s, (m_pos[0]+10,m_pos[1]+20))
+            screen.blit(annotation, (m_pos[0]+15,m_pos[1]+25))
 
                 
 
@@ -332,18 +379,22 @@ while working:
         info_blit_list.append(font.render(f"consists: {len(consists)}",True,text_color))
         if controlling > -1:
             info_blit_list.append(font.render(f"controlling traincar {controlling}",True,text_color))
-            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].velocity,5)} px",True,text_color))
-            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].humainzed_velocity,2)} m/s",True,text_color))
-            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].humainzed_velocity*3.6,2)} km/h",True,text_color))
+            if debug > 1:
+                info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].pixel_velocity,5)} px",True,text_color))
+                info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].velocity,2)} m/s",True,text_color))
+            info_blit_list.append(font.render(f"velocity {round(consists[controlling_consist].velocity*3.6,2)} km/h",True,text_color))
             info_blit_list.append(font.render(f"pressure {round(consists[controlling_consist].pressure)} aT",True,text_color))
             info_blit_list.append(font.render(f"km {consists[controlling_consist].km}",True,text_color))
             info_blit_list.append(font.render(f"tk {consists[controlling_consist].tk}",True,text_color))
             info_blit_list.append(font.render(f"energy {consists[controlling_consist].energy}",True,text_color))
             info_blit_list.append(font.render(f"emf {consists[controlling_consist].electromotive_force}",True,text_color))
             info_blit_list.append(font.render(f"volts {consists[controlling_consist].engine_voltage}",True,text_color))
-            info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))
-            info_blit_list.append(font.render(f"traction {consists[controlling_consist].traction_direction}",True,text_color))
-            info_blit_list.append(font.render(f"movement {consists[controlling_consist].velocity_direction}",True,text_color))
+            info_blit_list.append(font.render(f"current {consists[controlling_consist].engine_current}",True,text_color))
+            info_blit_list.append(font.render(f"RP {consists[controlling_consist].control_wires["rp"]}",True,text_color))
+            if debug > 1:
+                info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))
+                info_blit_list.append(font.render(f"traction {consists[controlling_consist].traction_direction}",True,text_color))
+                info_blit_list.append(font.render(f"movement {consists[controlling_consist].velocity_direction}",True,text_color))
             
 
     for i, line in enumerate(info_blit_list):

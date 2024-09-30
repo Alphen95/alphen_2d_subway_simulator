@@ -134,6 +134,7 @@ class Consist():
         self.linked_to = []
         self.pressure = 0
         self.velocity = 0
+        self.pixel_velocity = 0
         self.angular_velocity = 0
         self.train_type = train_type
         self.wheel_radius = consist_info["wheel_radius"]
@@ -141,6 +142,41 @@ class Consist():
         self.wheel_mass = consist_info["wheel_mass"]
         self.humainzed_velocity = 0
 
+        self.control_wires ={
+            "reserve_controls":False, #1 Резервное управление
+            "batteries":False, #2 Питание батарей
+            "mk":False, #3 Питание мотор-компрессора
+            "reserve_mk":False, #4 Питание резервного мотор-компрессора
+            "reversor_forwards":False, #5 Реверс вперёд
+            "reversor_backwards":False, #6 Реверс назад
+            "rp":True, #7 Реле перегрузки (False = требует восстановки)
+            "rp_return":False, #8 Возврат реле перегрузки
+            "vz_1":False, #9 Вентиль замещения №1
+            "vz_2":False, #10 Вентиль замещения №2
+            "traction":False, #11 Сбор схемы на ход
+            "electro_brake":False, #12 Сбор схемы на торможение
+            "maximal_traction":False, #13 Сбор схемы на максимальный ход
+            "rk_spin":False, #14 Вращение реостатного контроллера
+            "rk_maxed":False, #15 Схема собрана (РК на максимальной допустимой позиции)
+            "left_doors":False, #16 Открытие левых дверей
+            "right_doors":False, #17 Открытие правых дверей
+            "close_doors":False, #18 Закрытие дверей
+            "reserve_close_doors":False, #19 Резервное закрытие дверей
+            "doors_open":False, #20 Двери открыты
+            "doors_open_duplicate":False, #21 Двери открыты
+            "light_on":False, #22 Включение освещения
+            "light_off":False, #23 Выключение освещения
+            "ars":False, #24 Включение АРС
+            "als":False, #25 Включение АЛС
+            "ars_0":False, #26 АРС - 0
+            "ars_20":False, #27 АРС - НЧ [20]
+            "ars_40":False, #28 АРС - 40
+            "ars_60":False, #29 АРС - 60
+            "ars_70":False, #30 АРС - 70
+            "ars_80":False, #31 АРС - 80
+            "unused":False, #32 пока не используется
+
+        }
         self.consist_info = consist_info
 
         self.km = consist_info["default_km"]
@@ -177,17 +213,25 @@ class Consist():
         engines = 2*self.train_amount
 
         while self.exists:
+            for elem_id, element in enumerate(self.consist_info["element_mapouts"]):
+                if element["type"] == "lamp":
+                    self.consist_info["element_mapouts"][elem_id]["state"] = self.control_wires[element["connection"]]
 
             if self.consist_info["control_system_type"] == "direct":
+                if self.control_wires["rp_return"] and self.km == 0:
+                    self.control_wires["rp"] = True
+
                 self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number
                 engine_power = 0
-                if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel":
+                if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0:
                     self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
                     self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
                     if self.velocity_direction == 0: 
                         self.velocity_direction = self.traction_direction
                     self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
-                    engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction)
+                    if self.engine_current >= self.consist_info["peril_current"]:
+                        self.control_wires["rp"] = False
+                    engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
                 
                 if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
                     if self.pressure != self.consist_info["tk_mapouts"][str(self.tk)]["target"]:
@@ -196,12 +240,17 @@ class Consist():
                         else:
                             self.pressure+=-sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"])*self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
 
+                self.control_wires["traction"] = engine_power > 0
+                self.control_wires["maximal_traction"] = self.km == self.consist_info["max_km"]
+                self.control_wires["reversor_forwards"] = self.controlling_direction == 1
+                self.control_wires["reversor_backwards"] = self.controlling_direction == -11
+
                 engine_power*=engines
 
                 kinetic_energy = self.mass*self.velocity**2/2*self.train_amount
                 revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
                 friction_energy = 0.004*self.wheel_mass*9.81*self.angular_velocity
-                break_friction_energy = wheels*1*self.angular_velocity*(self.pressure*100000*self.break_cyllinder_surface)
+                break_friction_energy = wheels*1*self.velocity*(self.pressure*100000*self.break_cyllinder_surface)
 
                 self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-break_friction_energy/120,5)
                 self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
@@ -210,12 +259,13 @@ class Consist():
                 if self.velocity == 0: self.velocity_direction = 0
 
 
-            speed_modifier = 1.0
-            self.humainzed_velocity = round(self.velocity*120*0.15/4*speed_modifier,5)
+            speed_modifier = 1
+            #self.humainzed_velocity = round(self.velocity*120*0.15/4*speed_modifier,5)
+            self.pixel_velocity = round(self.velocity/120/0.15*4*speed_modifier,5)
 
             for train_id in self.linked_to:
                 trains[train_id].velocity = self.velocity
-                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.velocity*speed_modifier*self.velocity_direction,2)
-                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.velocity*speed_modifier*self.velocity_direction,2)
+                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.pixel_velocity*self.velocity_direction,2)
+                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.pixel_velocity*self.velocity_direction,2)
 
             time.sleep(1/120)

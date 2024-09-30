@@ -13,19 +13,23 @@
     "clickable_size":[124,312],
     "traction_info":{
         "control_system_type":"direct",
+        "has_ars":false,
+        "has_als":false,
         "max_km":5,
         "min_km":-2,
         "max_tk":5,
         "min_tk":1,
         "default_tk":2,
         "default_km":0,
-        "engine_constant":90,
-        "engine_resistance":25,
+        "engine_constant":40,
+        "engine_resistance":1.25,
+        "peril_current":420,
         "mass":517000,
         "wheel_mass":200,
         "wheel_radius":0.95,
         "transmissional_number":3.94,
-        "break_cyllinder_surface":0.1,
+        "break_cyllinder_surface":0.2,
+        "underlay_draw_params":[0,-41,5],
         "km_mapouts":{
             "5":{"type":"accel","voltage":750},
             "4":{"type":"accel","voltage":625},
@@ -40,8 +44,8 @@
             "1":{"type":"press","speed":0.05,"target":0},
             "2":{"type":"press","speed":0.025,"target":0},
             "3":{"type":"neutral"},
-            "4":{"type":"press","speed":0.025,"target":3},
-            "5":{"type":"press","speed":0.05,"target":3}
+            "4":{"type":"press","speed":0.025,"target":5},
+            "5":{"type":"press","speed":0.05,"target":5}
         },
         "km_draw_mapouts":{
             "5":[19,14],
@@ -52,72 +56,252 @@
             "0":[19,29],
             "-1":[19,32],
             "-2":[19,35],
-            "scale":4
+            "scale":5
         },
         "tk_draw_mapouts":{
-            "1":[75,20],
-            "2":[77,24],
-            "3":[80,29],
-            "4":[83,34],
-            "5":[85,38],
-            "scale":4
+            "1":[100,20],
+            "2":[102,24],
+            "3":[105,29],
+            "4":[108,34],
+            "5":[110,38],
+            "scale":5
         },
         "rr_draw_mapouts":{
             "1":[-18,45],
             "0":[-18,52],
             "-1":[-18,52],
-            "scale":4
-        }
+            "scale":5
+        },
+        "element_mapouts":[
+            {
+                "name":"Возврат РП",
+                "type":"button",
+                "connection":"rp_return",
+                "default":false,
+                "state":false,
+                "draw_mappings":[
+                    [55,43,5,"vu_22_off",11,18],
+                    [55,43,5,"vu_22_on",11,18]
+                ]
+
+            },
+            {
+                "name":"Открытие дверей правых",
+                "type":"button",
+                "connection":"right_doors",
+                "default":false,
+                "state":false,
+                "draw_mappings":[
+                    [67,43,5,"vu_22_off",11,18],
+                    [67,43,5,"vu_22_on",11,18]
+                ]
+
+            },
+            {
+                "name":"Открытие дверей левых",
+                "type":"button",
+                "connection":"left_doors",
+                "default":false,
+                "state":false,
+                "draw_mappings":[
+                    [80,43,5,"vu_22_off",11,18],
+                    [80,43,5,"vu_22_on",11,19]
+                ]
+
+            },
+            {
+                "name":"Выключатель управления дверьми",
+                "type":"switch",
+                "connection":"close_doors",
+                "default":false,
+                "state":false,
+                "draw_mappings":[
+                    [92,43,5,"vu_22_off",11,18],
+                    [92,43,5,"vu_22_on",11,18]
+                ]
+
+            },
+            {
+                "name":"Лампа сработки РП",
+                "type":"lamp",
+                "state":true,
+                "connection":"rp",
+                "draw_mappings":[
+                    [68,34,5,"red_lamp_on",6,6],
+                    [68,34,5,"red_lamp_off",6,6]
+                ]
+
+            },
+            {
+                "name":"Зелёная лампа РП",
+                "type":"lamp",
+                "state":true,
+                "connection":"unused",
+                "draw_mappings":[
+                    [76,34,5,"green_lamp_off",6,6],
+                    [76,34,5,"green_lamp_on",6,6]
+                ]
+
+            },
+            {
+                "name":"Лампа контроля дверей",
+                "type":"lamp",
+                "state":true,
+                "connection":"doors_open",
+                "draw_mappings":[
+                    [84,34,5,"blue_lamp_on",6,6],
+                    [84,34,5,"blue_lamp_off",6,6]
+                ]
+
+            },
+            {
+                "name":"Скоростемер",
+                "type":"speedometer_analog",
+                "base_angle":0,
+                "km_angle":1,
+                "max_speed":100,
+                "draw_mappings":[
+                    [111,-40,5,"speedometer_bottom",6,6],
+                    [143.5,-7.5,5,"speedometer_pointer",6,6],
+                    [111,-40,5,"speedometer_overlay",6,6]
+                ]
+
+            }
+        ]
     },
     "control_panel_info":{
         "panel":{
             "x":1,
             "y":1,
-            "w":128,
+            "w":148,
             "h":64,
-            "scale":4
+            "scale":5
+        },
+        "underlay":{
+            "x":1,
+            "y":131,
+            "w":148,
+            "h":105,
+            "scale":5
         },
         "km":{
-            "x":130,
+            "x":150,
             "y":1,
             "w":40,
             "h":8,
-            "scale":4
+            "scale":5
         },
         "tk":{
-            "x":130,
+            "x":150,
             "y":21,
             "w":30,
             "h":20,
-            "scale":4
+            "scale":5
         },
         "overlay":{
             "x":1,
             "y":66,
-            "w":128,
+            "w":148,
             "h":64,
-            "scale":4
+            "scale":5
         },
         "rr_0":{
-            "x":161,
+            "x":181,
             "y":10,
             "w":24,
             "h":4,
-            "scale":4
+            "scale":5
         },
         "rr_-1":{
-            "x":161,
+            "x":181,
             "y":15,
             "w":24,
             "h":10,
-            "scale":4
+            "scale":5
         },
         "rr_1":{
-            "x":161,
+            "x":181,
             "y":26,
             "w":24,
             "h":10,
-            "scale":4
+            "scale":5
+        },
+        "vu_22_on":{
+            "x":206,
+            "y":40,
+            "w":11,
+            "h":18,
+            "scale":5
+        },
+        "vu_22_off":{
+            "x":218,
+            "y":40,
+            "w":11,
+            "h":18,
+            "scale":5
+        },
+        "red_lamp_on":{
+            "x":150,
+            "y":42,
+            "w":6,
+            "h":6,
+            "scale":5
+        },
+        "green_lamp_on":{
+            "x":150,
+            "y":49,
+            "w":6,
+            "h":6,
+            "scale":5
+        },
+        "blue_lamp_on":{
+            "x":150,
+            "y":56,
+            "w":6,
+            "h":6,
+            "scale":5
+        },
+        "red_lamp_off":{
+            "x":157,
+            "y":42,
+            "w":6,
+            "h":6,
+            "scale":5
+        },
+        "green_lamp_off":{
+            "x":157,
+            "y":49,
+            "w":6,
+            "h":6,
+            "scale":5
+        },
+        "blue_lamp_off":{
+            "x":157,
+            "y":56,
+            "w":6,
+            "h":6,
+            "scale":5
+        },
+        "speedometer_overlay":{
+            "x":150,
+            "y":76,
+            "w":40,
+            "h":40,
+            "scale":5
+        },
+        "speedometer_bottom":{
+            "x":191,
+            "y":76,
+            "w":40,
+            "h":40,
+            "scale":5
+        },
+        "speedometer_pointer":{
+            "x":194,
+            "y":59,
+            "w":45,
+            "h":1,
+            "scale":5
         }
     }
 }
