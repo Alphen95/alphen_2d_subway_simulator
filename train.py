@@ -216,6 +216,17 @@ class Consist():
             for elem_id, element in enumerate(self.consist_info["element_mapouts"]):
                 if element["type"] == "lamp":
                     self.consist_info["element_mapouts"][elem_id]["state"] = self.control_wires[element["connection"]]
+                elif element["type"] == "analog_scale":
+                    value = 0
+                    if element["scale"] == "velocity": value = self.velocity*3.6
+                    elif element["scale"] == "amps": value = self.engine_current*self.traction_direction
+
+                    if value != element["angle"]:
+                        self.consist_info["element_mapouts"][elem_id]["angle"] += 5*sign(value-element["angle"])
+                        if self.consist_info["element_mapouts"][elem_id]["angle"] > element["max_value"]: self.consist_info["element_mapouts"][elem_id]["angle"] = element["max_value"]
+                        elif self.consist_info["element_mapouts"][elem_id]["angle"] < element["min_value"]: self.consist_info["element_mapouts"][elem_id]["angle"] = element["min_value"]
+                        elif abs(value-element["angle"]) <5: self.consist_info["element_mapouts"][elem_id]["angle"] = value
+
 
             if self.consist_info["control_system_type"] == "direct":
                 if self.control_wires["rp_return"] and self.km == 0:

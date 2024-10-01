@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.1.5 смари скоростемер и реле перегруза ничего себе"
+version = "v0.1.5.1 амперметор"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -286,7 +286,7 @@ while working:
         screen.blit(panel,(screen_size[0]/2-panel.get_width()/2,screen_size[1]-panel.get_height()))
 
         for element in consists[controlling_consist].consist_info["element_mapouts"]:
-            if element["type"] != "speedometer_analog":
+            if element["type"] != "analog_scale":
                 info = element["draw_mappings"][element["state"]]
                 sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
                 x,y = info[0], info[1]
@@ -300,7 +300,7 @@ while working:
                 screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                 
                 info = element["draw_mappings"][1]
-                sprite = pg.transform.rotate(train_sprites[consists[controlling_consist].train_type]["controls"][info[3]],round(element["base_angle"]-element["km_angle"]*consists[controlling_consist].velocity*3.6,2))
+                sprite = pg.transform.rotate(train_sprites[consists[controlling_consist].train_type]["controls"][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],2))
                 x,y = info[0], info[1]
                 scale = info[2]
                 screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+x*scale-sprite.get_width()/2,2),round(screen_size[1]-panel.get_height()+y*scale-sprite.get_height()/2,2)))

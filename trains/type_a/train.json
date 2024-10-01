@@ -156,14 +156,33 @@
             },
             {
                 "name":"Скоростемер",
-                "type":"speedometer_analog",
-                "base_angle":0,
-                "km_angle":1,
-                "max_speed":100,
+                "type":"analog_scale",
+                "scale":"velocity",
+                "angle":0,
+                "base_angle":180,
+                "multiplier":-1,
+                "min_value":0,
+                "max_value":100,
                 "draw_mappings":[
-                    [111,-40,5,"speedometer_bottom",6,6],
-                    [143.5,-7.5,5,"speedometer_pointer",6,6],
-                    [111,-40,5,"speedometer_overlay",6,6]
+                    [1,-32,5,"speedometer_bottom",6,6],
+                    [8.5,0.5,5,"speedometer_pointer",6,6],
+                    [1,-32,5,"speedometer_overlay",6,6]
+                ]
+
+            },
+            {
+                "name":"Амперметр",
+                "type":"analog_scale",
+                "scale":"amps",
+                "angle":0,
+                "base_angle":-90,
+                "multiplier":0.15,
+                "min_value":-600,
+                "max_value":600,
+                "draw_mappings":[
+                    [125,0,5,"ammeter_bottom",6,6],
+                    [137.5,12.5,5,"ammeter_pointer",6,6],
+                    [125,0,5,"ammeter_overlay",6,6]
                 ]
 
             }
@@ -227,15 +246,15 @@
             "scale":5
         },
         "vu_22_on":{
-            "x":206,
-            "y":40,
+            "x":164,
+            "y":42,
             "w":11,
             "h":18,
             "scale":5
         },
         "vu_22_off":{
-            "x":218,
-            "y":40,
+            "x":176,
+            "y":42,
             "w":11,
             "h":18,
             "scale":5
@@ -284,22 +303,43 @@
         },
         "speedometer_overlay":{
             "x":150,
-            "y":76,
+            "y":63,
             "w":40,
             "h":40,
             "scale":5
         },
         "speedometer_bottom":{
             "x":191,
-            "y":76,
+            "y":63,
             "w":40,
             "h":40,
             "scale":5
         },
         "speedometer_pointer":{
-            "x":194,
-            "y":59,
+            "x":164,
+            "y":61,
             "w":45,
+            "h":1,
+            "scale":5
+        },
+        "ammeter_bottom":{
+            "x":150,
+            "y":104,
+            "w":25,
+            "h":15,
+            "scale":5
+        },
+        "ammeter_overlay":{
+            "x":176,
+            "y":104,
+            "w":25,
+            "h":15,
+            "scale":5
+        },
+        "ammeter_pointer":{
+            "x":150,
+            "y":120,
+            "w":21,
             "h":1,
             "scale":5
         }
