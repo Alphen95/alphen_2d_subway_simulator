@@ -41,11 +41,11 @@
             "-2":{"type":"accel","voltage":-300}
         },
         "tk_mapouts":{
-            "1":{"type":"press","speed":0.05,"target":0},
-            "2":{"type":"press","speed":0.025,"target":0},
+            "1":{"type":"press","speed":0.025,"target":0},
+            "2":{"type":"press","speed":0.0125,"target":0},
             "3":{"type":"neutral"},
-            "4":{"type":"press","speed":0.025,"target":5},
-            "5":{"type":"press","speed":0.05,"target":5}
+            "4":{"type":"press","speed":0.0125,"target":3.5},
+            "5":{"type":"press","speed":0.025,"target":3.5}
         },
         "km_draw_mapouts":{
             "5":[19,14],
@@ -164,9 +164,9 @@
                 "min_value":0,
                 "max_value":100,
                 "draw_mappings":[
-                    [1,-32,5,"speedometer_bottom",6,6],
-                    [8.5,0.5,5,"speedometer_pointer",6,6],
-                    [1,-32,5,"speedometer_overlay",6,6]
+                    [1.5,-32,5,"speedometer_bottom",6,6],
+                    [7.5,32.5,5,"speedometer_pointer",6,6],
+                    [1.5,-32,5,"speedometer_overlay",6,6]
                 ]
 
             },
@@ -180,9 +180,41 @@
                 "min_value":-600,
                 "max_value":600,
                 "draw_mappings":[
-                    [125,0,5,"ammeter_bottom",6,6],
-                    [137.5,12.5,5,"ammeter_pointer",6,6],
-                    [125,0,5,"ammeter_overlay",6,6]
+                    [103,-31,5,"ammeter_bottom",6,6],
+                    [12.5,12.5,5,"ammeter_pointer",6,6],
+                    [103,-31,5,"ammeter_overlay",6,6]
+                ]
+
+            },
+            {
+                "name":"Вольтметр",
+                "type":"analog_scale",
+                "scale":"volts",
+                "angle":0,
+                "base_angle":-30,
+                "multiplier":0.16,
+                "min_value":0,
+                "max_value":800,
+                "draw_mappings":[
+                    [130,-31,5,"ammeter_bottom",6,6],
+                    [12.5,12.5,5,"ammeter_pointer",6,6],
+                    [130,-31,5,"ammeter_overlay",6,6]
+                ]
+
+            },
+            {
+                "name":"Манометр тормозных цилиндров",
+                "type":"analog_scale",
+                "scale":"press",
+                "angle":0,
+                "base_angle":45,
+                "multiplier":45,
+                "min_value":0,
+                "max_value":6,
+                "draw_mappings":[
+                    [114.5,-15,5,"manometer_bottom",6,6],
+                    [15.5,15.5,5,"manometer_pointer",6,6],
+                    [114.5,-15,5,"manometer_overlay",6,6]
                 ]
 
             }
@@ -199,7 +231,7 @@
         "underlay":{
             "x":1,
             "y":131,
-            "w":148,
+            "w":153,
             "h":105,
             "scale":5
         },
@@ -339,6 +371,27 @@
         "ammeter_pointer":{
             "x":150,
             "y":120,
+            "w":21,
+            "h":1,
+            "scale":5
+        },
+        "manometer_bottom":{
+            "x":202,
+            "y":104,
+            "w":31,
+            "h":31,
+            "scale":5
+        },
+        "manometer_overlay":{
+            "x":202,
+            "y":136,
+            "w":25,
+            "h":15,
+            "scale":5
+        },
+        "manometer_pointer":{
+            "x":150,
+            "y":122,
             "w":21,
             "h":1,
             "scale":5
