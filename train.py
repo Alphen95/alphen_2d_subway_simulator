@@ -133,6 +133,7 @@ class Consist():
 
         self.linked_to = []
         self.pressure = 0
+        self.vz_pressure = 0
         self.velocity = 0
         self.pixel_velocity = 0
         self.angular_velocity = 0
@@ -143,6 +144,7 @@ class Consist():
         self.humainzed_velocity = 0
 
         self.control_wires ={
+            "main_power":False, #1 Главный разъединитель и главный автомат
             "reserve_controls":False, #1 Резервное управление
             "batteries":False, #2 Питание батарей
             "mk":False, #3 Питание мотор-компрессора
@@ -221,13 +223,13 @@ class Consist():
                     if element["scale"] == "velocity": value = self.velocity*3.6
                     elif element["scale"] == "amps": value = self.engine_current*self.traction_direction*self.control_wires["rp"]
                     elif element["scale"] == "volts": value = self.engine_voltage*self.control_wires["rp"]
-                    elif element["scale"] == "press": value = self.pressure
+                    elif element["scale"] == "press": value = (1 if self.pressure < 1 and self.control_wires["vz_1"] else self.pressure)
 
                     if value != element["angle"]:
                         self.consist_info["element_mapouts"][elem_id]["angle"] += (element["max_value"]-element["min_value"])/100*sign(value-element["angle"])
                         if self.consist_info["element_mapouts"][elem_id]["angle"] > element["max_value"]: self.consist_info["element_mapouts"][elem_id]["angle"] = element["max_value"]
                         elif self.consist_info["element_mapouts"][elem_id]["angle"] < element["min_value"]: self.consist_info["element_mapouts"][elem_id]["angle"] = element["min_value"]
-                        elif abs(value-(element["max_value"]-element["min_value"])/100) <5: self.consist_info["element_mapouts"][elem_id]["angle"] = value
+                        elif abs(value-self.consist_info["element_mapouts"][elem_id]["angle"]) <(element["max_value"]-element["min_value"])/100: self.consist_info["element_mapouts"][elem_id]["angle"] = value
 
 
             if self.consist_info["control_system_type"] == "direct":
@@ -236,7 +238,7 @@ class Consist():
 
                 self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number
                 engine_power = 0
-                if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0:
+                if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0 and self.control_wires["rp"]:
                     self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
                     self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
                     if self.velocity_direction == 0: 
@@ -244,6 +246,8 @@ class Consist():
                     self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
                     if self.engine_current >= self.consist_info["peril_current"]:
                         self.control_wires["rp"] = False
+                        self.engine_current = 0
+                        self.engine_voltage = 0
                     engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
                 
                 if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
@@ -263,7 +267,7 @@ class Consist():
                 kinetic_energy = self.mass*self.velocity**2/2*self.train_amount
                 revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
                 friction_energy = 0.004*self.wheel_mass*9.81*self.angular_velocity
-                break_friction_energy = wheels*1*self.velocity*(self.pressure*100000*self.break_cyllinder_surface)
+                break_friction_energy = wheels*1*self.velocity*((1 if self.pressure < 1 and self.control_wires["vz_1"] else self.pressure)*100000*self.break_cyllinder_surface)
 
                 self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-break_friction_energy/120,5)
                 self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5

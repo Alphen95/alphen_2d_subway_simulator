@@ -1,5 +1,5 @@
 {
-    "system_name":"type_a",
+    "system_name":"type_a_hires",
     "name":"Метропоезд типа А",
     "sprite_info":{
         "train":{
@@ -22,14 +22,14 @@
         "default_tk":2,
         "default_km":0,
         "engine_constant":40,
-        "engine_resistance":1.25,
-        "peril_current":420,
+        "engine_resistance":0.75,
+        "peril_current":4200,
         "mass":517000,
         "wheel_mass":200,
         "wheel_radius":0.95,
         "transmissional_number":3.94,
         "break_cyllinder_surface":0.2,
-        "underlay_draw_params":[0,-41,5],
+        "underlay_draw_params":[0,-41,6],
         "km_mapouts":{
             "5":{"type":"accel","voltage":750},
             "4":{"type":"accel","voltage":625},
@@ -56,7 +56,7 @@
             "0":[19,29],
             "-1":[19,32],
             "-2":[19,35],
-            "scale":5
+            "scale":6
         },
         "tk_draw_mapouts":{
             "1":[100,20],
@@ -64,13 +64,13 @@
             "3":[105,29],
             "4":[108,34],
             "5":[110,38],
-            "scale":5
+            "scale":6
         },
         "rr_draw_mapouts":{
             "1":[-18,45],
             "0":[-18,52],
             "-1":[-18,52],
-            "scale":5
+            "scale":6
         },
         "element_mapouts":[
             {
@@ -80,8 +80,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [55,28,5,"vu_22_off",11,17],
-                    [55,28,5,"vu_22_on",11,17]
+                    [55,43,6,"vu_22_off",11,18],
+                    [55,43,6,"vu_22_on",11,18]
                 ]
 
             },
@@ -92,8 +92,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [67,28,5,"vu_22_off",11,17],
-                    [67,28,5,"vu_22_on",11,17]
+                    [67,43,6,"vu_22_off",11,18],
+                    [67,43,6,"vu_22_on",11,18]
                 ]
 
             },
@@ -104,8 +104,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [80,28,5,"vu_22_off",11,17],
-                    [80,28,5,"vu_22_on",11,17]
+                    [80,43,6,"vu_22_off",11,18],
+                    [80,43,6,"vu_22_on",11,19]
                 ]
 
             },
@@ -116,32 +116,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [92,28,5,"vu_22_off",11,17],
-                    [92,28,5,"vu_22_on",11,17]
-                ]
-
-            },
-            {
-                "name":"Вентиль замещения №1",
-                "type":"button",
-                "connection":"vz_1",
-                "default":false,
-                "state":false,
-                "draw_mappings":[
-                    [80,46,5,"vu_22_off",11,17],
-                    [80,46,5,"vu_22_on",11,17]
-                ]
-
-            },
-            {
-                "name":"Мотор-компрессор",
-                "type":"switch",
-                "connection":"mk",
-                "default":false,
-                "state":false,
-                "draw_mappings":[
-                    [92,46,5,"vu_22_off",11,17],
-                    [92,46,5,"vu_22_on",11,17]
+                    [92,43,6,"vu_22_off",11,18],
+                    [92,43,6,"vu_22_on",11,18]
                 ]
 
             },
@@ -151,8 +127,8 @@
                 "state":true,
                 "connection":"rp",
                 "draw_mappings":[
-                    [68,19,5,"red_lamp_on",6,6],
-                    [68,19,5,"red_lamp_off",6,6]
+                    [68,34,6,"red_lamp_on",6,6],
+                    [68,34,6,"red_lamp_off",6,6]
                 ]
 
             },
@@ -162,8 +138,8 @@
                 "state":true,
                 "connection":"unused",
                 "draw_mappings":[
-                    [76,19,5,"green_lamp_off",6,6],
-                    [76,19,5,"green_lamp_on",6,6]
+                    [76,34,6,"green_lamp_off",6,6],
+                    [76,34,6,"green_lamp_on",6,6]
                 ]
 
             },
@@ -173,8 +149,8 @@
                 "state":true,
                 "connection":"doors_open",
                 "draw_mappings":[
-                    [84,19,5,"blue_lamp_on",6,6],
-                    [84,19,5,"blue_lamp_off",6,6]
+                    [84,34,6,"blue_lamp_on",6,6],
+                    [84,34,6,"blue_lamp_off",6,6]
                 ]
 
             },
@@ -184,13 +160,13 @@
                 "scale":"velocity",
                 "angle":0,
                 "base_angle":180,
-                "multiplier":-1,
+                "multiplier":-1.125,
                 "min_value":0,
                 "max_value":100,
                 "draw_mappings":[
-                    [1.5,-32,5,"speedometer_bottom",6,6],
-                    [7.5,32.5,5,"speedometer_pointer",6,6],
-                    [1.5,-32,5,"speedometer_overlay",6,6]
+                    [3,-64,3,"speedometer_bottom",6,6],
+                    [15,65,3,"speedometer_pointer",6,6],
+                    [3,-64,3,"speedometer_overlay",6,6]
                 ]
 
             },
@@ -200,13 +176,29 @@
                 "scale":"amps",
                 "angle":0,
                 "base_angle":-90,
-                "multiplier":0.15,
+                "multiplier":0.075,
                 "min_value":-600,
                 "max_value":600,
                 "draw_mappings":[
-                    [120.5,-31,5,"ammeter_bottom",6,6],
-                    [12.5,12.5,5,"ammeter_pointer",6,6],
-                    [120.5,-31,5,"ammeter_overlay",6,6]
+                    [206,-100,3,"ammeter_bottom",6,6],
+                    [25,31,3,"ammeter_pointer",6,6],
+                    [206,-100,3,"ammeter_overlay",6,6]
+                ]
+
+            },
+            {
+                "name":"Вольтметр",
+                "type":"analog_scale",
+                "scale":"volts",
+                "angle":0,
+                "base_angle":-45,
+                "multiplier":0.075,
+                "min_value":0,
+                "max_value":800,
+                "draw_mappings":[
+                    [260,-100,3,"ammeter_bottom",6,6],
+                    [25,31,3,"ammeter_pointer",6,6],
+                    [260,-100,3,"ammeter_overlay",6,6]
                 ]
 
             },
@@ -220,9 +212,9 @@
                 "min_value":0,
                 "max_value":6,
                 "draw_mappings":[
-                    [117.5,-17,5,"manometer_bottom",6,6],
-                    [15.5,15.5,5,"manometer_pointer",6,6],
-                    [117.5,-17,5,"manometer_overlay",6,6]
+                    [229,-60,3,"manometer_bottom",6,6],
+                    [31,31,3,"manometer_pointer",6,6],
+                    [229,-60,3,"manometer_overlay",6,6]
                 ]
 
             }
@@ -230,179 +222,179 @@
     },
     "control_panel_info":{
         "panel":{
-            "x":1,
-            "y":1,
-            "w":148,
-            "h":64,
-            "scale":5
+            "x":2,
+            "y":2,
+            "w":296,
+            "h":128,
+            "scale":3
         },
         "underlay":{
-            "x":1,
-            "y":131,
-            "w":153,
-            "h":105,
-            "scale":5
+            "x":2,
+            "y":262,
+            "w":306,
+            "h":209,
+            "scale":3
         },
         "km":{
-            "x":150,
-            "y":1,
-            "w":40,
-            "h":8,
-            "scale":5
+            "x":300,
+            "y":2,
+            "w":80,
+            "h":16,
+            "scale":3
         },
         "tk":{
-            "x":150,
-            "y":21,
-            "w":30,
-            "h":20,
-            "scale":5
+            "x":300,
+            "y":42,
+            "w":60,
+            "h":40,
+            "scale":3
         },
         "overlay":{
-            "x":1,
-            "y":66,
-            "w":148,
-            "h":64,
-            "scale":5
+            "x":2,
+            "y":132,
+            "w":296,
+            "h":128,
+            "scale":3
         },
         "rr_0":{
-            "x":181,
-            "y":10,
-            "w":24,
-            "h":4,
-            "scale":5
+            "x":362,
+            "y":20,
+            "w":48,
+            "h":8,
+            "scale":3
         },
         "rr_-1":{
-            "x":181,
-            "y":15,
-            "w":24,
-            "h":10,
-            "scale":5
+            "x":362,
+            "y":30,
+            "w":48,
+            "h":20,
+            "scale":3
         },
         "rr_1":{
-            "x":181,
-            "y":26,
-            "w":24,
-            "h":10,
-            "scale":5
+            "x":362,
+            "y":52,
+            "w":48,
+            "h":20,
+            "scale":3
         },
         "vu_22_on":{
-            "x":164,
-            "y":42,
-            "w":11,
-            "h":17,
-            "scale":5
+            "x":328,
+            "y":84,
+            "w":22,
+            "h":36,
+            "scale":3
         },
         "vu_22_off":{
-            "x":176,
-            "y":42,
-            "w":11,
-            "h":17,
-            "scale":5
+            "x":352,
+            "y":84,
+            "w":22,
+            "h":36,
+            "scale":3
         },
         "red_lamp_on":{
-            "x":150,
-            "y":42,
-            "w":6,
-            "h":6,
-            "scale":5
+            "x":300,
+            "y":84,
+            "w":12,
+            "h":12,
+            "scale":3
         },
         "green_lamp_on":{
-            "x":150,
-            "y":49,
-            "w":6,
-            "h":6,
-            "scale":5
+            "x":300,
+            "y":98,
+            "w":12,
+            "h":12,
+            "scale":3
         },
         "blue_lamp_on":{
-            "x":150,
-            "y":56,
-            "w":6,
-            "h":6,
-            "scale":5
+            "x":300,
+            "y":112,
+            "w":12,
+            "h":12,
+            "scale":3
         },
         "red_lamp_off":{
-            "x":157,
-            "y":42,
-            "w":6,
-            "h":6,
-            "scale":5
+            "x":314,
+            "y":84,
+            "w":12,
+            "h":12,
+            "scale":3
         },
         "green_lamp_off":{
-            "x":157,
-            "y":49,
-            "w":6,
-            "h":6,
-            "scale":5
+            "x":314,
+            "y":98,
+            "w":12,
+            "h":12,
+            "scale":3
         },
         "blue_lamp_off":{
-            "x":157,
-            "y":56,
-            "w":6,
-            "h":6,
-            "scale":5
+            "x":314,
+            "y":112,
+            "w":12,
+            "h":12,
+            "scale":3
         },
         "speedometer_overlay":{
-            "x":150,
-            "y":63,
-            "w":40,
-            "h":40,
-            "scale":5
+            "x":300,
+            "y":126,
+            "w":80,
+            "h":80,
+            "scale":3
         },
         "speedometer_bottom":{
-            "x":191,
-            "y":63,
-            "w":40,
-            "h":40,
-            "scale":5
+            "x":382,
+            "y":126,
+            "w":80,
+            "h":80,
+            "scale":3
         },
         "speedometer_pointer":{
-            "x":164,
-            "y":61,
-            "w":45,
-            "h":1,
-            "scale":5
+            "x":328,
+            "y":122,
+            "w":90,
+            "h":2,
+            "scale":3
         },
         "ammeter_bottom":{
-            "x":150,
-            "y":104,
-            "w":25,
-            "h":15,
-            "scale":5
+            "x":300,
+            "y":208,
+            "w":50,
+            "h":38,
+            "scale":3
         },
         "ammeter_overlay":{
-            "x":176,
-            "y":104,
-            "w":25,
-            "h":15,
-            "scale":5
+            "x":352,
+            "y":208,
+            "w":50,
+            "h":38,
+            "scale":3
         },
         "ammeter_pointer":{
-            "x":150,
-            "y":120,
-            "w":21,
-            "h":1,
-            "scale":5
+            "x":310,
+            "y":262,
+            "w":42,
+            "h":2,
+            "scale":3
         },
         "manometer_bottom":{
-            "x":202,
-            "y":104,
-            "w":31,
-            "h":31,
-            "scale":5
+            "x":404,
+            "y":208,
+            "w":62,
+            "h":62,
+            "scale":3
         },
         "manometer_overlay":{
-            "x":202,
-            "y":136,
-            "w":25,
-            "h":15,
-            "scale":5
+            "x":404,
+            "y":272,
+            "w":62,
+            "h":62,
+            "scale":3
         },
         "manometer_pointer":{
-            "x":150,
-            "y":122,
-            "w":21,
-            "h":1,
-            "scale":5
+            "x":310,
+            "y":266,
+            "w":42,
+            "h":2,
+            "scale":3
         }
     }
 }

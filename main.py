@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.1.5.2 манометр и вольметр"
+version = "v0.1.5.3 скоро склепаю звуки и ридми"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -300,10 +300,10 @@ while working:
                 screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                 
                 info = element["draw_mappings"][1]
-                sprite = pg.transform.rotate(train_sprites[consists[controlling_consist].train_type]["controls"][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],2))
+                sprite = pg.transform.rotate(train_sprites[consists[controlling_consist].train_type]["controls"][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],5))
                 local_x,local_y = info[0], info[1]
-                scale = info[2]
-                screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x+local_x)*scale-sprite.get_width()/2,2),round(screen_size[1]-panel.get_height()+(y+local_y )*scale-sprite.get_height()/2,2)))
+                local_scale = info[2]
+                screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x*scale+local_x*local_scale)-sprite.get_width()/2,2),float(screen_size[1]-panel.get_height()+(int(y*scale+local_y*local_scale)+0.5)-sprite.get_height()/2)))
 
                 info = element["draw_mappings"][2]
                 sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
@@ -391,6 +391,7 @@ while working:
             info_blit_list.append(font.render(f"volts {consists[controlling_consist].engine_voltage}",True,text_color))
             info_blit_list.append(font.render(f"current {consists[controlling_consist].engine_current}",True,text_color))
             info_blit_list.append(font.render(f"RP {consists[controlling_consist].control_wires["rp"]}",True,text_color))
+            info_blit_list.append(font.render(f"vz1 {consists[controlling_consist].control_wires["vz_1"]}",True,text_color))
             if debug > 1:
                 info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))
                 info_blit_list.append(font.render(f"traction {consists[controlling_consist].traction_direction}",True,text_color))
