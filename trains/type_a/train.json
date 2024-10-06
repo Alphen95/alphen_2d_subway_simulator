@@ -30,6 +30,15 @@
         "transmissional_number":3.94,
         "break_cyllinder_surface":0.2,
         "underlay_draw_params":[0,-41,5],
+        "drive_sounds":[
+            ["engine1",0.5,8],
+            ["engine2",8,16],
+            ["engine3",16,24],
+            ["engine4",24,32],
+            ["engine5",32,40],
+            ["engine6",40,48],
+            ["engine7",48,1005]
+        ],
         "km_mapouts":{
             "5":{"type":"accel","voltage":750},
             "4":{"type":"accel","voltage":625},
@@ -80,8 +89,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [55,28,5,"vu_22_off",11,17],
-                    [55,28,5,"vu_22_on",11,17]
+                    [55,28,5,"vu_22_off",11,17,"switch_off"],
+                    [55,28,5,"vu_22_on",11,17,"switch_on"]
                 ]
 
             },
@@ -92,8 +101,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [67,28,5,"vu_22_off",11,17],
-                    [67,28,5,"vu_22_on",11,17]
+                    [67,28,5,"vu_22_off",11,17,"switch_off"],
+                    [67,28,5,"vu_22_on",11,17,"switch_on"]
                 ]
 
             },
@@ -104,8 +113,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [80,28,5,"vu_22_off",11,17],
-                    [80,28,5,"vu_22_on",11,17]
+                    [80,28,5,"vu_22_off",11,17,"switch_off"],
+                    [80,28,5,"vu_22_on",11,17,"switch_on"]
                 ]
 
             },
@@ -116,8 +125,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [92,28,5,"vu_22_off",11,17],
-                    [92,28,5,"vu_22_on",11,17]
+                    [92,28,5,"vu_22_off",11,17,"switch_off"],
+                    [92,28,5,"vu_22_on",11,17,"switch_on"]
                 ]
 
             },
@@ -128,8 +137,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [80,46,5,"vu_22_off",11,17],
-                    [80,46,5,"vu_22_on",11,17]
+                    [80,46,5,"vu_22_off",11,17,"switch_off"],
+                    [80,46,5,"vu_22_on",11,17,"switch_on"]
                 ]
 
             },
@@ -140,8 +149,8 @@
                 "default":false,
                 "state":false,
                 "draw_mappings":[
-                    [92,46,5,"vu_22_off",11,17],
-                    [92,46,5,"vu_22_on",11,17]
+                    [92,46,5,"vu_22_off",11,17,"switch_off"],
+                    [92,46,5,"vu_22_on",11,17,"switch_on"]
                 ]
 
             },
@@ -227,6 +236,21 @@
 
             }
         ]
+    },
+    "sound_loading_info":{
+        "switch_on":"sounds/vu_on.mp3",
+        "switch_off":"sounds/vu_off.mp3",
+        "km_plus":"sounds/km_plus.wav",
+        "km_minus":"sounds/km_minus.wav",
+        "tk_plus":"sounds/tk_plus.mp3",
+        "tk_minus":"sounds/tk_minus.mp3",
+        "engine1":"sounds/engine1.wav",
+        "engine2":"sounds/engine2.wav",
+        "engine3":"sounds/engine3.wav",
+        "engine4":"sounds/engine4.wav",
+        "engine5":"sounds/engine5.wav",
+        "engine6":"sounds/engine6.wav",
+        "engine7":"sounds/engine7.wav"
     },
     "control_panel_info":{
         "panel":{

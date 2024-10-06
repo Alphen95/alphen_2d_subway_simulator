@@ -142,6 +142,7 @@ class Consist():
         self.mass = consist_info["mass"]
         self.wheel_mass = consist_info["wheel_mass"]
         self.humainzed_velocity = 0
+        self.current_roll_sound = -1
 
         self.control_wires ={
             "main_power":False, #1 Главный разъединитель и главный автомат

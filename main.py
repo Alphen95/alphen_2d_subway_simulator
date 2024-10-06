@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.1.5.3 скоро склепаю звуки и ридми"
+version = "v0.2 звуки такая хуйня"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -72,7 +72,12 @@ for info_pack in sprite_loading_info:
 
 train_sprites = {}
 train_types = {}
+sounds = {}
 consists_info = {}
+
+pg.mixer.init()
+channel_rolling = pg.mixer.Channel(1)
+channel_rolling.set_volume(0.125)
 
 train_folders = os.listdir(os.path.join(current_dir,"trains"))
 for folder in train_folders:
@@ -119,6 +124,11 @@ for folder in train_folders:
             train_types[key] = {}
             train_types[key]["size"] = (*train_parameters["clickable_size"],sprite_params["layers"]*sprite_stack_factor-1)
 
+            sounds[key] = {}
+            for sound in train_parameters["sound_loading_info"]:
+                sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"trains",folder,train_parameters["sound_loading_info"][sound]))
+                sounds[key][sound].set_volume(0.5)
+
 
 world = {
     (0,2):"tstr",
@@ -148,6 +158,9 @@ consist_key = random.randint(0,999)
 consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*0.5,1024*2.5])
 
 player_pos = [256*0.5,1024*2.5]
+m_btn = [0,0,0]
+mouse_clicked = False
+mouse_released = False
 
 while working:
     valid = []
@@ -161,7 +174,9 @@ while working:
     block_pos = [int((player_pos[0]-(block_size[0] if player_pos[0] < 0 else 0))/block_size[0]),int((player_pos[1]-(block_size[1] if player_pos[1] < 0 else 0))/block_size[1])]
 
     keydowns = []
+    mouse_clicked_prev = mouse_clicked
     mouse_clicked = False
+    mouse_released = False
     for evt in pg.event.get():
         if evt.type == pg.QUIT:
             working = False
@@ -169,8 +184,11 @@ while working:
             keydowns.append(evt.key)
             if evt.key == pg.K_d:
                 debug = (debug+1)%3
-        if evt.type == pg.MOUSEBUTTONDOWN:
+        if evt.type == pg.MOUSEBUTTONDOWN and not m_btn[0] and not m_btn[2]:
             mouse_clicked = True
+        elif evt.type == pg.MOUSEBUTTONUP:
+            mouse_released = True
+
 
     screen.fill((25,25,25))
     for tile_y in range(-int(screen_size[1]/block_size[1]/2)-1,int(screen_size[1]/block_size[1]/2)+2):
@@ -239,31 +257,55 @@ while working:
                 if mouse_clicked and m_btn[0]:
                     controlling = train_params[0]
                     controlling_consist = trains[controlling].consist
-        annotation = None
-        if controlling != -1:
-            panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
-            if (screen_size[0]/2+panel.get_width()/2 >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2 and 
-                screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()):
-                for elem_id, element in enumerate(consists[controlling_consist].consist_info["element_mapouts"]):
-                    if element["type"] != "analog_scale":
-                        info = element["draw_mappings"][element["state"]]
-                        x,y,w,h = info[0], info[1],info[4], info[5]
-                        scale = info[2]
+    annotation = None
+    if controlling != -1:
+        
+        found = False
+        for map_id, mapping in enumerate(consists[controlling_consist].consist_info["drive_sounds"]):
+            if mapping[1] <= consists[controlling_consist].velocity*3.6 and consists[controlling_consist].velocity*3.6 <= mapping[2]:
+                if map_id != consists[controlling_consist].current_roll_sound:
+                    consists[controlling_consist].current_roll_sound = map_id
+                    channel_rolling.set_volume(0.125)
+                    channel_rolling.play(sounds[consists[controlling_consist].train_type][mapping[0]],-1)
+                found = True
+        if not found: 
+            consists[controlling_consist].current_roll_sound = -1
+            channel_rolling.stop()
+
+
+
+        panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
+        if (screen_size[0]/2+panel.get_width()/2 >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2 and 
+            screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()):
+            for elem_id, element in enumerate(consists[controlling_consist].consist_info["element_mapouts"]):
+                if element["type"] != "analog_scale":
+                    info = element["draw_mappings"][element["state"]]
+                    x,y,w,h = info[0], info[1],info[4], info[5]
+                    scale = info[2]
+                    if element["type"] in ["button","switch"]:
                         if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
-                                screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale):
-                            if element["type"] in ["button","switch"]:
-                                if (m_btn[0] or mouse_clicked):
-                                    if element["type"] == "button" and m_btn[0]:
-                                        consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(element["default"])
-                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
-                                    elif element["type"] == "switch" and mouse_clicked:
-                                        consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"])
-                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] 
-                                else:
-                                    if element["type"] == "button":
-                                        consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = element["default"]
-                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                            screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale): 
                             annotation = annotation_font.render(element["name"],True,(255,255,255))
+                        if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
+                            screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale and (m_btn[0] or mouse_clicked)):
+                            if element["type"] == "button" and (m_btn[0] and element["state"] != element["default"] or mouse_clicked):
+                                consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(element["default"])
+                                consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                                if mouse_clicked and len(element["draw_mappings"][element["state"]]) == 7:
+                                    sounds[consists[controlling_consist].train_type][element["draw_mappings"][element["state"]][6]].play()
+                            elif element["type"] == "switch" and mouse_clicked and not mouse_clicked_prev:
+                                consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"])
+                                consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                                if len(element["draw_mappings"][element["state"]]) == 7:
+                                    sounds[consists[controlling_consist].train_type][element["draw_mappings"][consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]][6]].play()
+                        else:
+                            if element["type"] == "button":
+                                if consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] != element["default"] and len(element["draw_mappings"][element["default"]]) == 7:
+                                    sounds[consists[controlling_consist].train_type][element["draw_mappings"][element["default"]][6]].play()
+                                consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = element["default"]
+                                consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+    else:
+        pass
                     
 
                     
@@ -348,13 +390,17 @@ while working:
         player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
         if pg.K_UP in keydowns and consists[controlling_consist].km < consists[controlling_consist].consist_info["max_km"]:
             consists[controlling_consist].km += 1
+            sounds[consists[controlling_consist].train_type]["km_plus"].play()
         elif pg.K_DOWN in keydowns and consists[controlling_consist].km > consists[controlling_consist].consist_info["min_km"]:
             consists[controlling_consist].km -= 1
+            sounds[consists[controlling_consist].train_type]["km_minus"].play()
 
         if pg.K_f in keydowns and consists[controlling_consist].tk < consists[controlling_consist].consist_info["max_tk"]:
             consists[controlling_consist].tk += 1
+            sounds[consists[controlling_consist].train_type]["tk_plus"].play()
         elif pg.K_r in keydowns and consists[controlling_consist].tk > consists[controlling_consist].consist_info["min_tk"]:
             consists[controlling_consist].tk -= 1
+            sounds[consists[controlling_consist].train_type]["tk_minus"].play()
 
         if not trains[controlling].reversed:
             if pg.K_0 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction < 1:
