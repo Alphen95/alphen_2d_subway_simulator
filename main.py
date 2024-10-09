@@ -221,8 +221,8 @@ while working:
 
 
     screen.fill((25,25,25))
-    for tile_x in reversed(range(-int(screen_size[0]/block_size[0]/2)-1,int(screen_size[0]/block_size[0]/2)+2)):
-        for tile_y in range(-int(screen_size[1]/block_size[1]/2)-1,int(screen_size[1]/block_size[1]/2)+2):
+    for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
+        for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
             #pg.draw.rect(screen,(255,0,0),)
             x_offset = (tile_x+1)*block_size[0]-player_pos[0]%(block_size[0])
             y_offset = (tile_y)*block_size[1]-player_pos[1]%(block_size[1])
@@ -239,19 +239,19 @@ while working:
                         round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[world[tile_world_position]]["height"],1)
                         )
                     )
-    for z in valid_draw:
-        for i, train_params in enumerate(sorted(valid_draw[z],key=lambda x:x[1])):
-            angle = (((train_params[2])%360 if train_params[2] in train_sprites[train_params[1]] else (train_params[2])//5*5)+45)%360
-            sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
-            x_offset = -player_pos[0]+train_params[0][0]
-            y_offset = -player_pos[1]+train_params[0][1]
-            screen.blit(
-                sprite,
-                (
-                    screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                    screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+        if block_pos[0]+tile_x in valid_draw:
+            for i, train_params in enumerate(sorted(valid_draw[block_pos[0]+tile_x],key=lambda x:x[1])):
+                angle = (((train_params[2])%360 if train_params[2] in train_sprites[train_params[1]] else (train_params[2])//5*5)+world_angle)%360
+                sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
+                x_offset = -player_pos[0]+train_params[0][0]
+                y_offset = -player_pos[1]+train_params[0][1]
+                screen.blit(
+                    sprite,
+                    (
+                        screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                        screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                    )
                 )
-            )
     
     if debug:
         for tile_y in range(-int(screen_size[1]/block_size[1]/2)-1,int(screen_size[1]/block_size[1]/2)+2):
