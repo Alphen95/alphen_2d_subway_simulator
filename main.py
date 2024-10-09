@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.(3-0.1) ОЧЕНЬ, ОЧЕНЬ СЫРОЙ, но загадочно рабочий ТЕМП"
+version = "v0.2.9.9 скоро всё будет путём"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -74,7 +74,7 @@ for info_pack in sprite_loading_info:
 
     ground_sprites[info_pack["name"]] = {}
 
-    for rotation in [*range(0,360,45)]:
+    for rotation in [world_angle]:
         w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
 
         surface = pg.Surface((w,h+info_pack["params"][4]*sprite_stack_factor))
@@ -121,6 +121,7 @@ for folder in train_folders:
 
             for rotation in [*range(0,360,5)]+[8.25+45,16.5+45,360-8.25+45,360-16.5+45,180-8.25+45,180-16.5+45,180+8.25+45,180+16.5+45]:
                 w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
+                h/=compression
                 rotation = rotation%360
 
                 surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
@@ -247,8 +248,8 @@ while working:
             screen.blit(
                 sprite,
                 (
-                    screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))+block_size[0]*math.sin(math.radians(360-world_angle)),
-                    screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                    screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                    screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
                 )
             )
     
