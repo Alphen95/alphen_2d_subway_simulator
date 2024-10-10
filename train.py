@@ -31,7 +31,8 @@ class Train():
             local_pos = (self.pos[0]%block_size[0],self.pos[1]%block_size[1])
 
             if block_pos in world:
-                curblock = world[block_pos]
+
+                curblock = world[block_pos][0] if type(world[block_pos]) == list else world[block_pos]
                 if curblock[-4:] == "tstr":
                     self.angle = 180 if 270 >= self.angle >= 90 else 0
                     if local_pos[0] < 127.95:

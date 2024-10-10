@@ -148,13 +148,13 @@ for folder in train_folders:
             sounds[key] = {}
             for sound in train_parameters["sound_loading_info"]:
                 sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"trains",folder,train_parameters["sound_loading_info"][sound]))
-                sounds[key][sound].set_volume(0.5)
+                sounds[key][sound].set_volume(0.0)
 
 world = {
-    (0,2):"tstr",
-    (0,1):"tsb1",(-1,1):"tcb2",
-    (1,0):"platform2_f",(0,0):"platform_f",(-1,0):"platform",(-2,0):"platform2",
-    (0,-1):"tstr",(-1,-1):"tstr",}
+    (0,2):["tstr"],
+    (0,1):["tsb1"],(-1,1):["tcb2"],
+    (1,0):["","platform2_f"],(0,0):["","platform_f"],(-1,0):["","platform"],(-2,0):["","platform2"],
+    (0,-1):["tstr"],(-1,-1):["tstr"],}
 
 '''
 world = {
@@ -230,15 +230,32 @@ while working:
             if (block_pos[0]+tile_x,block_pos[1]+tile_y) in world:
                 tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
 
-                if world[tile_world_position] in ground_sprites:
-                    w, h = ground_sprites[world[tile_world_position]][world_angle].get_size()
+                if world[tile_world_position][0] in ground_sprites:
+                    w, h = ground_sprites[world[tile_world_position][0]][world_angle].get_size()
                     screen.blit(
                         #pg.transform.scale(
-                        ground_sprites[world[tile_world_position]][world_angle]#,block_size)
+                        ground_sprites[world[tile_world_position][0]][world_angle]#,block_size)
                         ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))+block_size[0]*math.sin(math.radians(360-world_angle)),1),
-                        round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[world[tile_world_position]]["height"],1)
+                        round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[world[tile_world_position][0]]["height"],1)
                         )
                     )
+    
+    for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
+        for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
+            x_offset = (tile_x+1)*block_size[0]-player_pos[0]%(block_size[0])
+            y_offset = (tile_y)*block_size[1]-player_pos[1]%(block_size[1])
+            tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
+            if (block_pos[0]+tile_x,block_pos[1]+tile_y) in world and type(world[tile_world_position]) == list and len(world[tile_world_position]) > 1:
+
+                    if world[tile_world_position][1] in ground_sprites:
+                        w, h = ground_sprites[world[tile_world_position][1]][world_angle].get_size()
+                        screen.blit(
+                            #pg.transform.scale(
+                            ground_sprites[world[tile_world_position][1]][world_angle]#,block_size)
+                            ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))+block_size[0]*math.sin(math.radians(360-world_angle)),1),
+                            round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[world[tile_world_position][1]]["height"],1)
+                            )
+                        )
         if block_pos[0]+tile_x in valid_draw:
             for i, train_params in enumerate(sorted(valid_draw[block_pos[0]+tile_x],key=lambda x:x[1])):
                 angle = (((train_params[2])%360 if train_params[2] in train_sprites[train_params[1]] else (train_params[2])//5*5)+world_angle)%360

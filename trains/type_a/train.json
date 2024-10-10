@@ -23,7 +23,7 @@
         "default_km":0,
         "engine_constant":40,
         "engine_resistance":1.25,
-        "peril_current":420,
+        "peril_current":4020,
         "mass":517000,
         "wheel_mass":200,
         "wheel_radius":0.95,
