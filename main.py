@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.2.9.9 скоро всё будет путём"
+version = "v0.3 изометрия. ленивая, но рабочая."
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -33,19 +33,29 @@ screen = pg.display.set_mode(screen_size)
 pg.display.set_caption(f"Alphen's Subway Simulator v{version}")
 
 sprite_loading_info = [
-    {"name":"tstr","filename":"tracks","params":[0,0,64,256,1,False,False]},
-    {"name":"tca1","filename":"tracks","params":[64,0,64,256,1,False,False]},
-    {"name":"tca2","filename":"tracks","params":[128,0,64,256,1,False,False]},
-    {"name":"tcb1","filename":"tracks","params":[64,0,64,256,1,True,False]},
-    {"name":"tcb2","filename":"tracks","params":[128,0,64,256,1,True,False]},
-    {"name":"tsa1","filename":"tracks","params":[192,0,64,256,1,False,False]},
-    {"name":"tsa2","filename":"tracks","params":[256,0,64,256,1,False,False]},
-    {"name":"tsb1","filename":"tracks","params":[192,0,64,256,1,True,False]},
-    {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,True,False]},
-    {"name":"platform","filename":"platform","params":[0,256,64,256,3,False,False]},
-    {"name":"platform2","filename":"platform","params":[0,512,64,256,6,False,False]},
-    {"name":"platform_f","filename":"platform","params":[0,256,64,256,3,True,False]},
-    {"name":"platform2_f","filename":"platform","params":[0,512,64,256,6,True,False]},
+    {"name":"tstr","filename":"tracks","params":[0,0,64,256,1,0,False,False]},
+    {"name":"tca1","filename":"tracks","params":[64,0,64,256,1,0,False,False]},
+    {"name":"tca2","filename":"tracks","params":[128,0,64,256,1,0,False,False]},
+    {"name":"tcb1","filename":"tracks","params":[64,0,64,256,1,0,True,False]},
+    {"name":"tcb2","filename":"tracks","params":[128,0,64,256,1,0,True,False]},
+    {"name":"tsa1","filename":"tracks","params":[192,0,64,256,1,0,False,False]},
+    {"name":"tsa2","filename":"tracks","params":[256,0,64,256,1,0,False,False]},
+    {"name":"tsb1","filename":"tracks","params":[192,0,64,256,1,0,True,False]},
+    {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,0,True,False]},
+
+    {"name":"stroitelnaya_walls","filename":"platform","params":[64*3,256+512,64,256,29,3,False,False]},
+    {"name":"stroitelnaya_platform","filename":"platform","params":[0,256+512,64,256,3,0,False,False]},
+    {"name":"stroitelnaya_track_tstr","filename":"platform","params":[0,512+512,64,256,3,0,False,False]},
+    {"name":"stroitelnaya_walls_f","filename":"platform","params":[64*3,256+512,64,256,29,3,True,False]},
+    {"name":"stroitelnaya_platform_f","filename":"platform","params":[0,256+512,64,256,3,0,True,False]},
+    {"name":"stroitelnaya_track_f_tstr","filename":"platform","params":[0,512+512,64,256,3,0,True,False]},
+
+    {"name":"sodovaya_walls","filename":"platform","params":[64*3,256*5,64,256,29,3,False,False]},
+    {"name":"sodovaya_platform","filename":"platform","params":[0,256*5,64,256,3,0,False,False]},
+    {"name":"sodovaya_track_tstr","filename":"platform","params":[0,256*6,64,256,32,0,False,False]},
+    {"name":"sodovaya_walls_f","filename":"platform","params":[64*3,256*5,64,256,29,3,True,False]},
+    {"name":"sodovaya_platform_f","filename":"platform","params":[0,256*5,64,256,3,0,True,False]},
+    {"name":"sodovaya_track_f_tstr","filename":"platform","params":[0,256*6,64,256,3,0,True,False]},
 ]
 ground_sprites = {}
 
@@ -57,35 +67,30 @@ for filename in filenames:
 
 for info_pack in sprite_loading_info:
 
-    base_ground_sprite = pg.transform.rotate(
-        pg.transform.flip(
-            temp_sprites[info_pack["filename"]].subsurface(info_pack["params"][0],info_pack["params"][1],info_pack["params"][2]*info_pack["params"][4],info_pack["params"][3]),
-            0,0
-        ),
-        0
-    )
+    base_ground_sprite = temp_sprites[info_pack["filename"]].subsurface(info_pack["params"][0],info_pack["params"][1],info_pack["params"][2]*info_pack["params"][4],info_pack["params"][3])
 
     base_layers = []
-    sprite_stack_factor = 8
+    sprite_stack_factor = 4
     
     for i in range(info_pack["params"][4]):
         x_pos = info_pack["params"][2]*i# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
-        base_layers.append(pg.transform.flip(pg.transform.scale(base_ground_sprite.subsurface(x_pos,0,info_pack["params"][2],info_pack["params"][3]),(info_pack["params"][2]*4,info_pack["params"][3]*4)),info_pack["params"][5],info_pack["params"][6]))
+        base_layers.append(pg.transform.flip(pg.transform.scale(base_ground_sprite.subsurface(x_pos,0,info_pack["params"][2],info_pack["params"][3]),(info_pack["params"][2]*4,info_pack["params"][3]*4)),info_pack["params"][6],info_pack["params"][7]))
 
     ground_sprites[info_pack["name"]] = {}
 
     for rotation in [world_angle]:
         w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
+        h=h/compression
 
-        surface = pg.Surface((w,h+info_pack["params"][4]*sprite_stack_factor))
+        surface = pg.Surface((w,h+(info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor))
         surface.set_colorkey((0,0,0))
 
         for i in range(info_pack["params"][4]*sprite_stack_factor):
-            pos = (0,surface.get_height()-i-h)
+            pos = (0,surface.get_height()-i-h-info_pack["params"][5]*sprite_stack_factor)
             base_img = pg.transform.rotate(base_layers[int(i/sprite_stack_factor)],rotation)
             surface.blit(pg.transform.scale(base_img,(base_img.get_width(),base_img.get_height()/compression)),pos)
         ground_sprites[info_pack["name"]][rotation] = surface
-    ground_sprites[info_pack["name"]]["height"] = info_pack["params"][4]*sprite_stack_factor-1
+    ground_sprites[info_pack["name"]]["height"] = (info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor-1
     
 
 train_sprites = {}
@@ -119,7 +124,7 @@ for folder in train_folders:
                 base_layers.append(pg.transform.scale(base_train_sprite.subsurface(x_pos,0,sprite_params["w"],sprite_params["h"]),(sprite_params["w"]*4,sprite_params["h"]*4)))
 
 
-            for rotation in [*range(0,360,5)]+[8.25+45,16.5+45,360-8.25+45,360-16.5+45,180-8.25+45,180-16.5+45,180+8.25+45,180+16.5+45]:
+            for rotation in [*range(0,360,5)]+[8.25+world_angle,16.5+world_angle,-8.25+world_angle,-16.5+world_angle,180-8.25+world_angle,180-16.5+world_angle,180+8.25+world_angle,180+16.5+world_angle]:
                 w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
                 h/=compression
                 rotation = rotation%360
@@ -148,13 +153,19 @@ for folder in train_folders:
             sounds[key] = {}
             for sound in train_parameters["sound_loading_info"]:
                 sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"trains",folder,train_parameters["sound_loading_info"][sound]))
-                sounds[key][sound].set_volume(0.0)
+                sounds[key][sound].set_volume(0.5)
 
 world = {
     (0,2):["tstr"],
     (0,1):["tsb1"],(-1,1):["tcb2"],
-    (1,0):["","platform2_f"],(0,0):["","platform_f"],(-1,0):["","platform"],(-2,0):["","platform2"],
-    (0,-1):["tstr"],(-1,-1):["tstr"],}
+    (1,0):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,0):["stroitelnaya_track_f_tstr"],(-1,0):["stroitelnaya_track_tstr"],(-2,0):["stroitelnaya_platform","stroitelnaya_walls"],
+    (0,-1):["tstr"],(-1,-1):["tstr"],
+    (1,-2):["tca2"],(0,-2):["tca1"],(-1,-2):["tcb1"],(-2,-2):["tcb2"],
+    (1,-3):["tstr"],(-2,-3):["tstr"],
+    (1,-4):["sodovaya_track_tstr"],(0,-4):["sodovaya_platform","sodovaya_walls"],(-1,-4):["sodovaya_platform_f","sodovaya_walls_f"],(-2,-4):["sodovaya_track_f_tstr"],
+    (1,-5):["tcb1"],(0,-5):["tcb2"],(-1,-5):["tca2"],(-2,-5):["tca1"],
+    (0,-6):["tsa2"],(-1,-6):["tca1"],
+    (0,-7):["tstr"]}
 
 '''
 world = {
@@ -177,15 +188,16 @@ world = {
 switches = {
     (0,1):False,
     (0,-10):True,
+    (0,-6):True,
     (-1,-10):True
 }
 
 #trains = {}
 consists = {}
 consist_key = random.randint(0,999)
-consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*-0.5,1024*-0.5])
+consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*1.5,1024*-3.5])
 
-player_pos = [256*0.5,1024*-0.5]
+player_pos = [256*0.5,1024*-2.5]
 m_btn = [0,0,0]
 mouse_clicked = False
 mouse_released = False
@@ -194,12 +206,14 @@ while working:
     valid = []
     valid_draw = {}
     for train_id in trains:
+        trains[train_id].switches = switches
         train = trains[train_id]
         if (player_pos[0]-screen_size[0]*2 <= train.pos[0] <= player_pos[0]+screen_size[0]*2) and (player_pos[1]-screen_size[1]*2 <= train.pos[1] <= player_pos[1]+screen_size[1]*2):
             valid.append([train_id,train.pos[1]])
-            if not int((train.pos[0]//block_size[0])-(1 if train.pos[0]<0 else 0)) in valid_draw:
-                valid_draw[int((train.pos[0]//block_size[0])-(1 if train.pos[0]<0 else 0))] = []
-            valid_draw[int((train.pos[0]//block_size[0])-(1 if train.pos[0]<0 else 0))].append([(train.pos[0],train.pos[1]),train.type,train.angle,train.reversed])
+            if not int(((train.pos[0]-train.size[0]/2)//block_size[0])-(1 if (train.pos[0]-train.size[0]/2)<0 else 0)) in valid_draw:
+                valid_draw[int(((train.pos[0]-train.size[0]/2)//block_size[0])-(1 if (train.pos[0]-train.size[0]/2)<0 else 0))] = []
+            valid_draw[int(((train.pos[0]-train.size[0]/2)//block_size[0])-(1 if (train.pos[0]-train.size[0]/2)<0 else 0))].append(
+                [(train.pos[0],train.pos[1]),train.type,train.angle,train.reversed,train.size])
     if controlling != -1: player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
     block_pos = [int((player_pos[0]-(block_size[0] if player_pos[0] < 0 else 0))/block_size[0]),int((player_pos[1]-(block_size[1] if player_pos[1] < 0 else 0))/block_size[1])]
 
@@ -221,54 +235,104 @@ while working:
 
 
     screen.fill((25,25,25))
+    object_draw_queue = []
     for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
         for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
             #pg.draw.rect(screen,(255,0,0),)
-            x_offset = (tile_x+1)*block_size[0]-player_pos[0]%(block_size[0])
-            y_offset = (tile_y)*block_size[1]-player_pos[1]%(block_size[1])
+            x_offset = (block_pos[0]+tile_x)*block_size[0]
+            y_offset = (block_pos[1]+tile_y)*block_size[1]
 
             if (block_pos[0]+tile_x,block_pos[1]+tile_y) in world:
                 tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
 
                 if world[tile_world_position][0] in ground_sprites:
-                    w, h = ground_sprites[world[tile_world_position][0]][world_angle].get_size()
-                    screen.blit(
-                        #pg.transform.scale(
-                        ground_sprites[world[tile_world_position][0]][world_angle]#,block_size)
-                        ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))+block_size[0]*math.sin(math.radians(360-world_angle)),1),
-                        round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[world[tile_world_position][0]]["height"],1)
+                    object_draw_queue.append([
+                        "world",
+                        (x_offset,y_offset),
+                        world[tile_world_position][0],
+                        (
+                            tile_x*block_size[0],
+                            tile_y*block_size[1]
                         )
-                    )
-    
+
+                    ])
+    for object in sorted(object_draw_queue,key= lambda z:(z[1][1],-z[1][0])):
+        if object[0] == "world":
+            w, h = ground_sprites[object[2]][world_angle].get_size()
+            x_offset = object[3][0]+block_size[0]/2-player_pos[0]%(block_size[0])
+            y_offset = object[3][1]+block_size[1]/2-player_pos[1]%(block_size[1])
+            screen.blit(
+                #pg.transform.scale(
+                ground_sprites[object[2]][world_angle]#,block_size)
+                ,(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,
+                screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2
+                )
+            )
+
+    object_draw_queue = []
     for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
         for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
-            x_offset = (tile_x+1)*block_size[0]-player_pos[0]%(block_size[0])
-            y_offset = (tile_y)*block_size[1]-player_pos[1]%(block_size[1])
-            tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
-            if (block_pos[0]+tile_x,block_pos[1]+tile_y) in world and type(world[tile_world_position]) == list and len(world[tile_world_position]) > 1:
+            #pg.draw.rect(screen,(255,0,0),)
+            x_offset = (block_pos[0]+tile_x)*block_size[0]+block_size[0]
+            y_offset = (block_pos[1]+tile_y)*block_size[1]
 
-                    if world[tile_world_position][1] in ground_sprites:
-                        w, h = ground_sprites[world[tile_world_position][1]][world_angle].get_size()
-                        screen.blit(
-                            #pg.transform.scale(
-                            ground_sprites[world[tile_world_position][1]][world_angle]#,block_size)
-                            ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))+block_size[0]*math.sin(math.radians(360-world_angle)),1),
-                            round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[world[tile_world_position][1]]["height"],1)
-                            )
+            if (block_pos[0]+tile_x,block_pos[1]+tile_y) in world:
+                tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
+
+                if len(world[tile_world_position]) > 1 and world[tile_world_position][1] in ground_sprites:
+                    object_draw_queue.append([
+                        "world",
+                        (x_offset,y_offset),
+                        world[tile_world_position][1],
+                        (
+                            tile_x*block_size[0],
+                            tile_y*block_size[1]
                         )
+
+                    ])
+
+        
+
         if block_pos[0]+tile_x in valid_draw:
             for i, train_params in enumerate(sorted(valid_draw[block_pos[0]+tile_x],key=lambda x:x[1])):
-                angle = (((train_params[2])%360 if train_params[2] in train_sprites[train_params[1]] else (train_params[2])//5*5)+world_angle)%360
+                angle = (((train_params[2]+world_angle)%360 if (train_params[2]+world_angle)%360 in train_sprites[train_params[1]] else (train_params[2]+world_angle)//5*5))%360
                 sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
-                x_offset = -player_pos[0]+train_params[0][0]
-                y_offset = -player_pos[1]+train_params[0][1]
-                screen.blit(
-                    sprite,
-                    (
-                        screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                        screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
-                    )
+                x_offset = train_params[0][0]-(train_params[4][0]*math.cos(math.radians(180-angle+world_angle))/2-train_params[4][1]*math.sin(math.radians(180-angle+world_angle))/2)
+                y_offset = train_params[0][1]-(train_params[4][0]*math.sin(math.radians(180-angle+world_angle))/2+train_params[4][1]*math.cos(math.radians(180-angle+world_angle))/2)
+                
+                object_draw_queue.append([
+                        "train",
+                        (x_offset,y_offset),
+                        train.type,
+                        (angle+train_params[3]*180)%360,
+                        (-(train_params[4][0]*math.cos(math.radians(180-angle+world_angle))/2-train_params[4][1]*math.sin(math.radians(180-angle+world_angle))/2),
+                         -(train_params[4][0]*math.sin(math.radians(180-angle+world_angle))/2+train_params[4][1]*math.cos(math.radians(180-angle+world_angle))/2))
+                    ])
+                
+    
+    for object in sorted(object_draw_queue,key= lambda z:z[1][1]-z[1][0]): #олег помог с сортировкой #ОЛЕГКОГДАВИСТЕРИЯ
+        if object[0] == "world":
+            w, h = ground_sprites[object[2]][world_angle].get_size()
+            x_offset = object[3][0]+block_size[0]/2-player_pos[0]%(block_size[0])
+            y_offset = object[3][1]+block_size[1]/2-player_pos[1]%(block_size[1])
+            screen.blit(
+                #pg.transform.scale(
+                ground_sprites[object[2]][world_angle]#,block_size)
+                ,(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,
+                screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2
                 )
+            )
+        elif object[0] == "train":
+            sprite = train_sprites[object[2]][object[3]]
+            x_offset = -player_pos[0]+object[1][0]-object[4][0]
+            y_offset = -player_pos[1]+object[1][1]-object[4][1]
+            screen.blit(
+                sprite,
+                (
+                    screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                    screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                )
+            )
     
     if debug:
         for tile_y in range(-int(screen_size[1]/block_size[1]/2)-1,int(screen_size[1]/block_size[1]/2)+2):

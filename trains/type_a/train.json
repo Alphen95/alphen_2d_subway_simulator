@@ -10,7 +10,7 @@
             "layers":20
         }
     },
-    "clickable_size":[124,312],
+    "clickable_size":[112,312],
     "traction_info":{
         "control_system_type":"direct",
         "has_ars":false,

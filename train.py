@@ -46,12 +46,12 @@ class Train():
                     if local_pos[1] > 4*(256-39):
                         self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
                     else:
-                        self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
                 elif curblock[-4:] == "tca2":
                     if local_pos[1] < 4*(39):
                         self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
                     else:
-                        self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
                 elif curblock[-4:] == "tcb1":
                     if local_pos[1] > 4*(256-39):
                         self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
@@ -64,11 +64,13 @@ class Train():
                         self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
                 
                 elif curblock[-4:] == "tsa1":
-                    if int(self.angle) not in [0,180] or (local_pos[1] > 4*(256-2) and block_pos in self.switches and self.switches[block_pos]):
+                    if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
                         if local_pos[1] > 4*(256-39):
                             self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                        else:
+                        elif local_pos[1] > 4*64:
                             self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        else:
+                            self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
@@ -79,11 +81,13 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsa2":
-                    if self.angle not in [0,180] or (local_pos[1] < 4*(2) and block_pos in self.switches and self.switches[block_pos]):
+                    if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
                         if local_pos[1] < 4*(39):
                             self.angle = 180-8.25 if 270 >= self.angle >= 90 else 8.25
-                        else:
+                        elif local_pos[1] < 4*(64*3):
                             self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        else:
+                            self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
@@ -94,11 +98,13 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb1":
-                    if int(self.angle) not in [0,180] or (local_pos[1] > 4*(256-2) and block_pos in self.switches and self.switches[block_pos]):
+                    if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
                         if local_pos[1] > 4*(256-39):
                             self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        else:
+                        elif local_pos[1] > 4*64:
                             self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
+                        else:
+                            self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
@@ -109,11 +115,13 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb2":
-                    if self.angle not in [0,180] or (local_pos[1] < 4*2 and block_pos in self.switches and self.switches[block_pos]):
+                    if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
                         if local_pos[1] < 4*(39):
                             self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        else:
+                        elif local_pos[1] < 4*(64*3):
                             self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
+                        else:
+                            self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
