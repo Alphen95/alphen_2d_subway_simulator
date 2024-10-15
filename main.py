@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.3.1 изометрия улучшенная и рабочая"
+version = "v0.3.2 улучшенная трассировка"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -51,12 +51,19 @@ sprite_loading_info = [
     {"name":"stroitelnaya_platform_f","filename":"platform","params":[0,256+512,64,256,3,0,True,False]},
     {"name":"stroitelnaya_track_f_tstr","filename":"platform","params":[0,512+512,64,256,3,0,True,False]},
 
-    {"name":"sodovaya_walls","filename":"platform","params":[64*3,256*7,64,256,29,3,False,False]},
-    {"name":"sodovaya_platform","filename":"platform","params":[0,256*7,64,256,3,0,False,False]},
-    {"name":"sodovaya_track_tstr","filename":"platform","params":[0,256*8,64,256,32,0,False,False]},
-    {"name":"sodovaya_walls_f","filename":"platform","params":[64*3,256*7,64,256,29,3,True,False]},
-    {"name":"sodovaya_platform_f","filename":"platform","params":[0,256*7,64,256,3,0,True,False]},
-    {"name":"sodovaya_track_f_tstr","filename":"platform","params":[0,256*8,64,256,3,0,True,False]},
+    {"name":"sodovaya_walls","filename":"platform","params":[64*3,256*5,64,256,29,3,False,False]},
+    {"name":"sodovaya_platform","filename":"platform","params":[0,256*5,64,256,3,0,False,False]},
+    {"name":"sodovaya_walls_f","filename":"platform","params":[64*3,256*5,64,256,29,3,True,False]},
+    {"name":"sodovaya_platform_f","filename":"platform","params":[0,256*5,64,256,3,0,True,False]},
+    {"name":"sodovaya_track_tstr","filename":"platform","params":[0,256*6,64,256,32,0,False,False]},
+    {"name":"sodovaya_track_f_tstr","filename":"platform","params":[0,256*6,64,256,3,0,True,False]},
+
+    {"name":"kochetova_walls","filename":"platform","params":[64*3,256*7,64,256,29,3,False,False]},
+    {"name":"kochetova_platform","filename":"platform","params":[0,256*7,64,256,3,0,False,False]},
+    {"name":"kochetova_track_tstr","filename":"platform","params":[0,256*8,64,256,32,0,False,False]},
+    {"name":"kochetova_walls_f","filename":"platform","params":[64*3,256*7,64,256,29,3,True,False]},
+    {"name":"kochetova_platform_f","filename":"platform","params":[0,256*7,64,256,3,0,True,False]},
+    {"name":"kochetova_track_f_tstr","filename":"platform","params":[0,256*8,64,256,3,0,True,False]},
 ]
 ground_sprites = {}
 train_sprites = {}
@@ -184,14 +191,18 @@ def sprite_load_routine():
 world = {
     (0,2):["tstr"],
     (0,1):["tsb1"],(-1,1):["tcb2"],
-    (1,0):["stroitelnaya_platform_f","sodovaya_walls_f"],(0,0):["stroitelnaya_track_f_tstr"],(-1,0):["stroitelnaya_track_tstr"],(-2,0):["stroitelnaya_platform","sodovaya_walls"],
+    (1,0):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,0):["stroitelnaya_track_f_tstr"],(-1,0):["stroitelnaya_track_tstr"],(-2,0):["stroitelnaya_platform","stroitelnaya_walls"],
     (0,-1):["tstr"],(-1,-1):["tstr"],
     (1,-2):["tca2"],(0,-2):["tca1"],(-1,-2):["tcb1"],(-2,-2):["tcb2"],
     (1,-3):["tstr"],(-2,-3):["tstr"],
-    (1,-4):["sodovaya_track_tstr"],(0,-4):["sodovaya_platform","sodovaya_walls"],(-1,-4):["sodovaya_platform_f","sodovaya_walls_f"],(-2,-4):["sodovaya_track_f_tstr"],
-    (1,-5):["tcb1"],(0,-5):["tcb2"],(-1,-5):["tca2"],(-2,-5):["tca1"],
-    (0,-6):["tsa2"],(-1,-6):["tca1"],
-    (0,-7):["tstr"],}
+    (1,-4):["kochetova_track_tstr"],(0,-4):["kochetova_platform","kochetova_walls"],(-1,-4):["kochetova_platform_f","kochetova_walls_f"],(-2,-4):["kochetova_track_f_tstr"],
+    (1,-5):["tstr"],(-2,-5):["tstr"],
+    (1,-6):["tstr"],(-2,-6):["tstr"],
+    (1,-7):["tstr"],(-2,-7):["tstr"],
+    (1,-8):["sodovaya_track_tstr"],(0,-8):["sodovaya_platform","sodovaya_walls"],(-1,-8):["sodovaya_platform_f","sodovaya_walls_f"],(-2,-8):["sodovaya_track_f_tstr"],
+    (1,-9):["tcb1"],(0,-9):["tcb2"],(-1,-9):["tca2"],(-2,-9):["tca1"],
+    (0,-10):["tsa2"],(-1,-10):["tca1"],
+    (0,-11):["tstr"],}
 
 '''
 world = {
@@ -247,9 +258,9 @@ while working:
     if screen_state == "loading":
         text_color = (200,200,200)
         screen.fill((10,10,10))
-        text = font.render("ща прогружусь погодь", True, text_color)
+        text = font.render("загрузка...", True, text_color)
         screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-text.get_height()))
-        text = font.render(f"загрузил {round(progress/(len(sprite_loading_info)*5+len(train_folders))*100,1)}%", True, text_color)
+        text = font.render(f"{round(progress/(len(sprite_loading_info)*5+len(train_folders))*100,1)}%", True, text_color)
         screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+text.get_height()))
 
 
@@ -269,6 +280,7 @@ while working:
         block_pos = [int((player_pos[0]-(block_size[0] if player_pos[0] < 0 else 0))/block_size[0]),int((player_pos[1]-(block_size[1] if player_pos[1] < 0 else 0))/block_size[1])]
     
         screen.fill((25,25,25))
+        prima_object_draw_queue = []
         object_draw_queue = []
         for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
             for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
@@ -280,7 +292,7 @@ while working:
                     tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
 
                     if world[tile_world_position][0] in ground_sprites:
-                        object_draw_queue.append([
+                        prima_object_draw_queue.append([
                             "world",
                             (x_offset,y_offset),
                             world[tile_world_position][0],
@@ -290,32 +302,6 @@ while working:
                             )
 
                         ])
-        for object in sorted(object_draw_queue,key= lambda z:(z[1][1],-z[1][0])):
-            if object[0] == "world":
-                w, h = ground_sprites[object[2]][world_angle].get_size()
-                x_offset = object[3][0]+block_size[0]/2-player_pos[0]%(block_size[0])
-                y_offset = object[3][1]+block_size[1]/2-player_pos[1]%(block_size[1])
-                screen.blit(
-                    #pg.transform.scale(
-                    ground_sprites[object[2]][world_angle]#,block_size)
-                    ,(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,
-                    screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2
-                    )
-                )
-
-
-
-        object_draw_queue = []
-        camera_pos = (0+player_pos[0]-screen_size[0],0+player_pos[1]+screen_size[1]*2)
-        for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
-            for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
-                #pg.draw.rect(screen,(255,0,0),)
-                x_offset = (block_pos[0]+tile_x)*block_size[0]
-                y_offset = (block_pos[1]+tile_y)*block_size[1]
-
-                if (block_pos[0]+tile_x,block_pos[1]+tile_y) in world:
-                    tile_world_position = (block_pos[0]+tile_x,block_pos[1]+tile_y)
-
                     if len(world[tile_world_position]) > 1 and world[tile_world_position][1] in ground_sprites:
                         for z in range(4):
                             object_draw_queue.append([
@@ -328,25 +314,36 @@ while working:
                                 )
 
                             ])
-
+        for object in sorted(prima_object_draw_queue,key= lambda z:(z[1][1],-z[1][0])):
+            if object[0] == "world":
+                w, h = ground_sprites[object[2]][world_angle].get_size()
+                x_offset = object[3][0]+block_size[0]/2-player_pos[0]%(block_size[0])
+                y_offset = object[3][1]+block_size[1]/2-player_pos[1]%(block_size[1])
+                screen.blit(
+                    #pg.transform.scale(
+                    ground_sprites[object[2]][world_angle]#,block_size)
+                    ,(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,
+                    screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2
+                    )
+                )
             
 
-            if block_pos[0]+tile_x in valid_draw:
-                for i, train_params in enumerate(sorted(valid_draw[block_pos[0]+tile_x],key=lambda x:x[1])):
-                    angle = (((train_params[2]+world_angle)%360 if (train_params[2]+world_angle)%360 in train_sprites[train_params[1]] else (train_params[2]+world_angle)//5*5))%360
-                    sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
-                    w, h = train_params[4][0]*0,train_params[4][1]*0
-                    x_offset = train_params[0][0]+(w*math.cos(math.radians(180-train_params[2]))-h*math.sin(math.radians(180-train_params[2])))
-                    y_offset = train_params[0][1]+(w*math.sin(math.radians(180-train_params[2]))+h*math.cos(math.radians(180-train_params[2])))
-                    
-                    object_draw_queue.append([
-                            "train",
-                            (x_offset,y_offset),
-                            train.type,
-                            (angle+train_params[3]*180)%360,
-                            (x_offset -train_params[0][0],
-                            y_offset -train_params[0][1])
-                        ])
+        for z in valid_draw:
+            for i, train_params in enumerate(sorted(valid_draw[z],key=lambda x:x[1])):
+                angle = (((train_params[2]+world_angle)%360 if (train_params[2]+world_angle)%360 in train_sprites[train_params[1]] else (train_params[2]+world_angle)//5*5))%360
+                sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
+                w, h = train_params[4][0]*0,train_params[4][1]*0
+                x_offset = train_params[0][0]+(w*math.cos(math.radians(180-train_params[2]))-h*math.sin(math.radians(180-train_params[2])))
+                y_offset = train_params[0][1]+(w*math.sin(math.radians(180-train_params[2]))+h*math.cos(math.radians(180-train_params[2])))
+                
+                object_draw_queue.append([
+                        "train",
+                        (x_offset,y_offset),
+                        train.type,
+                        (angle+train_params[3]*180)%360,
+                        (x_offset -train_params[0][0],
+                        y_offset -train_params[0][1])
+                    ])
                     
         
         #for object in sorted(object_draw_queue,key= lambda z:-(abs(camera_pos[1]-z[1][1])**2+abs(camera_pos[0]-z[1][0])**2)): #олег помог с сортировкой #ОЛЕГКОГДАВИСТЕРИЯ
