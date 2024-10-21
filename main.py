@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.3.2 улучшенная трассировка"
+version = "v0.4 не, ну это ещё не четвёрка, но двери я уже сделал. ридми потом."
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -139,32 +139,60 @@ def sprite_load_routine():
                 base_train_sprite = pg.image.load(os.path.join(*([current_dir,"trains",folder,"sprite.png"]))).convert_alpha()
                 base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"trains",folder,"controls.png"]))).convert_alpha()
                 key = train_parameters["system_name"]
-                train_sprites[key] = {}
+                train_sprites[key] = {"controls":{},"doors":{}}
                 consists_info[key] = train_parameters["traction_info"]
-                base_layers = []
                 sprite_stack_factor = 4
 
-                sprite_params = train_parameters["sprite_info"]["train"]
+                for sprite_params in train_parameters["sprite_info"]:
+                    base_layers = []
+                    door_type = sprite_params["type"]
+                    train_sprites[key]["doors"][door_type] = {"type":door_type}
 
-                for i in range(sprite_params["layers"]):
-                    x_pos = sprite_params["w"]*i# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
-                    base_layers.append(pg.transform.scale(base_train_sprite.subsurface(x_pos,0,sprite_params["w"],sprite_params["h"]),(sprite_params["w"]*4,sprite_params["h"]*4)))
+                    for j in range(sprite_params["layers"]):
+                        x_pos = sprite_params["w"]*j# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
+                        base_layers.append(pg.transform.scale(base_train_sprite.subsurface(x_pos,sprite_params["y"],sprite_params["w"],sprite_params["h"]),(sprite_params["w"]*4,sprite_params["h"]*4)))
 
 
-                for rotation in [*range(0,360,5)]+[8.25+world_angle,16.5+world_angle,-8.25+world_angle,-16.5+world_angle,180-8.25+world_angle,180-16.5+world_angle,180+8.25+world_angle,180+16.5+world_angle]:
-                    w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
-                    h/=compression
-                    rotation = rotation%360
+                    for rotation in [0,180,world_angle,world_angle+180]+[8.25+world_angle,16.5+world_angle,-8.25+world_angle,-16.5+world_angle,180-8.25+world_angle,180-16.5+world_angle,180+8.25+world_angle,180+16.5+world_angle]:
+                        w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
+                        h/=compression
+                        rotation = rotation%360
 
-                    surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
-                    surface.set_colorkey((0,0,0))
+                        global_l_surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
+                        global_r_surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
+                        global_l_surface.set_colorkey((0,0,0))
+                        global_r_surface.set_colorkey((0,0,0))
 
-                    for i in range(sprite_params["layers"]*sprite_stack_factor):
-                        pos = (0,surface.get_height()-i-h)
-                        sprite = pg.transform.rotate(base_layers[int(i/sprite_stack_factor)],rotation)
-                        surface.blit(pg.transform.scale(sprite,(sprite.get_width(),sprite.get_height()/compression)),pos)
-                    train_sprites[key][rotation] = surface
-                train_sprites[key]["height"] = sprite_params["layers"]*sprite_stack_factor-1
+                        for i in range(sprite_params["layers"]*sprite_stack_factor):
+                            pos = (0,global_l_surface.get_height()-i-h)
+                            l_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
+                            r_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
+                            l_surface.set_colorkey((0,0,0))
+                            r_surface.set_colorkey((0,0,0))
+
+                            l_surface.blit(base_layers[int(i/sprite_stack_factor)].subsurface(
+                                0,
+                                0,
+                                base_layers[int(i/sprite_stack_factor)].get_width()/2,
+                                base_layers[int(i/sprite_stack_factor)].get_height()
+                            ),(0,0))
+                            r_surface.blit(base_layers[int(i/sprite_stack_factor)].subsurface(
+                                base_layers[int(i/sprite_stack_factor)].get_width()/2,
+                                0,
+                                base_layers[int(i/sprite_stack_factor)].get_width()/2,
+                                base_layers[int(i/sprite_stack_factor)].get_height()
+                            ),(base_layers[int(i/sprite_stack_factor)].get_width()/2,0))
+                            l_surface = pg.transform.rotate(l_surface,rotation)
+                            r_surface = pg.transform.rotate(r_surface,rotation)
+                            l_surface.set_colorkey((0,0,0))
+                            r_surface.set_colorkey((0,0,0))
+                            global_l_surface.blit(pg.transform.scale(l_surface,(l_surface.get_width(),l_surface.get_height()/compression)),pos)
+                            global_r_surface.blit(pg.transform.scale(r_surface,(r_surface.get_width(),r_surface.get_height()/compression)),pos)
+                        train_sprites[key]["doors"][door_type][rotation] = {}
+                        train_sprites[key]["doors"][door_type][rotation]["l"] = global_l_surface
+                        train_sprites[key]["doors"][door_type][rotation]["r"] = global_r_surface
+
+                    train_sprites[key]["doors"][door_type]["height"] = sprite_params["layers"]*sprite_stack_factor-1
 
 
                 controls_info = train_parameters["control_panel_info"]
@@ -275,7 +303,14 @@ while working:
                 if not int(((train.pos[0]-train.size[0]/2)//block_size[0])-(1 if (train.pos[0]-train.size[0]/2)<0 else 0)) in valid_draw:
                     valid_draw[int(((train.pos[0]-train.size[0]/2)//block_size[0])-(1 if (train.pos[0]-train.size[0]/2)<0 else 0))] = []
                 valid_draw[int(((train.pos[0]-train.size[0]/2)//block_size[0])-(1 if (train.pos[0]-train.size[0]/2)<0 else 0))].append(
-                    [(train.pos[0],train.pos[1]),train.type,train.angle,train.reversed,train.size])
+                    [
+                        (train.pos[0],train.pos[1]),
+                        train.type,
+                        train.angle,
+                        train.reversed,
+                        train.size,
+                        consists[train.consist].doors
+                ])
         if controlling != -1: player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
         block_pos = [int((player_pos[0]-(block_size[0] if player_pos[0] < 0 else 0))/block_size[0]),int((player_pos[1]-(block_size[1] if player_pos[1] < 0 else 0))/block_size[1])]
     
@@ -330,8 +365,8 @@ while working:
 
         for z in valid_draw:
             for i, train_params in enumerate(sorted(valid_draw[z],key=lambda x:x[1])):
-                angle = (((train_params[2]+world_angle)%360 if (train_params[2]+world_angle)%360 in train_sprites[train_params[1]] else (train_params[2]+world_angle)//5*5))%360
-                sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
+                angle = (train_params[2]+world_angle)%360
+                #sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
                 w, h = train_params[4][0]*0,train_params[4][1]*0
                 x_offset = train_params[0][0]+(w*math.cos(math.radians(180-train_params[2]))-h*math.sin(math.radians(180-train_params[2])))
                 y_offset = train_params[0][1]+(w*math.sin(math.radians(180-train_params[2]))+h*math.cos(math.radians(180-train_params[2])))
@@ -339,10 +374,11 @@ while working:
                 object_draw_queue.append([
                         "train",
                         (x_offset,y_offset),
-                        train.type,
+                        train_params[1],
                         (angle+train_params[3]*180)%360,
                         (x_offset -train_params[0][0],
-                        y_offset -train_params[0][1])
+                        y_offset -train_params[0][1]),
+                        train_params[5], train_params[3]
                     ])
                     
         
@@ -360,16 +396,48 @@ while working:
                     )
                 )
             elif object[0] == "train":
-                sprite = train_sprites[object[2]][object[3]]
-                x_offset = -player_pos[0]+object[1][0]-object[4][0]
-                y_offset = -player_pos[1]+object[1][1]-object[4][1]
-                screen.blit(
-                    sprite,
-                    (
-                        screen_size[0]/2-sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                        screen_size[1]/2-sprite.get_height()/2-train_sprites[train_params[1]]["height"]/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                r_train_sprite = train_sprites[object[2]]["doors"][object[5]["r" if not object[6] else "l"]][object[3]]["r"]
+                r_height = train_sprites[object[2]]["doors"][object[5]["r" if not object[6] else "l"]]["height"]
+                l_train_sprite = train_sprites[object[2]]["doors"][object[5]["l" if not object[6] else "r"]][object[3]]["l"]
+                l_height = train_sprites[object[2]]["doors"][object[5]["l" if not object[6] else "r"]]["height"]
+                if 0 <= object[3] < 90 or 270 <= object[3] < 360:
+                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
+                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
+                    screen.blit(
+                        r_train_sprite,
+                        (
+                            screen_size[0]/2-r_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                            screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                        )
                     )
-                )
+                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
+                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
+                    screen.blit(
+                        l_train_sprite,
+                        (
+                            screen_size[0]/2-l_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                            screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                        )
+                    )
+                else:
+                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
+                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
+                    screen.blit(
+                        l_train_sprite,
+                        (
+                            screen_size[0]/2-l_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                            screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                        )
+                    )
+                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
+                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
+                    screen.blit(
+                        r_train_sprite,
+                        (
+                            screen_size[0]/2-r_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
+                            screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                        )
+                    )
         
         if debug:
             for tile_y in range(-int(screen_size[1]/block_size[1]/2)-1,int(screen_size[1]/block_size[1]/2)+2):
@@ -484,7 +552,12 @@ while working:
                                 screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale and (m_btn[0] or mouse_clicked)):
                                 if element["type"] == "button" and (m_btn[0] and element["state"] != element["default"] or mouse_clicked):
                                     consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(element["default"])
-                                    consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                                    if element["connection"] == "left_doors" and trains[controlling].reversed:
+                                        consists[controlling_consist].control_wires["right_doors"] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                                    elif element["connection"] == "right_doors" and trains[controlling].reversed:
+                                        consists[controlling_consist].control_wires["left_doors"] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
+                                    else:
+                                        consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
                                     if mouse_clicked and len(element["draw_mappings"][element["state"]]) == 7:
                                         sounds[consists[controlling_consist].train_type][element["draw_mappings"][element["state"]][6]].play()
                                 elif element["type"] == "switch" and mouse_clicked and not mouse_clicked_prev:
@@ -637,8 +710,9 @@ while working:
                 info_blit_list.append(font.render(f"emf {consists[controlling_consist].electromotive_force}",True,text_color))
                 info_blit_list.append(font.render(f"volts {consists[controlling_consist].engine_voltage}",True,text_color))
                 info_blit_list.append(font.render(f"current {consists[controlling_consist].engine_current}",True,text_color))
-                info_blit_list.append(font.render(f"RP {consists[controlling_consist].control_wires["rp"]}",True,text_color))
-                info_blit_list.append(font.render(f"vz1 {consists[controlling_consist].control_wires["vz_1"]}",True,text_color))
+                info_blit_list.append(font.render(f"RP {consists[controlling_consist].control_wires['rp']}",True,text_color))
+                info_blit_list.append(font.render(f"vz1 {consists[controlling_consist].control_wires['vz_1']}",True,text_color))
+                info_blit_list.append(font.render(f"doors {consists[controlling_consist].doors}",True,text_color))
                 if debug > 1:
                     info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))
                     info_blit_list.append(font.render(f"traction {consists[controlling_consist].traction_direction}",True,text_color))

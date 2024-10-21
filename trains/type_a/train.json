@@ -1,15 +1,56 @@
 {
     "system_name":"type_a",
     "name":"Метропоезд типа А",
-    "sprite_info":{
-        "train":{
+    "sprite_info":[
+        {
+            "type":"closed",
             "x":0,
             "y":0,
             "w":32,
             "h":96,
             "layers":20
+        },
+        {
+            "type":"inter_1",
+            "x":0,
+            "y":96,
+            "w":32,
+            "h":96,
+            "layers":20
+        },
+        {
+            "type":"inter_2",
+            "x":0,
+            "y":192,
+            "w":32,
+            "h":96,
+            "layers":20
+        },
+        {
+            "type":"inter_3",
+            "x":0,
+            "y":288,
+            "w":32,
+            "h":96,
+            "layers":20
+        },
+        {
+            "type":"inter_4",
+            "x":0,
+            "y":384,
+            "w":32,
+            "h":96,
+            "layers":20
+        },
+        {
+            "type":"open",
+            "x":0,
+            "y":480,
+            "w":32,
+            "h":96,
+            "layers":20
         }
-    },
+    ],
     "clickable_size":[112,312],
     "traction_info":{
         "control_system_type":"direct",
@@ -80,6 +121,14 @@
             "0":[-18,52],
             "-1":[-18,52],
             "scale":5
+        },
+        "door_animation_states":{
+            "closed":0,
+            "inter_1":20,
+            "inter_2":20,
+            "inter_3":20,
+            "inter_4":20,
+            "open":0
         },
         "element_mapouts":[
             {

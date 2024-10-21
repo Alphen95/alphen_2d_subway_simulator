@@ -190,6 +190,14 @@ class Consist():
 
         }
         self.consist_info = consist_info
+        self.doors = {
+            "l":"closed",
+            "r":"closed",
+            "timer_l":0,
+            "timer_r":0,
+            "action_l":None,
+            "action_r":None,
+        }
 
         self.km = consist_info["default_km"]
         self.tk = consist_info["default_tk"]
@@ -245,6 +253,52 @@ class Consist():
             if self.consist_info["control_system_type"] == "direct":
                 if self.control_wires["rp_return"] and self.km == 0:
                     self.control_wires["rp"] = True
+                if self.control_wires["right_doors"] and self.doors["r"] == "closed":
+                    self.doors["action_r"] = "open"
+                if self.control_wires["left_doors"] and self.doors["l"] == "closed":
+                    self.doors["action_l"] = "open"
+                if self.control_wires["close_doors"]:
+                    self.doors["action_r"] = "close" if self.doors["r"] != "closed" else None
+                    self.doors["action_l"] = "close" if self.doors["l"] != "closed" else None
+                self.control_wires["doors_open"] = self.doors["r"] != "closed" or self.doors["l"] != "closed"
+
+                if self.doors["action_r"] == "open":
+                    z = list(self.consist_info["door_animation_states"].keys())
+                    if self.doors["timer_r"] == 0:
+                        self.doors["r"] = z[z.index(self.doors["r"])+1]
+                        if self.doors["r"] != "open":
+                            self.doors["timer_r"] = self.consist_info["door_animation_states"][self.doors["r"]]
+                        else:
+                            self.doors["action_r"] = None
+                    if self.doors["timer_r"] > 0: self.doors["timer_r"] -= 1
+                elif self.doors["action_r"] == "close":
+                    z = list(self.consist_info["door_animation_states"].keys())
+                    if self.doors["timer_r"] == 0:
+                        self.doors["r"] = z[z.index(self.doors["r"])-1]
+                        if self.doors["r"] != "closed":
+                            self.doors["timer_r"] = self.consist_info["door_animation_states"][self.doors["r"]]
+                        else:
+                            self.doors["action_r"] = None
+                    if self.doors["timer_r"] > 0: self.doors["timer_r"] -= 1
+
+                if self.doors["action_l"] == "open":
+                    z = list(self.consist_info["door_animation_states"].keys())
+                    if self.doors["timer_l"] == 0:
+                        self.doors["l"] = z[z.index(self.doors["l"])+1]
+                        if self.doors["l"] != "open":
+                            self.doors["timer_l"] = self.consist_info["door_animation_states"][self.doors["l"]]
+                        else:
+                            self.doors["action_l"] = None
+                    if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
+                elif self.doors["action_l"] == "close":
+                    z = list(self.consist_info["door_animation_states"].keys())
+                    if self.doors["timer_l"] == 0:
+                        self.doors["l"] = z[z.index(self.doors["l"])-1]
+                        if self.doors["l"] != "closed":
+                            self.doors["timer_l"] = self.consist_info["door_animation_states"][self.doors["l"]]
+                        else:
+                            self.doors["action_l"] = None
+                    if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
 
                 self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number
                 engine_power = 0
