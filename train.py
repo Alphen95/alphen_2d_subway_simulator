@@ -231,6 +231,7 @@ class Consist():
         pi = 3.1415
         wheels = 8*self.train_amount
         engines = 2*self.train_amount
+        magical_proskalzyvanie_scale = 0.95 #на случай если движок больно резвый
 
         while self.exists:
             for elem_id, element in enumerate(self.consist_info["element_mapouts"]):
@@ -324,19 +325,19 @@ class Consist():
                 self.control_wires["traction"] = engine_power > 0
                 self.control_wires["maximal_traction"] = self.km == self.consist_info["max_km"]
                 self.control_wires["reversor_forwards"] = self.controlling_direction == 1
-                self.control_wires["reversor_backwards"] = self.controlling_direction == -11
+                self.control_wires["reversor_backwards"] = self.controlling_direction == -1
 
                 engine_power*=engines
 
-                kinetic_energy = self.mass*self.velocity**2/2*self.train_amount
+                kinetic_energy = self.mass*(self.velocity**2)/2*self.train_amount
                 revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
-                friction_energy = 0.004*self.wheel_mass*9.81*self.angular_velocity
+                friction_energy = 0.05*self.wheel_mass*9.81*self.angular_velocity
                 break_friction_energy = wheels*1*self.velocity*((1 if self.pressure < 1 and self.control_wires["vz_1"] else self.pressure)*100000*self.break_cyllinder_surface)
 
                 self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-break_friction_energy/120,5)
                 self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
                 self.velocity = round(complex(self.velocity).real,5)
-                self.angular_velocity = round(self.velocity*self.wheel_radius,5)
+                self.angular_velocity = round(self.velocity/self.wheel_radius,5)
                 if self.velocity == 0: self.velocity_direction = 0
 
 

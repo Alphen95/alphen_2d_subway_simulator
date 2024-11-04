@@ -3,7 +3,7 @@ import os
 import json
 import pathlib
 
-version = "v0.4 не, ну это ещё не четвёрка, но двери я уже сделал. ридми потом."
+version = "0.4.2 презентационная версия с рабочими стрелками"
 scale = 1
 CURRENT_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 current_dir = CURRENT_DIRECTORY
@@ -64,6 +64,13 @@ sprite_loading_info = [
     {"name":"kochetova_walls_f","filename":"platform","params":[64*3,256*7,64,256,29,3,True,False]},
     {"name":"kochetova_platform_f","filename":"platform","params":[0,256*7,64,256,3,0,True,False]},
     {"name":"kochetova_track_f_tstr","filename":"platform","params":[0,256*8,64,256,3,0,True,False]},
+
+    {"name":"park_kultury_walls","filename":"platform","params":[64*3,256*9,64,256,29,3,False,False]},
+    {"name":"park_kultury_platform","filename":"platform","params":[0,256*9,64,256,3,0,False,False]},
+    {"name":"park_kultury_track_tstr","filename":"platform","params":[0,256*10,64,256,32,0,False,False]},
+    {"name":"park_kultury_walls_f","filename":"platform","params":[64*3,256*9,64,256,29,3,True,False]},
+    {"name":"park_kultury_platform_f","filename":"platform","params":[0,256*9,64,256,3,0,True,False]},
+    {"name":"park_kultury_track_f_tstr","filename":"platform","params":[0,256*10,64,256,3,0,True,False]},
 ]
 ground_sprites = {}
 train_sprites = {}
@@ -217,11 +224,15 @@ def sprite_load_routine():
     consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*-1.5,1024*-3.9])
 
 world = {
-    (0,2):["tstr"],
-    (0,1):["tsb1"],(-1,1):["tcb2"],
-    (1,0):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,0):["stroitelnaya_track_f_tstr"],(-1,0):["stroitelnaya_track_tstr"],(-2,0):["stroitelnaya_platform","stroitelnaya_walls"],
-    (0,-1):["tstr"],(-1,-1):["tstr"],
-    (1,-2):["tca2"],(0,-2):["tca1"],(-1,-2):["tcb1"],(-2,-2):["tcb2"],
+    (0,6):["tstr"],
+    (0,5):["tsb1"],(-1,5):["tcb2"],
+    (1,4):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,4):["stroitelnaya_track_f_tstr"],(-1,4):["stroitelnaya_track_tstr"],(-2,4):["stroitelnaya_platform","stroitelnaya_walls"],
+    (0,3):["tstr"],(-1,3):["tstr"],
+    (1,2):["tca2"],(0,2):["tca1"],(-1,2):["tcb1"],(-2,2):["tcb2"],
+    (1,1):["tstr"],(-2,1):["tstr"],
+    (1,0):["park_kultury_track_tstr"],(0,0):["park_kultury_platform","park_kultury_walls"],(-1,0):["park_kultury_platform_f","park_kultury_walls_f"],(-2,0):["park_kultury_track_f_tstr"],
+    (1,-1):["tstr"],(-2,-1):["tstr"],
+    (1,-2):["tstr"],(-2,-2):["tstr"],
     (1,-3):["tstr"],(-2,-3):["tstr"],
     (1,-4):["kochetova_track_tstr"],(0,-4):["kochetova_platform","kochetova_walls"],(-1,-4):["kochetova_platform_f","kochetova_walls_f"],(-2,-4):["kochetova_track_f_tstr"],
     (1,-5):["tstr"],(-2,-5):["tstr"],
@@ -229,8 +240,9 @@ world = {
     (1,-7):["tstr"],(-2,-7):["tstr"],
     (1,-8):["sodovaya_track_tstr"],(0,-8):["sodovaya_platform","sodovaya_walls"],(-1,-8):["sodovaya_platform_f","sodovaya_walls_f"],(-2,-8):["sodovaya_track_f_tstr"],
     (1,-9):["tcb1"],(0,-9):["tcb2"],(-1,-9):["tca2"],(-2,-9):["tca1"],
-    (0,-10):["tsa2"],(-1,-10):["tca1"],
-    (0,-11):["tstr"],}
+    (0,-10):["tstr"],(-1,-10):["tstr"],
+    (0,-11):["tsa2"],(-1,-11):["tsa1"],
+    (0,-12):["tstr"],(-1,-12):["tstr"]}
 
 '''
 world = {
@@ -251,16 +263,17 @@ world = {
 }
 '''
 switches = {
-    (0,1):False,
-    (0,-10):True,
-    (0,-6):True,
-    (-1,-10):True
+    (0,5):False,
+    (0,-11):True,
+    (-1,-11):True
 }
 
 #trains = {}
 
 player_pos = [256*0.5,1024*0.5]
 m_btn = [0,0,0]
+world_mouse_coord = [0,0]
+mouse_block_pos = (None,None)
 mouse_clicked = False
 mouse_released = False
 
@@ -268,6 +281,7 @@ sprite_thread = threading.Thread(target=sprite_load_routine,daemon=True) #,args=
 sprite_thread.start()
 
 while working:
+    tunnel_nothingness = (15,15,15)
     keydowns = []
     mouse_clicked_prev = mouse_clicked
     mouse_clicked = False
@@ -285,7 +299,7 @@ while working:
             mouse_released = True
     if screen_state == "loading":
         text_color = (200,200,200)
-        screen.fill((10,10,10))
+        screen.fill(tunnel_nothingness)
         text = font.render("загрузка...", True, text_color)
         screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-text.get_height()))
         text = font.render(f"{round(progress/(len(sprite_loading_info)*5+len(train_folders))*100,1)}%", True, text_color)
@@ -314,11 +328,11 @@ while working:
         if controlling != -1: player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
         block_pos = [int((player_pos[0]-(block_size[0] if player_pos[0] < 0 else 0))/block_size[0]),int((player_pos[1]-(block_size[1] if player_pos[1] < 0 else 0))/block_size[1])]
     
-        screen.fill((25,25,25))
+        screen.fill(tunnel_nothingness)
         prima_object_draw_queue = []
         object_draw_queue = []
-        for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-1,int(screen_size[0]/block_size[0])+2)):
-            for tile_y in range(-int(screen_size[1]/block_size[1])-1,int(screen_size[1]/block_size[1])+2):
+        for tile_x in reversed(range(-int(screen_size[0]/block_size[0])-2,int(screen_size[0]/block_size[0])+3)):
+            for tile_y in range(-int(screen_size[1]/block_size[1])-2,int(screen_size[1]/block_size[1])+3):
                 #pg.draw.rect(screen,(255,0,0),)
                 x_offset = (block_pos[0]+tile_x)*block_size[0]
                 y_offset = (block_pos[1]+tile_y)*block_size[1]
@@ -334,7 +348,8 @@ while working:
                             (
                                 tile_x*block_size[0],
                                 tile_y*block_size[1]
-                            )
+                            ),
+                            tile_world_position
 
                         ])
                     if len(world[tile_world_position]) > 1 and world[tile_world_position][1] in ground_sprites:
@@ -357,10 +372,36 @@ while working:
                 screen.blit(
                     #pg.transform.scale(
                     ground_sprites[object[2]][world_angle]#,block_size)
-                    ,(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,
-                    screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2
+                    ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,0),
+                    round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2,0)
                     )
                 )
+                if mouse_block_pos[0] == object[4][0] and mouse_block_pos[1] == object[4][1] and object[2][-4:-1] in ["tsa","tsb"]:
+                    x_offset = object[3][0]-player_pos[0]%(block_size[0])+block_size[0]/2
+                    x_offset1 = object[3][0]-player_pos[0]%(block_size[0])
+                    x_offset2 = object[3][0]-player_pos[0]%(block_size[0])
+                    x_offset3 = object[3][0]-player_pos[0]%(block_size[0])+block_size[0]
+                    x_offset4 = object[3][0]-player_pos[0]%(block_size[0])+block_size[0]
+                    y_offset = object[3][1]-player_pos[1]%(block_size[1])+block_size[1]/2
+                    y_offset1 = object[3][1]-player_pos[1]%(block_size[1])
+                    y_offset2 = object[3][1]-player_pos[1]%(block_size[1])+block_size[1]
+                    y_offset3 = object[3][1]-player_pos[1]%(block_size[1])+block_size[1]
+                    y_offset4 = object[3][1]-player_pos[1]%(block_size[1])
+                    pg.draw.polygon(screen,((0,0,255) if switches[mouse_block_pos] else (0,255,0)),(
+                            (
+                                screen_size[0]/2+x_offset1*math.cos(math.radians(360-world_angle))-y_offset1*math.sin(math.radians(360-world_angle)),
+                                screen_size[1]/2+(x_offset1*math.sin(math.radians(360-world_angle))+y_offset1*math.cos(math.radians(360-world_angle)))/compression 
+                            ),(
+                                screen_size[0]/2+x_offset2*math.cos(math.radians(360-world_angle))-y_offset2*math.sin(math.radians(360-world_angle)),
+                                screen_size[1]/2+(x_offset2*math.sin(math.radians(360-world_angle))+y_offset2*math.cos(math.radians(360-world_angle)))/compression 
+                            ),(
+                                screen_size[0]/2+x_offset3*math.cos(math.radians(360-world_angle))-y_offset3*math.sin(math.radians(360-world_angle)),
+                                screen_size[1]/2+(x_offset3*math.sin(math.radians(360-world_angle))+y_offset3*math.cos(math.radians(360-world_angle)))/compression 
+                            ),(
+                                screen_size[0]/2+x_offset4*math.cos(math.radians(360-world_angle))-y_offset4*math.sin(math.radians(360-world_angle)),
+                                screen_size[1]/2+(x_offset4*math.sin(math.radians(360-world_angle))+y_offset4*math.cos(math.radians(360-world_angle)))/compression 
+                            )
+                        ),10)
             
 
         for z in valid_draw:
@@ -391,23 +432,23 @@ while working:
                 screen.blit(
                     #pg.transform.scale(
                     ground_sprites[object[2]][object[3]]#,block_size)
-                    ,(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,
-                    screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2
+                    ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,0),
+                    round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2,0)
                     )
                 )
             elif object[0] == "train":
-                r_train_sprite = train_sprites[object[2]]["doors"][object[5]["r" if not object[6] else "l"]][object[3]]["r"]
-                r_height = train_sprites[object[2]]["doors"][object[5]["r" if not object[6] else "l"]]["height"]
-                l_train_sprite = train_sprites[object[2]]["doors"][object[5]["l" if not object[6] else "r"]][object[3]]["l"]
-                l_height = train_sprites[object[2]]["doors"][object[5]["l" if not object[6] else "r"]]["height"]
+                r_train_sprite = train_sprites[object[2]]["doors"][object[5]["r" if object[6] else "l"]][object[3]]["r"]
+                r_height = train_sprites[object[2]]["doors"][object[5]["r" if object[6] else "l"]]["height"]
+                l_train_sprite = train_sprites[object[2]]["doors"][object[5]["l" if object[6] else "r"]][object[3]]["l"]
+                l_height = train_sprites[object[2]]["doors"][object[5]["l" if object[6] else "r"]]["height"]
                 if 0 <= object[3] < 90 or 270 <= object[3] < 360:
                     x_offset = -player_pos[0]+object[1][0]-object[4][0]
                     y_offset = -player_pos[1]+object[1][1]-object[4][1]
                     screen.blit(
                         r_train_sprite,
                         (
-                            screen_size[0]/2-r_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                            round(screen_size[0]/2-r_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),0),
+                            round(screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6,0)
                         )
                     )
                     x_offset = -player_pos[0]+object[1][0]-object[4][0]
@@ -415,8 +456,8 @@ while working:
                     screen.blit(
                         l_train_sprite,
                         (
-                            screen_size[0]/2-l_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                            round(screen_size[0]/2-l_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),0),
+                            round(screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6,0)
                         )
                     )
                 else:
@@ -425,8 +466,8 @@ while working:
                     screen.blit(
                         l_train_sprite,
                         (
-                            screen_size[0]/2-l_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                            round(screen_size[0]/2-l_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),0),
+                            round(screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6,0)
                         )
                     )
                     x_offset = -player_pos[0]+object[1][0]-object[4][0]
@@ -434,12 +475,12 @@ while working:
                     screen.blit(
                         r_train_sprite,
                         (
-                            screen_size[0]/2-r_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6
+                            round(screen_size[0]/2-r_train_sprite.get_width()/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle)),0),
+                            round(screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6,0)
                         )
                     )
         
-        if debug:
+        if debug > 1:
             for tile_y in range(-int(screen_size[1]/block_size[1]/2)-1,int(screen_size[1]/block_size[1]/2)+2):
                 for tile_x in reversed(range(-int(screen_size[0]/block_size[0]/2)-1,int(screen_size[0]/block_size[0]/2)+2)):
                     x_offset = tile_x*block_size[0]-player_pos[0]%(block_size[0])+block_size[0]/2
@@ -476,12 +517,32 @@ while working:
         
             #pg.draw.circle(screen,(255,0,0),(-player_pos[0]+train.pos[0]+screen_size[0]/2,-player_pos[1]+train.pos[1]+screen_size[1]/2),4)
         
+        
         pressed = pg.key.get_pressed()
         m_btn = pg.mouse.get_pressed()
         m_pos = pg.mouse.get_pos()
+        dx, dy = m_pos[0]-screen_size[0]/2, m_pos[1]-screen_size[1]/2
+        a, b, c, d =math.cos(math.radians(360-world_angle)),math.sin(math.radians(360-world_angle)),math.sin(math.radians(360-world_angle))/compression,math.cos(math.radians(360-world_angle))/compression
+        ty = (dy*a-dx*c)/(a*d+b*c)
+        tx = (dx+ty*b)/a
+        world_mouse_coord = [tx,ty]
+        mouse_block_pos = (int((player_pos[0]+world_mouse_coord[0]-(block_size[0] if player_pos[0]+world_mouse_coord[0] < 0 else 0))/block_size[0]),int((player_pos[1]+world_mouse_coord[1]-(block_size[1] if player_pos[1]+world_mouse_coord[1] < 0 else 0))/block_size[1]))
+        if m_btn[0] and mouse_clicked:
+            if mouse_block_pos in world and mouse_block_pos in switches:
+                switches[mouse_block_pos] = not(switches[mouse_block_pos])
+
+        #text =annotation_font.render(f"{world_mouse_coord}",True,(255,255,255))
+        #screen.blit(text,(
+        #    m_pos[0]+20,m_pos[1]+20
+        #))
+        #text =annotation_font.render(f"{dx,dy}",True,(255,255,255))
+        #screen.blit(text,(
+        #    m_pos[0]+20,m_pos[1]+40
+        #))
+
 
         '''
-        #if mouse_clicked and m_btn[0]:
+        #
         for train_params in sorted(valid,key=lambda x:x[1],reverse=True):
             localized_m_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,player_pos[1]+m_pos[1]-screen_size[1]/2)
             train = trains[train_params[0]]
@@ -503,8 +564,7 @@ while working:
                     pg.draw.circle(screen,colors[i],(x_coords[i]-player_pos[0]+screen_size[0]/2,y_coords[i]-player_pos[1]+screen_size[1]/2),4)
                 for i in range(4):
                     pg.draw.circle(screen,colors[i],(x_coords[i+4]-player_pos[0]+screen_size[0]/2,y_coords[i+4]-player_pos[1]+screen_size[1]/2),4)
-        ''' #нахуй не нужная хуйня
-
+        ''' #здесь были маты, но на случай передачи кода их теперь тут нету
         '''
         for train_params in sorted(valid,key=lambda x:x[1]):
             if controlling == -1:
@@ -520,6 +580,7 @@ while working:
                         controlling_consist = trains[controlling].consist
         ''' #временно без этого. оно не рабоатет с новой системой.
         annotation = None
+
         if controlling != -1:
             
             found = False
@@ -696,6 +757,8 @@ while working:
         if debug > 0:
             info_blit_list.append(font.render(f"tramcars: {len(trains)}",True,text_color))
             info_blit_list.append(font.render(f"consists: {len(consists)}",True,text_color))
+            info_blit_list.append(font.render(f"pos: {player_pos}",True,text_color))
+
             if controlling > -1:
                 info_blit_list.append(font.render(f"controlling traincar {controlling}",True,text_color))
                 info_blit_list.append(font.render(f"controlling traincar {trains[controlling].pos}",True,text_color))

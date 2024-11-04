@@ -62,14 +62,14 @@
         "min_tk":1,
         "default_tk":2,
         "default_km":0,
-        "engine_constant":40,
-        "engine_resistance":1.25,
-        "peril_current":4020,
-        "mass":517000,
-        "wheel_mass":200,
+        "engine_constant":100,
+        "engine_resistance":1,
+        "peril_current":300,
+        "mass":51700,
+        "wheel_mass":1400,
         "wheel_radius":0.95,
         "transmissional_number":3.94,
-        "break_cyllinder_surface":0.2,
+        "break_cyllinder_surface":0.1,
         "underlay_draw_params":[0,-41,5],
         "drive_sounds":[
             ["engine1",0.5,8],
@@ -81,11 +81,11 @@
             ["engine7",48,1005]
         ],
         "km_mapouts":{
-            "5":{"type":"accel","voltage":750},
-            "4":{"type":"accel","voltage":625},
-            "3":{"type":"accel","voltage":500},
-            "2":{"type":"accel","voltage":375},
-            "1":{"type":"accel","voltage":200},
+            "5":{"type":"accel","voltage":700},
+            "4":{"type":"accel","voltage":600},
+            "3":{"type":"accel","voltage":475},
+            "2":{"type":"accel","voltage":350},
+            "1":{"type":"accel","voltage":150},
             "0":{"type":"neutral","voltage":0},
             "-1":{"type":"accel","voltage":-150},
             "-2":{"type":"accel","voltage":-300}
@@ -144,9 +144,9 @@
 
             },
             {
-                "name":"Открытие дверей правых",
+                "name":"Открытие дверей левых",
                 "type":"button",
-                "connection":"right_doors",
+                "connection":"left_doors",
                 "default":false,
                 "state":false,
                 "draw_mappings":[
@@ -156,9 +156,9 @@
 
             },
             {
-                "name":"Открытие дверей левых",
+                "name":"Открытие дверей правых",
                 "type":"button",
-                "connection":"left_doors",
+                "connection":"right_doors",
                 "default":false,
                 "state":false,
                 "draw_mappings":[
