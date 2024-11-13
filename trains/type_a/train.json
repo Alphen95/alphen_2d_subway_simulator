@@ -64,13 +64,18 @@
         "default_km":0,
         "engine_constant":100,
         "engine_resistance":1,
-        "peril_current":300,
+        "peril_current":30000,
         "mass":51700,
         "wheel_mass":1400,
         "wheel_radius":0.95,
         "transmissional_number":3.94,
         "break_cyllinder_surface":0.1,
         "underlay_draw_params":[0,-41,5],
+        "valve_params":{
+            "vz_1":[1.3,0.0054], 
+            "vz_2":[],
+            "stopkran":[3.5,0.2]
+        },
         "drive_sounds":[
             ["engine1",0.5,8],
             ["engine2",8,16],
@@ -91,11 +96,11 @@
             "-2":{"type":"accel","voltage":-300}
         },
         "tk_mapouts":{
-            "1":{"type":"press","speed":0.025,"target":0},
-            "2":{"type":"press","speed":0.0125,"target":0},
+            "1":{"type":"press","speed":0.018,"target":0},
+            "2":{"type":"press","speed":0.009,"target":0},
             "3":{"type":"neutral"},
-            "4":{"type":"press","speed":0.0125,"target":3.5},
-            "5":{"type":"press","speed":0.025,"target":3.5}
+            "4":{"type":"press","speed":0.009,"target":3.5},
+            "5":{"type":"press","speed":0.018,"target":3.5}
         },
         "km_draw_mapouts":{
             "5":[19,14],
