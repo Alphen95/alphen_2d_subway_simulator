@@ -7,7 +7,7 @@ import threading
 import random
 import pathlib
 
-version = "0.4.3 перегонка на формат с возможностью компиляции"
+version = "0.4.4 пакеты"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -38,45 +38,7 @@ screen = pg.display.set_mode(screen_size, pg.SRCALPHA)
 pg.display.set_caption(f"Alphen's 2.5D Subway Simulator v{version_id}")
 screen_state = "loading"
 
-sprite_loading_info = [
-    {"name":"tstr","filename":"tracks","params":[0,0,64,256,1,0,False,False]},
-    {"name":"tca1","filename":"tracks","params":[64,0,64,256,1,0,False,False]},
-    {"name":"tca2","filename":"tracks","params":[128,0,64,256,1,0,False,False]},
-    {"name":"tcb1","filename":"tracks","params":[64,0,64,256,1,0,True,False]},
-    {"name":"tcb2","filename":"tracks","params":[128,0,64,256,1,0,True,False]},
-    {"name":"tsa1","filename":"tracks","params":[192,0,64,256,1,0,False,False]},
-    {"name":"tsa2","filename":"tracks","params":[256,0,64,256,1,0,False,False]},
-    {"name":"tsb1","filename":"tracks","params":[192,0,64,256,1,0,True,False]},
-    {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,0,True,False]},
-
-    {"name":"stroitelnaya_walls","filename":"platform","params":[64*3,256+512,64,256,29,3,False,False]},
-    {"name":"stroitelnaya_platform","filename":"platform","params":[0,256+512,64,256,3,0,False,False]},
-    {"name":"stroitelnaya_track_tstr","filename":"platform","params":[0,512+512,64,256,3,0,False,False]},
-    {"name":"stroitelnaya_walls_f","filename":"platform","params":[64*3,256+512,64,256,29,3,True,False]},
-    {"name":"stroitelnaya_platform_f","filename":"platform","params":[0,256+512,64,256,3,0,True,False]},
-    {"name":"stroitelnaya_track_f_tstr","filename":"platform","params":[0,512+512,64,256,3,0,True,False]},
-
-    {"name":"sodovaya_walls","filename":"platform","params":[64*3,256*5,64,256,29,3,False,False]},
-    {"name":"sodovaya_platform","filename":"platform","params":[0,256*5,64,256,3,0,False,False]},
-    {"name":"sodovaya_walls_f","filename":"platform","params":[64*3,256*5,64,256,29,3,True,False]},
-    {"name":"sodovaya_platform_f","filename":"platform","params":[0,256*5,64,256,3,0,True,False]},
-    {"name":"sodovaya_track_tstr","filename":"platform","params":[0,256*6,64,256,32,0,False,False]},
-    {"name":"sodovaya_track_f_tstr","filename":"platform","params":[0,256*6,64,256,3,0,True,False]},
-
-    {"name":"kochetova_walls","filename":"platform","params":[64*3,256*7,64,256,29,3,False,False]},
-    {"name":"kochetova_platform","filename":"platform","params":[0,256*7,64,256,3,0,False,False]},
-    {"name":"kochetova_track_tstr","filename":"platform","params":[0,256*8,64,256,32,0,False,False]},
-    {"name":"kochetova_walls_f","filename":"platform","params":[64*3,256*7,64,256,29,3,True,False]},
-    {"name":"kochetova_platform_f","filename":"platform","params":[0,256*7,64,256,3,0,True,False]},
-    {"name":"kochetova_track_f_tstr","filename":"platform","params":[0,256*8,64,256,3,0,True,False]},
-
-    {"name":"park_kultury_walls","filename":"platform","params":[64*3,256*9,64,256,29,3,False,False]},
-    {"name":"park_kultury_platform","filename":"platform","params":[0,256*9,64,256,3,0,False,False]},
-    {"name":"park_kultury_track_tstr","filename":"platform","params":[0,256*10,64,256,32,0,False,False]},
-    {"name":"park_kultury_walls_f","filename":"platform","params":[64*3,256*9,64,256,29,3,True,False]},
-    {"name":"park_kultury_platform_f","filename":"platform","params":[0,256*9,64,256,3,0,True,False]},
-    {"name":"park_kultury_track_f_tstr","filename":"platform","params":[0,256*10,64,256,3,0,True,False]},
-]
+sprite_loading_info = []
 ground_sprites = {}
 train_sprites = {}
 train_types = {}
@@ -88,7 +50,6 @@ progress = 0
 pg.mixer.init()
 channel_rolling = pg.mixer.Channel(1)
 channel_rolling.set_volume(0.125)
-train_folders = os.listdir(os.path.join(current_dir,"trains"))
 
 trains = {}
 
@@ -447,136 +408,141 @@ class Consist():
             time.sleep(1/120)
 
 def sprite_load_routine():
-    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,train_folders
+    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress
+    pak_folders = os.listdir(os.path.join(current_dir,"paks"))
 
-    temp_sprites = {}
-    filenames = os.listdir(os.path.join(CURRENT_DIRECTORY,"res"))
-    for filename in filenames:
-        if filename[-4:] == ".png":
-            temp_sprites[filename[:-4]] = pg.image.load(os.path.join(*([current_dir,"res",filename]))).convert_alpha()
-
-    for info_pack in sprite_loading_info:
-
-        base_ground_sprite = temp_sprites[info_pack["filename"]].subsurface(info_pack["params"][0],info_pack["params"][1],info_pack["params"][2]*info_pack["params"][4],info_pack["params"][3])
-
-        base_layers = []
-        sprite_stack_factor = 4
-        
-        for i in range(info_pack["params"][4]):
-            x_pos = info_pack["params"][2]*i# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
-            base_layers.append(pg.transform.flip(pg.transform.scale(base_ground_sprite.subsurface(x_pos,0,info_pack["params"][2],info_pack["params"][3]),(info_pack["params"][2]*4,info_pack["params"][3]*4)),info_pack["params"][6],info_pack["params"][7]))
-
-        ground_sprites[info_pack["name"]] = {}
-
-        for rotation in [world_angle]:
-            w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
-            h=h/compression
-
-            surface = pg.Surface((w,h+(info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor))
-            surface.set_colorkey((0,0,0))
-
-            for i in range(info_pack["params"][4]*sprite_stack_factor):
-                pos = (0,surface.get_height()-i-h-info_pack["params"][5]*sprite_stack_factor)
-                base_img = pg.transform.rotate(base_layers[int(i/sprite_stack_factor)],rotation)
-                surface.blit(pg.transform.scale(base_img,(base_img.get_width(),base_img.get_height()/compression)),pos)
-            ground_sprites[info_pack["name"]][rotation] = surface
-            progress+=1
-        for q in range(4):
-            w, h = pg.transform.rotate(base_layers[0].subsurface(0,base_layers[0].get_height()/4*q,base_layers[0].get_width(),base_layers[0].get_height()/4),rotation).get_size()
-            h=h/compression
-
-            surface = pg.Surface((w,h+(info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor))
-            surface.set_colorkey((0,0,0))
-
-            for i in range(info_pack["params"][4]*sprite_stack_factor):
-                pos = (0,surface.get_height()-i-h-info_pack["params"][5]*sprite_stack_factor)
-                z=base_layers[int(i/sprite_stack_factor)]
-                base_img = pg.transform.rotate(z.subsurface(0,z.get_height()/4*q,z.get_width(),z.get_height()/4),rotation)
-                surface.blit(pg.transform.scale(base_img,(base_img.get_width(),base_img.get_height()/compression)),pos)
-            ground_sprites[info_pack["name"]][q] = surface
-            progress+=1
-        ground_sprites[info_pack["name"]]["height"] = (info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor-1
-        
-
-    for folder in train_folders:
-        folder_contents = os.listdir(os.path.join(current_dir,"trains",folder))
-        if "train.json" in folder_contents:
+    for folder in pak_folders:
+        folder_contents = os.listdir(os.path.join(current_dir,"paks",folder))
+        if "pack.json" in folder_contents:
             
-            with open(os.path.join(CURRENT_DIRECTORY,"trains",folder,"train.json"),encoding="utf-8") as file:
-                train_parameters = json.loads(file.read())
-                base_train_sprite = pg.image.load(os.path.join(*([current_dir,"trains",folder,"sprite.png"]))).convert_alpha()
-                base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"trains",folder,"controls.png"]))).convert_alpha()
-                key = train_parameters["system_name"]
-                train_sprites[key] = {"controls":{},"doors":{}}
-                consists_info[key] = train_parameters["traction_info"]
-                sprite_stack_factor = 4
+            with open(os.path.join(CURRENT_DIRECTORY,"paks",folder,"pack.json"),encoding="utf-8") as file:
+                pack_parameters = json.loads(file.read())
 
-                for sprite_params in train_parameters["sprite_info"]:
-                    base_layers = []
-                    door_type = sprite_params["type"]
-                    train_sprites[key]["doors"][door_type] = {"type":door_type}
+                if "tiles" in pack_parameters:
+                    temp_sprites = {}
+                    filenames = os.listdir(os.path.join(CURRENT_DIRECTORY,"paks",folder))
+                    for filename in filenames:
+                        if filename[-4:] == ".png":
+                            temp_sprites[filename[:-4]] = pg.image.load(os.path.join(*([CURRENT_DIRECTORY,"paks",folder,filename]))).convert_alpha()
+                    
+                    for info_pack in pack_parameters["tiles"]:
 
-                    for j in range(sprite_params["layers"]):
-                        x_pos = sprite_params["w"]*j# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
-                        base_layers.append(pg.transform.scale(base_train_sprite.subsurface(x_pos,sprite_params["y"],sprite_params["w"],sprite_params["h"]),(sprite_params["w"]*4,sprite_params["h"]*4)))
+                        base_ground_sprite = temp_sprites[info_pack["filename"]].subsurface(info_pack["params"][0],info_pack["params"][1],info_pack["params"][2]*info_pack["params"][4],info_pack["params"][3])
+
+                        base_layers = []
+                        sprite_stack_factor = 4
+                        
+                        for i in range(info_pack["params"][4]):
+                            x_pos = info_pack["params"][2]*i# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
+                            base_layers.append(pg.transform.flip(pg.transform.scale(base_ground_sprite.subsurface(x_pos,0,info_pack["params"][2],info_pack["params"][3]),(info_pack["params"][2]*4,info_pack["params"][3]*4)),info_pack["params"][6],info_pack["params"][7]))
+
+                        ground_sprites[info_pack["name"]] = {}
+
+                        for rotation in [world_angle]:
+                            w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
+                            h=h/compression
+
+                            surface = pg.Surface((w,h+(info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor))
+                            surface.set_colorkey((0,0,0))
+
+                            for i in range(info_pack["params"][4]*sprite_stack_factor):
+                                pos = (0,surface.get_height()-i-h-info_pack["params"][5]*sprite_stack_factor)
+                                base_img = pg.transform.rotate(base_layers[int(i/sprite_stack_factor)],rotation)
+                                surface.blit(pg.transform.scale(base_img,(base_img.get_width(),base_img.get_height()/compression)),pos)
+                            ground_sprites[info_pack["name"]][rotation] = surface
+                            progress+=1
+                        for q in range(4):
+                            w, h = pg.transform.rotate(base_layers[0].subsurface(0,base_layers[0].get_height()/4*q,base_layers[0].get_width(),base_layers[0].get_height()/4),rotation).get_size()
+                            h=h/compression
+
+                            surface = pg.Surface((w,h+(info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor))
+                            surface.set_colorkey((0,0,0))
+
+                            for i in range(info_pack["params"][4]*sprite_stack_factor):
+                                pos = (0,surface.get_height()-i-h-info_pack["params"][5]*sprite_stack_factor)
+                                z=base_layers[int(i/sprite_stack_factor)]
+                                base_img = pg.transform.rotate(z.subsurface(0,z.get_height()/4*q,z.get_width(),z.get_height()/4),rotation)
+                                surface.blit(pg.transform.scale(base_img,(base_img.get_width(),base_img.get_height()/compression)),pos)
+                            ground_sprites[info_pack["name"]][q] = surface
+                            progress+=1
+                        ground_sprites[info_pack["name"]]["height"] = (info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor-1
+                    
+                if "trains" in pack_parameters:
+                    for train in pack_parameters["trains"]:
+                        train_parameters = train
+                        base_train_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,"sprite.png"]))).convert_alpha()
+                        base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,"controls.png"]))).convert_alpha()
+                        key = train_parameters["system_name"]
+                        train_sprites[key] = {"controls":{},"doors":{}}
+                        consists_info[key] = train_parameters["traction_info"]
+                        sprite_stack_factor = 4
+
+                        for sprite_params in train_parameters["sprite_info"]:
+                            base_layers = []
+                            door_type = sprite_params["type"]
+                            train_sprites[key]["doors"][door_type] = {"type":door_type}
+
+                            for j in range(sprite_params["layers"]):
+                                x_pos = sprite_params["w"]*j# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
+                                base_layers.append(pg.transform.scale(base_train_sprite.subsurface(x_pos,sprite_params["y"],sprite_params["w"],sprite_params["h"]),(sprite_params["w"]*4,sprite_params["h"]*4)))
 
 
-                    for rotation in [0,180,world_angle,world_angle+180]+[8.25+world_angle,16.5+world_angle,-8.25+world_angle,-16.5+world_angle,180-8.25+world_angle,180-16.5+world_angle,180+8.25+world_angle,180+16.5+world_angle]:
-                        w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
-                        h/=compression
-                        rotation = rotation%360
+                            for rotation in [0,180,world_angle,world_angle+180]+[8.25+world_angle,16.5+world_angle,-8.25+world_angle,-16.5+world_angle,180-8.25+world_angle,180-16.5+world_angle,180+8.25+world_angle,180+16.5+world_angle]:
+                                w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
+                                h/=compression
+                                rotation = rotation%360
 
-                        global_l_surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
-                        global_r_surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
-                        global_l_surface.set_colorkey((0,0,0))
-                        global_r_surface.set_colorkey((0,0,0))
+                                global_l_surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
+                                global_r_surface = pg.Surface((w,h+sprite_params["layers"]*sprite_stack_factor-1))
+                                global_l_surface.set_colorkey((0,0,0))
+                                global_r_surface.set_colorkey((0,0,0))
 
-                        for i in range(sprite_params["layers"]*sprite_stack_factor):
-                            pos = (0,global_l_surface.get_height()-i-h)
-                            l_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
-                            r_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
-                            l_surface.set_colorkey((0,0,0))
-                            r_surface.set_colorkey((0,0,0))
+                                for i in range(sprite_params["layers"]*sprite_stack_factor):
+                                    pos = (0,global_l_surface.get_height()-i-h)
+                                    l_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
+                                    r_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
+                                    l_surface.set_colorkey((0,0,0))
+                                    r_surface.set_colorkey((0,0,0))
 
-                            l_surface.blit(base_layers[int(i/sprite_stack_factor)].subsurface(
-                                0,
-                                0,
-                                base_layers[int(i/sprite_stack_factor)].get_width()/2,
-                                base_layers[int(i/sprite_stack_factor)].get_height()
-                            ),(0,0))
-                            r_surface.blit(base_layers[int(i/sprite_stack_factor)].subsurface(
-                                base_layers[int(i/sprite_stack_factor)].get_width()/2,
-                                0,
-                                base_layers[int(i/sprite_stack_factor)].get_width()/2,
-                                base_layers[int(i/sprite_stack_factor)].get_height()
-                            ),(base_layers[int(i/sprite_stack_factor)].get_width()/2,0))
-                            l_surface = pg.transform.rotate(l_surface,rotation)
-                            r_surface = pg.transform.rotate(r_surface,rotation)
-                            l_surface.set_colorkey((0,0,0))
-                            r_surface.set_colorkey((0,0,0))
-                            global_l_surface.blit(pg.transform.scale(l_surface,(l_surface.get_width(),l_surface.get_height()/compression)),pos)
-                            global_r_surface.blit(pg.transform.scale(r_surface,(r_surface.get_width(),r_surface.get_height()/compression)),pos)
-                        train_sprites[key]["doors"][door_type][rotation] = {}
-                        train_sprites[key]["doors"][door_type][rotation]["l"] = global_l_surface
-                        train_sprites[key]["doors"][door_type][rotation]["r"] = global_r_surface
+                                    l_surface.blit(base_layers[int(i/sprite_stack_factor)].subsurface(
+                                        0,
+                                        0,
+                                        base_layers[int(i/sprite_stack_factor)].get_width()/2,
+                                        base_layers[int(i/sprite_stack_factor)].get_height()
+                                    ),(0,0))
+                                    r_surface.blit(base_layers[int(i/sprite_stack_factor)].subsurface(
+                                        base_layers[int(i/sprite_stack_factor)].get_width()/2,
+                                        0,
+                                        base_layers[int(i/sprite_stack_factor)].get_width()/2,
+                                        base_layers[int(i/sprite_stack_factor)].get_height()
+                                    ),(base_layers[int(i/sprite_stack_factor)].get_width()/2,0))
+                                    l_surface = pg.transform.rotate(l_surface,rotation)
+                                    r_surface = pg.transform.rotate(r_surface,rotation)
+                                    l_surface.set_colorkey((0,0,0))
+                                    r_surface.set_colorkey((0,0,0))
+                                    global_l_surface.blit(pg.transform.scale(l_surface,(l_surface.get_width(),l_surface.get_height()/compression)),pos)
+                                    global_r_surface.blit(pg.transform.scale(r_surface,(r_surface.get_width(),r_surface.get_height()/compression)),pos)
+                                train_sprites[key]["doors"][door_type][rotation] = {}
+                                train_sprites[key]["doors"][door_type][rotation]["l"] = global_l_surface
+                                train_sprites[key]["doors"][door_type][rotation]["r"] = global_r_surface
 
-                    train_sprites[key]["doors"][door_type]["height"] = sprite_params["layers"]*sprite_stack_factor-1
+                            train_sprites[key]["doors"][door_type]["height"] = sprite_params["layers"]*sprite_stack_factor-1
 
 
-                controls_info = train_parameters["control_panel_info"]
-                train_sprites[key]["controls"] = {}
-                for control in controls_info:
-                    train_sprites[key]["controls"][control] = pg.transform.scale(
-                        base_control_panel_sprite.subsurface(controls_info[control]["x"],controls_info[control]["y"],controls_info[control]["w"],controls_info[control]["h"]),
-                        (controls_info[control]["w"]*controls_info[control]["scale"],controls_info[control]["h"]*controls_info[control]["scale"]))
+                        controls_info = train_parameters["control_panel_info"]
+                        train_sprites[key]["controls"] = {}
+                        for control in controls_info:
+                            train_sprites[key]["controls"][control] = pg.transform.scale(
+                                base_control_panel_sprite.subsurface(controls_info[control]["x"],controls_info[control]["y"],controls_info[control]["w"],controls_info[control]["h"]),
+                                (controls_info[control]["w"]*controls_info[control]["scale"],controls_info[control]["h"]*controls_info[control]["scale"]))
 
-                train_types[key] = {}
-                train_types[key]["size"] = (*train_parameters["clickable_size"],sprite_params["layers"]*sprite_stack_factor-1)
+                        train_types[key] = {}
+                        train_types[key]["size"] = (*train_parameters["clickable_size"],sprite_params["layers"]*sprite_stack_factor-1)
 
-                sounds[key] = {}
-                for sound in train_parameters["sound_loading_info"]:
-                    sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"trains",folder,train_parameters["sound_loading_info"][sound]))
-                    sounds[key][sound].set_volume(0.0)
+                        sounds[key] = {}
+                        for sound in train_parameters["sound_loading_info"]:
+                            sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"paks",folder,train_parameters["sound_loading_info"][sound]))
+                            sounds[key][sound].set_volume(0.0)
         progress+=1
 
     screen_state = "playing"
@@ -637,6 +603,7 @@ world_mouse_coord = [0,0]
 mouse_block_pos = (None,None)
 mouse_clicked = False
 mouse_released = False
+line_pos = 0
 
 sprite_thread = threading.Thread(target=sprite_load_routine,daemon=True) #,args=[world]
 sprite_thread.start()
@@ -663,8 +630,11 @@ while working:
         screen.fill(tunnel_nothingness)
         text = font.render("загрузка...", True, text_color)
         screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-text.get_height()))
-        text = font.render(f"{round(progress/(len(sprite_loading_info)*5+len(train_folders))*100,1)}%", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+text.get_height()))
+        line_pos = (line_pos + 2) % 280
+        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos) if 0 < line_pos < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-6) if 0 < line_pos-6     < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-12) if 0 < line_pos-12 < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        pg.draw.rect(screen,(255,255,255),(screen_size[0]/2-124,screen_size[1]/2+2,248,text.get_height()-4),2)
 
 
     elif screen_state == "playing":

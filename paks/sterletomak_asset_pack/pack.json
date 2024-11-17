@@ -1,0 +1,41 @@
+{
+    "tiles":[
+        {"name":"tstr","filename":"tracks","params":[0,0,64,256,1,0,false,false]},
+        {"name":"tca1","filename":"tracks","params":[64,0,64,256,1,0,false,false]},
+        {"name":"tca2","filename":"tracks","params":[128,0,64,256,1,0,false,false]},
+        {"name":"tcb1","filename":"tracks","params":[64,0,64,256,1,0,true,false]},
+        {"name":"tcb2","filename":"tracks","params":[128,0,64,256,1,0,true,false]},
+        {"name":"tsa1","filename":"tracks","params":[192,0,64,256,1,0,false,false]},
+        {"name":"tsa2","filename":"tracks","params":[256,0,64,256,1,0,false,false]},
+        {"name":"tsb1","filename":"tracks","params":[192,0,64,256,1,0,true,false]},
+        {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,0,true,false]},
+    
+        {"name":"stroitelnaya_walls","filename":"platform","params":[192,768,64,256,29,3,false,false]},
+        {"name":"stroitelnaya_platform","filename":"platform","params":[0,768,64,256,3,0,false,false]},
+        {"name":"stroitelnaya_track_tstr","filename":"platform","params":[0,1024,64,256,3,0,false,false]},
+        {"name":"stroitelnaya_walls_f","filename":"platform","params":[192,768,64,256,29,3,true,false]},
+        {"name":"stroitelnaya_platform_f","filename":"platform","params":[0,768,64,256,3,0,true,false]},
+        {"name":"stroitelnaya_track_f_tstr","filename":"platform","params":[0,1024,64,256,3,0,true,false]},
+    
+        {"name":"sodovaya_walls","filename":"platform","params":[192,1280,64,256,29,3,false,false]},
+        {"name":"sodovaya_platform","filename":"platform","params":[0,1280,64,256,3,0,false,false]},
+        {"name":"sodovaya_walls_f","filename":"platform","params":[192,1280,64,256,29,3,true,false]},
+        {"name":"sodovaya_platform_f","filename":"platform","params":[0,1280,64,256,3,0,true,false]},
+        {"name":"sodovaya_track_tstr","filename":"platform","params":[0,1536,64,256,32,0,false,false]},
+        {"name":"sodovaya_track_f_tstr","filename":"platform","params":[0,1536,64,256,3,0,true,false]},
+    
+        {"name":"kochetova_walls","filename":"platform","params":[192,1792,64,256,29,3,false,false]},
+        {"name":"kochetova_platform","filename":"platform","params":[0,1792,64,256,3,0,false,false]},
+        {"name":"kochetova_track_tstr","filename":"platform","params":[0,2048,64,256,32,0,false,false]},
+        {"name":"kochetova_walls_f","filename":"platform","params":[192,1792,64,256,29,3,true,false]},
+        {"name":"kochetova_platform_f","filename":"platform","params":[0,1792,64,256,3,0,true,false]},
+        {"name":"kochetova_track_f_tstr","filename":"platform","params":[0,2048,64,256,3,0,true,false]},
+    
+        {"name":"park_kultury_walls","filename":"platform","params":[192,2304,64,256,29,3,false,false]},
+        {"name":"park_kultury_platform","filename":"platform","params":[0,2304,64,256,3,0,false,false]},
+        {"name":"park_kultury_track_tstr","filename":"platform","params":[0,2560,64,256,32,0,false,false]},
+        {"name":"park_kultury_walls_f","filename":"platform","params":[192,2304,64,256,29,3,true,false]},
+        {"name":"park_kultury_platform_f","filename":"platform","params":[0,2304,64,256,3,0,true,false]},
+        {"name":"park_kultury_track_f_tstr","filename":"platform","params":[0,2560,64,256,3,0,true,false]}
+    ]
+}
