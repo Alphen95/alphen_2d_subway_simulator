@@ -7,7 +7,7 @@ import threading
 import random
 import pathlib
 
-version = "0.4.4 пакеты"
+version = "0.4.5 +Вокзальная, +скины"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -35,7 +35,7 @@ font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),20)
 annotation_font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),12)
 screen_size = screen.get_size()
 screen = pg.display.set_mode(screen_size, pg.SRCALPHA)
-pg.display.set_caption(f"Alphen's 2.5D Subway Simulator v{version_id}")
+pg.display.set_caption(f"Alphen's Isometric Subway Simulator v{version_id}")
 screen_state = "loading"
 
 sprite_loading_info = []
@@ -185,7 +185,7 @@ class Train():
             time.sleep(1/120)
 
 class Consist():
-    def __init__(self,train_type,params,consist_info,self_id,world,spawn_pos):
+    def __init__(self,train_type,train_sprite,params,consist_info,self_id,world,spawn_pos):
         global trains
 
         self.linked_to = []
@@ -195,6 +195,7 @@ class Consist():
         self.pixel_velocity = 0
         self.angular_velocity = 0
         self.train_type = train_type
+        self.train_sprite = train_sprite
         self.wheel_radius = consist_info["wheel_radius"]
         self.mass = consist_info["mass"]
         self.wheel_mass = consist_info["wheel_mass"]
@@ -269,7 +270,7 @@ class Consist():
         self.train_amount = 3
         for i in range(self.train_amount):
             train_id = random.randint(0,99999)
-            trains[train_id] = Train([pos[0],pos[1]+320*i],train_type, i+1==self.train_amount,params["size"],self_id,world)
+            trains[train_id] = Train([pos[0],pos[1]+320*i],train_sprite, i+1==self.train_amount,params["size"],self_id,world)
             self.linked_to.append(train_id)
 
         self.exists = True
@@ -410,6 +411,8 @@ class Consist():
 def sprite_load_routine():
     global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress
     pak_folders = os.listdir(os.path.join(current_dir,"paks"))
+    train_sprites["sprites"] = {}
+    train_sprites["controls"] = {}
 
     for folder in pak_folders:
         folder_contents = os.listdir(os.path.join(current_dir,"paks",folder))
@@ -467,20 +470,42 @@ def sprite_load_routine():
                             progress+=1
                         ground_sprites[info_pack["name"]]["height"] = (info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor-1
                     
-                if "trains" in pack_parameters:
-                    for train in pack_parameters["trains"]:
+                if "consists" in pack_parameters:
+                    for train in pack_parameters["consists"]:
                         train_parameters = train
-                        base_train_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,"sprite.png"]))).convert_alpha()
-                        base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,"controls.png"]))).convert_alpha()
+                        base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,train_parameters["control_panel_sprite"]]))).convert_alpha()
                         key = train_parameters["system_name"]
-                        train_sprites[key] = {"controls":{},"doors":{}}
+                        train_sprites["controls"][key] = {}
                         consists_info[key] = train_parameters["traction_info"]
                         sprite_stack_factor = 4
+
+                        controls_info = train_parameters["control_panel_info"]
+                        for control in controls_info:
+                            train_sprites["controls"][key][control] = pg.transform.scale(
+                                base_control_panel_sprite.subsurface(controls_info[control]["x"],controls_info[control]["y"],controls_info[control]["w"],controls_info[control]["h"]),
+                                (controls_info[control]["w"]*controls_info[control]["scale"],controls_info[control]["h"]*controls_info[control]["scale"]))
+
+                        train_types[key] = {}
+                        train_types[key]["size"] = train_parameters["clickable_size"]
+
+                        sounds[key] = {}
+                        for sound in train_parameters["sound_loading_info"]:
+                            sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"paks",folder,train_parameters["sound_loading_info"][sound]))
+                            sounds[key][sound].set_volume(0.0)
+                if "trains" in pack_parameters:
+                    for train in pack_parameters["trains"]:
+                        
+                        train_parameters = train
+                        key = train_parameters["system_name"]
+                        train_sprites["sprites"][key] = {}
+                        sprite_stack_factor = 4
+                        
+                        base_train_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,train_parameters["sprite"]]))).convert_alpha()
 
                         for sprite_params in train_parameters["sprite_info"]:
                             base_layers = []
                             door_type = sprite_params["type"]
-                            train_sprites[key]["doors"][door_type] = {"type":door_type}
+                            train_sprites["sprites"][key][door_type] = {"type":door_type}
 
                             for j in range(sprite_params["layers"]):
                                 x_pos = sprite_params["w"]*j# if not ("reversed" in sprite_params and sprite_params["reversed"]) else sprite_params["h_layer"]*(sprite_params["layer_amount"]-1-i)
@@ -522,54 +547,53 @@ def sprite_load_routine():
                                     r_surface.set_colorkey((0,0,0))
                                     global_l_surface.blit(pg.transform.scale(l_surface,(l_surface.get_width(),l_surface.get_height()/compression)),pos)
                                     global_r_surface.blit(pg.transform.scale(r_surface,(r_surface.get_width(),r_surface.get_height()/compression)),pos)
-                                train_sprites[key]["doors"][door_type][rotation] = {}
-                                train_sprites[key]["doors"][door_type][rotation]["l"] = global_l_surface
-                                train_sprites[key]["doors"][door_type][rotation]["r"] = global_r_surface
+                                train_sprites["sprites"][key][door_type][rotation] = {}
+                                train_sprites["sprites"][key][door_type][rotation]["l"] = global_l_surface
+                                train_sprites["sprites"][key][door_type][rotation]["r"] = global_r_surface
 
-                            train_sprites[key]["doors"][door_type]["height"] = sprite_params["layers"]*sprite_stack_factor-1
-
-
-                        controls_info = train_parameters["control_panel_info"]
-                        train_sprites[key]["controls"] = {}
-                        for control in controls_info:
-                            train_sprites[key]["controls"][control] = pg.transform.scale(
-                                base_control_panel_sprite.subsurface(controls_info[control]["x"],controls_info[control]["y"],controls_info[control]["w"],controls_info[control]["h"]),
-                                (controls_info[control]["w"]*controls_info[control]["scale"],controls_info[control]["h"]*controls_info[control]["scale"]))
-
-                        train_types[key] = {}
-                        train_types[key]["size"] = (*train_parameters["clickable_size"],sprite_params["layers"]*sprite_stack_factor-1)
-
-                        sounds[key] = {}
-                        for sound in train_parameters["sound_loading_info"]:
-                            sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"paks",folder,train_parameters["sound_loading_info"][sound]))
-                            sounds[key][sound].set_volume(0.0)
+                            train_sprites["sprites"][key][door_type]["height"] = sprite_params["layers"]*sprite_stack_factor-1
         progress+=1
 
     screen_state = "playing"
     consists = {}
     consist_key = random.randint(0,999)
-    consists[consist_key] = Consist("type_a",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*0.5,1024*6.125])
+    consists[consist_key] = Consist("type_a","type_a_bc",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*0.5,1024*-16.5])
 
 world = {
-    (0,6):["tstr"],
-    (0,5):["tsb1"],(-1,5):["tcb2"],
-    (1,4):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,4):["stroitelnaya_track_f_tstr"],(-1,4):["stroitelnaya_track_tstr"],(-2,4):["stroitelnaya_platform","stroitelnaya_walls"],
-    (0,3):["tstr"],(-1,3):["tstr"],
-    (1,2):["tca2"],(0,2):["tca1"],(-1,2):["tcb1"],(-2,2):["tcb2"],
+    (0,17):["tstr"],
+    (0,16):["tsb1"],(-1,6):["tcb2"],
+    (1,15):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,15):["stroitelnaya_track_f_tstr"],(-1,15):["stroitelnaya_track_tstr"],(-2,15):["stroitelnaya_platform","stroitelnaya_walls"],
+    (0,14):["tstr"],(-1,14):["tstr"],
+    (0,13):["tstr"],(-1,13):["tstr"],
+    (1,12):["tca2"],(0,12):["tca1"],(-1,9):["tcb1"],(-2,9):["tcb2"],
+    (1,11):["tstr"],(-2,11):["tstr"],
+    (1,10):["tstr"],(-2,10):["tstr"],
+    (1,9):["tsb1"],(0,9):["tcb2"],(-2,9):["tstr"],
+    (1,8):["tstr"],(0,8):["tcb1"],(-1,8):["tcb2"],(-2,8):["tstr"],
+    (1,7):["tstr"],(-1,7):["tcb1"],(-2,7):["tsb2"],
+    (1,6):["vokzalnaya_track_tstr"],(0,6):["vokzalnaya_platform","vokzalnaya_walls"],(-1,6):["vokzalnaya_platform_f","vokzalnaya_walls_f"],(-2,6):["vokzalnaya_track_f_tstr"],
+    (1,5):["tstr"],(-2,5):["tstr"],
+    (1,4):["tstr"],(-2,4):["tstr"],
+    (1,3):["tstr"],(-2,3):["tstr"],
+    (1,2):["tstr"],(-2,2):["tstr"],
     (1,1):["tstr"],(-2,1):["tstr"],
     (1,0):["park_kultury_track_tstr"],(0,0):["park_kultury_platform","park_kultury_walls"],(-1,0):["park_kultury_platform_f","park_kultury_walls_f"],(-2,0):["park_kultury_track_f_tstr"],
     (1,-1):["tstr"],(-2,-1):["tstr"],
     (1,-2):["tstr"],(-2,-2):["tstr"],
     (1,-3):["tstr"],(-2,-3):["tstr"],
-    (1,-4):["kochetova_track_tstr"],(0,-4):["kochetova_platform","kochetova_walls"],(-1,-4):["kochetova_platform_f","kochetova_walls_f"],(-2,-4):["kochetova_track_f_tstr"],
+    (1,-4):["tstr"],(-2,-4):["tstr"],
     (1,-5):["tstr"],(-2,-5):["tstr"],
-    (1,-6):["tstr"],(-2,-6):["tstr"],
+    (1,-6):["kochetova_track_tstr"],(0,-6):["kochetova_platform","kochetova_walls"],(-1,-6):["kochetova_platform_f","kochetova_walls_f"],(-2,-6):["kochetova_track_f_tstr"],
     (1,-7):["tstr"],(-2,-7):["tstr"],
-    (1,-8):["sodovaya_track_tstr"],(0,-8):["sodovaya_platform","sodovaya_walls"],(-1,-8):["sodovaya_platform_f","sodovaya_walls_f"],(-2,-8):["sodovaya_track_f_tstr"],
-    (1,-9):["tcb1"],(0,-9):["tcb2"],(-1,-9):["tca2"],(-2,-9):["tca1"],
-    (0,-10):["tstr"],(-1,-10):["tstr"],
-    (0,-11):["tsa2"],(-1,-11):["tsa1"],
-    (0,-12):["tstr"],(-1,-12):["tstr"]}
+    (1,-8):["tstr"],(-2,-8):["tstr"],
+    (1,-9):["tstr"],(-2,-9):["tstr"],
+    (1,-10):["tstr"],(-2,-10):["tstr"],
+    (1,-11):["tstr"],(-2,-11):["tstr"],
+    (1,-12):["sodovaya_track_tstr"],(0,-12):["sodovaya_platform","sodovaya_walls"],(-1,-12):["sodovaya_platform_f","sodovaya_walls_f"],(-2,-12):["sodovaya_track_f_tstr"],
+    (1,-13):["tcb1"],(0,-13):["tcb2"],(-1,-13):["tca2"],(-2,-13):["tca1"],
+    (0,-14):["tstr"],(-1,-14):["tstr"],
+    (0,-15):["tsa2"],(-1,-15):["tsa1"],
+    (0,-16):["tstr"],(-1,-16):["tstr"]}
 
 '''
 world = {
@@ -590,9 +614,11 @@ world = {
 }
 '''
 switches = {
-    (0,5):False,
-    (0,-11):True,
-    (-1,-11):True
+    (0,16):False,
+    (1,9):False,
+    (-2,7):True,
+    (0,-15):True,
+    (-1,-15):True
 }
 
 #trains = {}
@@ -768,10 +794,10 @@ while working:
                     )
                 )
             elif object[0] == "train":
-                r_train_sprite = train_sprites[object[2]]["doors"][object[5]["r" if object[6] else "l"]][object[3]]["r"]
-                r_height = train_sprites[object[2]]["doors"][object[5]["r" if object[6] else "l"]]["height"]
-                l_train_sprite = train_sprites[object[2]]["doors"][object[5]["l" if object[6] else "r"]][object[3]]["l"]
-                l_height = train_sprites[object[2]]["doors"][object[5]["l" if object[6] else "r"]]["height"]
+                r_train_sprite = train_sprites["sprites"][object[2]][object[5]["r" if object[6] else "l"]][object[3]]["r"]
+                r_height = train_sprites["sprites"][object[2]][object[5]["r" if object[6] else "l"]]["height"]
+                l_train_sprite = train_sprites["sprites"][object[2]][object[5]["l" if object[6] else "r"]][object[3]]["l"]
+                l_height = train_sprites["sprites"][object[2]][object[5]["l" if object[6] else "r"]]["height"]
                 if 0 <= object[3] < 90 or 270 <= object[3] < 360:
                     x_offset = -player_pos[0]+object[1][0]-object[4][0]
                     y_offset = -player_pos[1]+object[1][1]-object[4][1]
@@ -928,7 +954,7 @@ while working:
 
 
 
-            panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
+            panel = train_sprites["controls"][consists[controlling_consist].train_type]["panel"]
             if (screen_size[0]/2+panel.get_width()/2 >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2 and 
                 screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()):
                 for elem_id, element in enumerate(consists[controlling_consist].consist_info["element_mapouts"]):
@@ -983,16 +1009,16 @@ while working:
                         
 
         if controlling != -1:
-            panel = train_sprites[consists[controlling_consist].train_type]["controls"]["panel"]
+            panel = train_sprites["controls"][consists[controlling_consist].train_type]["panel"]
 
             if "underlay_draw_params" in consists[controlling_consist].consist_info:
-                underlay = train_sprites[consists[controlling_consist].train_type]["controls"]["underlay"]
+                underlay = train_sprites["controls"][consists[controlling_consist].train_type]["underlay"]
                 x,y,scale = consists[controlling_consist].consist_info["underlay_draw_params"]
                 screen.blit(underlay,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
 
             
             rr_direction = int(consists[controlling_consist].controlling_direction*(1-2*trains[controlling].reversed))
-            rr = train_sprites[consists[controlling_consist].train_type]["controls"][f"rr_{rr_direction}"]
+            rr = train_sprites["controls"][consists[controlling_consist].train_type][f"rr_{rr_direction}"]
             x,y = consists[controlling_consist].consist_info["rr_draw_mapouts"][str(rr_direction)]
             scale = consists[controlling_consist].consist_info["rr_draw_mapouts"]["scale"]
             screen.blit(rr,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
@@ -1002,41 +1028,41 @@ while working:
             for element in consists[controlling_consist].consist_info["element_mapouts"]:
                 if element["type"] != "analog_scale":
                     info = element["draw_mappings"][element["state"]]
-                    sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
+                    sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
                     x,y = info[0], info[1]
                     scale = info[2]
                     screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                 else:
                     info = element["draw_mappings"][0]
-                    sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
+                    sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
                     x,y = info[0], info[1]
                     scale = info[2]
                     screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                     
                     info = element["draw_mappings"][1]
-                    sprite = pg.transform.rotate(train_sprites[consists[controlling_consist].train_type]["controls"][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],5))
+                    sprite = pg.transform.rotate(train_sprites["controls"][consists[controlling_consist].train_type][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],5))
                     local_x,local_y = info[0], info[1]
                     local_scale = info[2]
                     screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x*scale+local_x*local_scale)-sprite.get_width()/2,2),float(screen_size[1]-panel.get_height()+(int(y*scale+local_y*local_scale)+0.5)-sprite.get_height()/2)))
 
                     info = element["draw_mappings"][2]
-                    sprite = train_sprites[consists[controlling_consist].train_type]["controls"][info[3]] 
+                    sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
                     x,y = info[0], info[1]
                     scale = info[2]
                     screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
 
 
-            km = train_sprites[consists[controlling_consist].train_type]["controls"]["km"]
+            km = train_sprites["controls"][consists[controlling_consist].train_type]["km"]
             x,y = consists[controlling_consist].consist_info["km_draw_mapouts"][str(consists[controlling_consist].km)]
             scale = consists[controlling_consist].consist_info["km_draw_mapouts"]["scale"]
             screen.blit(km,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
             
-            tk = train_sprites[consists[controlling_consist].train_type]["controls"]["tk"]
+            tk = train_sprites["controls"][consists[controlling_consist].train_type]["tk"]
             x,y = consists[controlling_consist].consist_info["tk_draw_mapouts"][str(consists[controlling_consist].tk)]
             scale = consists[controlling_consist].consist_info["tk_draw_mapouts"]["scale"]
             screen.blit(tk,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
             
-            overlay = train_sprites[consists[controlling_consist].train_type]["controls"]["overlay"]
+            overlay = train_sprites["controls"][consists[controlling_consist].train_type]["overlay"]
             screen.blit(overlay,(screen_size[0]/2-overlay.get_width()/2,screen_size[1]-overlay.get_height()))
 
             if annotation:

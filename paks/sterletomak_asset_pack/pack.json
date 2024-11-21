@@ -36,6 +36,13 @@
         {"name":"park_kultury_track_tstr","filename":"platform","params":[0,2560,64,256,32,0,false,false]},
         {"name":"park_kultury_walls_f","filename":"platform","params":[192,2304,64,256,29,3,true,false]},
         {"name":"park_kultury_platform_f","filename":"platform","params":[0,2304,64,256,3,0,true,false]},
-        {"name":"park_kultury_track_f_tstr","filename":"platform","params":[0,2560,64,256,3,0,true,false]}
+        {"name":"park_kultury_track_f_tstr","filename":"platform","params":[0,2560,64,256,3,0,true,false]},
+        
+        {"name":"vokzalnaya_walls","filename":"platform","params":[192,2816,64,256,29,3,false,false]},
+        {"name":"vokzalnaya_platform","filename":"platform","params":[0,2816,64,256,3,0,false,false]},
+        {"name":"vokzalnaya_track_tstr","filename":"platform","params":[0,3072,64,256,32,0,false,false]},
+        {"name":"vokzalnaya_walls_f","filename":"platform","params":[192,2816,64,256,29,3,true,false]},
+        {"name":"vokzalnaya_platform_f","filename":"platform","params":[0,2816,64,256,3,0,true,false]},
+        {"name":"vokzalnaya_track_f_tstr","filename":"platform","params":[0,3072,64,256,3,0,true,false]}
     ]
 }

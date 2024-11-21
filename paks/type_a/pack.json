@@ -1,58 +1,8 @@
 {
-    "trains":[
+    "consists":[
         {
             "system_name":"type_a",
             "name":"Метропоезд типа А",
-            "sprite_info":[
-                {
-                    "type":"closed",
-                    "x":0,
-                    "y":0,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_1",
-                    "x":0,
-                    "y":96,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_2",
-                    "x":0,
-                    "y":192,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_3",
-                    "x":0,
-                    "y":288,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_4",
-                    "x":0,
-                    "y":384,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"open",
-                    "x":0,
-                    "y":480,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                }
-            ],
             "clickable_size":[112,312],
             "traction_info":{
                 "control_system_type":"direct",
@@ -308,6 +258,7 @@
                 "engine6":"sounds/engine6.wav",
                 "engine7":"sounds/engine7.wav"
             },
+            "control_panel_sprite":"controls.png",
             "control_panel_info":{
                 "panel":{
                     "x":1,
@@ -485,6 +436,120 @@
                     "scale":5
                 }
             }
+        }
+    ],
+    "trains":[
+        {   
+            "system_name":"type_a_",
+            "name":"Метропоезд типа А - Зелёно-горчичный окрас",
+            "designed_for":"type_a",
+            "sprite":"type_a_gm.png",
+            "sprite_info":[
+                {
+                    "type":"closed",
+                    "x":0,
+                    "y":0,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_1",
+                    "x":0,
+                    "y":96,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_2",
+                    "x":0,
+                    "y":192,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_3",
+                    "x":0,
+                    "y":288,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_4",
+                    "x":0,
+                    "y":384,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"open",
+                    "x":0,
+                    "y":480,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                }
+            ]
+        },
+        {   
+            "system_name":"type_a_bc",
+            "name":"Метропоезд типа А - Сине-циановый окрас",
+            "designed_for":"type_a",
+            "sprite":"type_a_bc.png",
+            "sprite_info":[
+                {
+                    "type":"closed",
+                    "x":0,
+                    "y":0,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_1",
+                    "x":0,
+                    "y":96,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_2",
+                    "x":0,
+                    "y":192,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_3",
+                    "x":0,
+                    "y":288,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"inter_4",
+                    "x":0,
+                    "y":384,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                },
+                {
+                    "type":"open",
+                    "x":0,
+                    "y":480,
+                    "w":32,
+                    "h":96,
+                    "layers":20
+                }
+            ]
         }
     ]
 }
