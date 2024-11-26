@@ -44,5 +44,20 @@
         {"name":"vokzalnaya_walls_f","filename":"platform","params":[192,2816,64,256,29,3,true,false]},
         {"name":"vokzalnaya_platform_f","filename":"platform","params":[0,2816,64,256,3,0,true,false]},
         {"name":"vokzalnaya_track_f_tstr","filename":"platform","params":[0,3072,64,256,3,0,true,false]}
+    ],
+    "icons":[
+        {"name":"default_tstr","params":[0,0,64,64,false,false]},
+        {"name":"default_tca1","params":[64,64,64,64,false,false]},
+        {"name":"default_tca2","params":[64,0,64,64,false,false]},
+        {"name":"default_tcb1","params":[64,64,64,64,true,false]},
+        {"name":"default_tcb2","params":[64,0,64,64,true,false]},
+        {"name":"default_tsa1","params":[128,64,64,64,false,false]},
+        {"name":"default_tsa2","params":[128,0,64,64,false,false]},
+        {"name":"default_tsb1","params":[128,64,64,64,true,false]},
+        {"name":"default_tsb2","params":[128,0,64,64,true,false]},
+        {"name":"generic_station_track","params":[192,0,64,64,false,false]},
+        {"name":"generic_station_platform","params":[192,0,64,64,false,false]},
+        {"name":"generic_station_track_f","params":[192,0,64,64,true,false]},
+        {"name":"generic_station_platform_f","params":[192,0,64,64,true,false]}
     ]
 }

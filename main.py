@@ -6,8 +6,9 @@ import time
 import threading
 import random
 import pathlib
+from res.train import *
 
-version = "0.4.5 +Вокзальная, +скины"
+version = "0.4.5.1 да ща слеплю я редачер"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -16,6 +17,7 @@ current_dir = CURRENT_DIRECTORY
 
 #from train import *
 #Train module deprecated and merged with main 11-11-24
+#ага, напиздел. вернул обратно, но теперь оно живёт в res/. 24-11-24 
 
 player_pos = [0,0]
 block_pos = [0,0]
@@ -41,6 +43,7 @@ screen_state = "loading"
 sprite_loading_info = []
 ground_sprites = {}
 train_sprites = {}
+icons = {}
 train_types = {}
 sounds = {}
 consists_info = {}
@@ -51,365 +54,12 @@ pg.mixer.init()
 channel_rolling = pg.mixer.Channel(1)
 channel_rolling.set_volume(0.125)
 
-trains = {}
-
 sign = lambda x: math.copysign(1, x)
 
-class Train():
-    def __init__(self,pos,type, reversed,size,consist,world):
-        self.pos = pos
-        self.type = type
-        self.velocity = 0
-        self.angle = 180
-        self.reversed = reversed
-        self.size = size
-        self.consist = consist
 
-        self.exists = True
-        self.thread = threading.Thread(target=self.cycle,args=[world],daemon=True)
-        self.thread.start()
-        self.switches = []
-
-    def cycle(self,world):
-        block_size = (256,1024)
-
-
-        while self.exists:
-            block_pos = (int((self.pos[0]-(block_size[0] if self.pos[0] < 0 else 0))/block_size[0]),int((self.pos[1]-(block_size[1] if self.pos[1] < 0 else 0))/block_size[1]))
-            local_pos = (self.pos[0]%block_size[0],self.pos[1]%block_size[1])
-
-            if block_pos in world:
-
-                curblock = world[block_pos][0] if type(world[block_pos]) == list else world[block_pos]
-                if curblock[-4:] == "tstr":
-                    self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    if local_pos[0] < 127.95:
-                        self.pos[0] += 0.05
-                    elif local_pos[0] > 128.05:
-                        self.pos[0] -= 0.05
-                    
-                    if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
-                        self.pos[0] += 128-local_pos[0]
-                elif curblock[-4:] == "tca1":
-                    if local_pos[1] > 4*(256-39):
-                        self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                    else:
-                        self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
-                elif curblock[-4:] == "tca2":
-                    if local_pos[1] < 4*(39):
-                        self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                    else:
-                        self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
-                elif curblock[-4:] == "tcb1":
-                    if local_pos[1] > 4*(256-39):
-                        self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                    else:
-                        self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
-                elif curblock[-4:] == "tcb2":
-                    if local_pos[1] < 4*(39):
-                        self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                    else:
-                        self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
-                
-                elif curblock[-4:] == "tsa1":
-                    if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] > 4*(256-39):
-                            self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                        elif local_pos[1] > 4*64:
-                            self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
-                        else:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
-                        self.angle = 180 if 270 >= self.angle >= 90 else 0
-                        if local_pos[0] < 127.95:
-                            self.pos[0] += 0.05
-                        elif local_pos[0] > 128.05:
-                            self.pos[0] -= 0.05
-                        
-                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
-                            self.pos[0] += 128-local_pos[0]
-                elif curblock[-4:] == "tsa2":
-                    if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] < 4*(39):
-                            self.angle = 180-8.25 if 270 >= self.angle >= 90 else 8.25
-                        elif local_pos[1] < 4*(64*3):
-                            self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
-                        else:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
-                        self.angle = 180 if 270 >= self.angle >= 90 else 0
-                        if local_pos[0] < 127.95:
-                            self.pos[0] += 0.05
-                        elif local_pos[0] > 128.05:
-                            self.pos[0] -= 0.05
-                        
-                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
-                            self.pos[0] += 128-local_pos[0]
-                elif curblock[-4:] == "tsb1":
-                    if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] > 4*(256-39):
-                            self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        elif local_pos[1] > 4*64:
-                            self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
-                        else:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
-                        self.angle = 180 if 270 >= self.angle >= 90 else 0
-                        if local_pos[0] < 127.95:
-                            self.pos[0] += 0.05
-                        elif local_pos[0] > 128.05:
-                            self.pos[0] -= 0.05
-                        
-                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
-                            self.pos[0] += 128-local_pos[0]
-                elif curblock[-4:] == "tsb2":
-                    if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] < 4*(39):
-                            self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        elif local_pos[1] < 4*(64*3):
-                            self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
-                        else:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
-                        self.angle = 180 if 270 >= self.angle >= 90 else 0
-                        if local_pos[0] < 127.95:
-                            self.pos[0] += 0.05
-                        elif local_pos[0] > 128.05:
-                            self.pos[0] -= 0.05
-                        
-                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
-                            self.pos[0] += 128-local_pos[0]
-
-            
-            
-            time.sleep(1/120)
-
-class Consist():
-    def __init__(self,train_type,train_sprite,params,consist_info,self_id,world,spawn_pos):
-        global trains
-
-        self.linked_to = []
-        self.pressure = 0
-        self.vz_pressure = 0
-        self.velocity = 0
-        self.pixel_velocity = 0
-        self.angular_velocity = 0
-        self.train_type = train_type
-        self.train_sprite = train_sprite
-        self.wheel_radius = consist_info["wheel_radius"]
-        self.mass = consist_info["mass"]
-        self.wheel_mass = consist_info["wheel_mass"]
-        self.humainzed_velocity = 0
-        self.current_roll_sound = -1
-
-        self.control_wires ={
-            "main_power":False, #1 Главный разъединитель и главный автомат
-            "reserve_controls":False, #1 Резервное управление
-            "batteries":False, #2 Питание батарей
-            "mk":False, #3 Питание мотор-компрессора
-            "reserve_mk":False, #4 Питание резервного мотор-компрессора
-            "reversor_forwards":False, #5 Реверс вперёд
-            "reversor_backwards":False, #6 Реверс назад
-            "rp":True, #7 Реле перегрузки (False = требует восстановки)
-            "rp_return":False, #8 Возврат реле перегрузки
-            "vz_1":False, #9 Вентиль замещения №1
-            "vz_2":False, #10 Вентиль замещения №2
-            "traction":False, #11 Сбор схемы на ход
-            "electro_brake":False, #12 Сбор схемы на торможение
-            "maximal_traction":False, #13 Сбор схемы на максимальный ход
-            "rk_spin":False, #14 Вращение реостатного контроллера
-            "rk_maxed":False, #15 Схема собрана (РК на максимальной допустимой позиции)
-            "left_doors":False, #16 Открытие левых дверей
-            "right_doors":False, #17 Открытие правых дверей
-            "close_doors":False, #18 Закрытие дверей
-            "reserve_close_doors":False, #19 Резервное закрытие дверей
-            "doors_open":False, #20 Двери открыты
-            "doors_open_duplicate":False, #21 Двери открыты
-            "light_on":False, #22 Включение освещения
-            "light_off":False, #23 Выключение освещения
-            "ars":False, #24 Включение АРС
-            "als":False, #25 Включение АЛС
-            "ars_0":False, #26 АРС - 0
-            "ars_20":False, #27 АРС - НЧ [20]
-            "ars_40":False, #28 АРС - 40
-            "ars_60":False, #29 АРС - 60
-            "ars_70":False, #30 АРС - 70
-            "ars_80":False, #31 АРС - 80
-            "unused":False, #32 пока не используется
-
-        }
-        self.consist_info = consist_info
-        self.doors = {
-            "l":"closed",
-            "r":"closed",
-            "timer_l":0,
-            "timer_r":0,
-            "action_l":None,
-            "action_r":None,
-        }
-
-        self.km = consist_info["default_km"]
-        self.tk = consist_info["default_tk"]
-
-        self.energy = 0
-        self.engine_voltage = 0
-        self.engine_current = 0
-        self.electromotive_force = 0
-        self.vz_1 = 0
-        self.vz_2 = 0
-        self.engine_constant = consist_info["engine_constant"]
-        self.engine_resistance = consist_info["engine_resistance"]
-        self.transmissional_number = consist_info["transmissional_number"]
-        self.break_cyllinder_surface = consist_info["break_cyllinder_surface"]
-
-        self.controlling_direction = 0
-        self.traction_direction = 0
-        self.velocity_direction = 0
-
-        pos = spawn_pos
-        self.train_amount = 3
-        for i in range(self.train_amount):
-            train_id = random.randint(0,99999)
-            trains[train_id] = Train([pos[0],pos[1]+320*i],train_sprite, i+1==self.train_amount,params["size"],self_id,world)
-            self.linked_to.append(train_id)
-
-        self.exists = True
-        self.thread = threading.Thread(target=self.cycle,daemon=True) #,args=[world]
-        self.thread.start()
-
-    def cycle(self):
-        global trains
-        pi = 3.1415
-        wheels = 8*self.train_amount
-        engines = 2*self.train_amount
-        magical_proskalzyvanie_scale = 0.95 #на случай если движок больно резвый
-
-        while self.exists:
-            for elem_id, element in enumerate(self.consist_info["element_mapouts"]):
-                if element["type"] == "lamp":
-                    self.consist_info["element_mapouts"][elem_id]["state"] = self.control_wires[element["connection"]]
-                elif element["type"] == "analog_scale":
-                    value = 0
-                    if element["scale"] == "velocity": value = self.velocity*3.6
-                    elif element["scale"] == "amps": value = self.engine_current*self.traction_direction*self.control_wires["rp"]
-                    elif element["scale"] == "volts": value = self.engine_voltage*self.control_wires["rp"]
-                    elif element["scale"] == "press": value = max(self.vz_1,self.vz_2,self.pressure)
-
-                    if value != element["angle"]:
-                        self.consist_info["element_mapouts"][elem_id]["angle"] += (element["max_value"]-element["min_value"])/100*sign(value-element["angle"])
-                        if self.consist_info["element_mapouts"][elem_id]["angle"] > element["max_value"]: self.consist_info["element_mapouts"][elem_id]["angle"] = element["max_value"]
-                        elif self.consist_info["element_mapouts"][elem_id]["angle"] < element["min_value"]: self.consist_info["element_mapouts"][elem_id]["angle"] = element["min_value"]
-                        elif abs(value-self.consist_info["element_mapouts"][elem_id]["angle"]) <(element["max_value"]-element["min_value"])/100: self.consist_info["element_mapouts"][elem_id]["angle"] = value
-
-
-            if self.consist_info["control_system_type"] == "direct":
-                if self.control_wires["rp_return"] and self.km == 0:
-                    self.control_wires["rp"] = True
-                if self.control_wires["right_doors"] and self.doors["r"] == "closed":
-                    self.doors["action_r"] = "open"
-                if self.control_wires["left_doors"] and self.doors["l"] == "closed":
-                    self.doors["action_l"] = "open"
-                if self.control_wires["close_doors"]:
-                    self.doors["action_r"] = "close" if self.doors["r"] != "closed" else None
-                    self.doors["action_l"] = "close" if self.doors["l"] != "closed" else None
-                self.control_wires["doors_open"] = self.doors["r"] != "closed" or self.doors["l"] != "closed"
-
-                if self.doors["action_r"] == "open":
-                    z = list(self.consist_info["door_animation_states"].keys())
-                    if self.doors["timer_r"] == 0:
-                        self.doors["r"] = z[z.index(self.doors["r"])+1]
-                        if self.doors["r"] != "open":
-                            self.doors["timer_r"] = self.consist_info["door_animation_states"][self.doors["r"]]
-                        else:
-                            self.doors["action_r"] = None
-                    if self.doors["timer_r"] > 0: self.doors["timer_r"] -= 1
-                elif self.doors["action_r"] == "close":
-                    z = list(self.consist_info["door_animation_states"].keys())
-                    if self.doors["timer_r"] == 0:
-                        self.doors["r"] = z[z.index(self.doors["r"])-1]
-                        if self.doors["r"] != "closed":
-                            self.doors["timer_r"] = self.consist_info["door_animation_states"][self.doors["r"]]
-                        else:
-                            self.doors["action_r"] = None
-                    if self.doors["timer_r"] > 0: self.doors["timer_r"] -= 1
-
-                if self.doors["action_l"] == "open":
-                    z = list(self.consist_info["door_animation_states"].keys())
-                    if self.doors["timer_l"] == 0:
-                        self.doors["l"] = z[z.index(self.doors["l"])+1]
-                        if self.doors["l"] != "open":
-                            self.doors["timer_l"] = self.consist_info["door_animation_states"][self.doors["l"]]
-                        else:
-                            self.doors["action_l"] = None
-                    if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
-                elif self.doors["action_l"] == "close":
-                    z = list(self.consist_info["door_animation_states"].keys())
-                    if self.doors["timer_l"] == 0:
-                        self.doors["l"] = z[z.index(self.doors["l"])-1]
-                        if self.doors["l"] != "closed":
-                            self.doors["timer_l"] = self.consist_info["door_animation_states"][self.doors["l"]]
-                        else:
-                            self.doors["action_l"] = None
-                    if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
-
-                self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number
-                engine_power = 0
-                if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0 and self.control_wires["rp"]:
-                    self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
-                    self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
-                    if self.velocity_direction == 0: 
-                        self.velocity_direction = self.traction_direction
-                    self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
-                    if self.engine_current <= 0: self.engine_current = 0
-                    if self.engine_current >= self.consist_info["peril_current"]:
-                        self.control_wires["rp"] = False
-                        self.engine_current = 0
-                        self.engine_voltage = 0
-                    engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
-                
-                self.vz_1 = (self.vz_1 + (2*self.control_wires["vz_1"]-1)*self.consist_info["valve_params"]["vz_1"][1]) 
-                self.vz_1 = (self.vz_1 if self.vz_1 >= 0 else 0)
-                self.vz_1 = (self.vz_1 if self.vz_1 <= self.consist_info["valve_params"]["vz_1"][0] else self.consist_info["valve_params"]["vz_1"][0])
-
-                if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
-                    if self.pressure != self.consist_info["tk_mapouts"][str(self.tk)]["target"]:
-                        if abs(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) < self.consist_info["tk_mapouts"][str(self.tk)]["speed"]:
-                            self.pressure = self.consist_info["tk_mapouts"][str(self.tk)]["target"]
-                        else:
-                            self.pressure+=-sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"])*self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
-
-                self.control_wires["traction"] = engine_power > 0
-                self.control_wires["maximal_traction"] = self.km == self.consist_info["max_km"]
-                self.control_wires["reversor_forwards"] = self.controlling_direction == 1
-                self.control_wires["reversor_backwards"] = self.controlling_direction == -1
-
-                engine_power*=engines
-
-                kinetic_energy = self.mass*(self.velocity**2)/2*self.train_amount
-                revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
-                friction_energy = 0.05*self.wheel_mass*9.81*self.angular_velocity
-                break_friction_energy = wheels*1*self.velocity*(max(self.pressure,self.vz_1,self.vz_2)*100000*self.break_cyllinder_surface)
-
-                self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-break_friction_energy/120,5)
-                self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
-                self.velocity = round(complex(self.velocity).real,5)
-                self.angular_velocity = round(self.velocity/self.wheel_radius,5)
-                if self.velocity == 0: self.velocity_direction = 0
-
-
-            speed_modifier = 1
-            #self.humainzed_velocity = round(self.velocity*120*0.15/4*speed_modifier,5)
-            self.pixel_velocity = round(self.velocity/120/0.15*4*speed_modifier,5)
-
-            for train_id in self.linked_to:
-                trains[train_id].velocity = self.velocity
-                trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.pixel_velocity*self.velocity_direction,2)
-                trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.pixel_velocity*self.velocity_direction,2)
-
-            time.sleep(1/120)
 
 def sprite_load_routine():
-    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress
+    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons
     pak_folders = os.listdir(os.path.join(current_dir,"paks"))
     train_sprites["sprites"] = {}
     train_sprites["controls"] = {}
@@ -469,7 +119,14 @@ def sprite_load_routine():
                             ground_sprites[info_pack["name"]][q] = surface
                             progress+=1
                         ground_sprites[info_pack["name"]]["height"] = (info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor-1
-                    
+                
+                if "icons" in pack_parameters:
+                    for icon_param in pack_parameters["icons"]:
+                        icons[icon_param["name"]] = pg.transform.flip(
+                            temp_sprites["icons"].subsurface(icon_param["params"][0],icon_param["params"][1],icon_param["params"][2],icon_param["params"][3]),
+                            icon_param["params"][4],icon_param["params"][5])
+
+
                 if "consists" in pack_parameters:
                     for train in pack_parameters["consists"]:
                         train_parameters = train
@@ -554,18 +211,16 @@ def sprite_load_routine():
                             train_sprites["sprites"][key][door_type]["height"] = sprite_params["layers"]*sprite_stack_factor-1
         progress+=1
 
-    screen_state = "playing"
+    screen_state = "title"
     consists = {}
-    consist_key = random.randint(0,999)
-    consists[consist_key] = Consist("type_a","type_a_bc",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*0.5,1024*-16.5])
 
 world = {
     (0,17):["tstr"],
-    (0,16):["tsb1"],(-1,6):["tcb2"],
+    (0,16):["tsb1"],(-1,16):["tcb2"],
     (1,15):["stroitelnaya_platform_f","stroitelnaya_walls_f"],(0,15):["stroitelnaya_track_f_tstr"],(-1,15):["stroitelnaya_track_tstr"],(-2,15):["stroitelnaya_platform","stroitelnaya_walls"],
     (0,14):["tstr"],(-1,14):["tstr"],
     (0,13):["tstr"],(-1,13):["tstr"],
-    (1,12):["tca2"],(0,12):["tca1"],(-1,9):["tcb1"],(-2,9):["tcb2"],
+    (1,12):["tca2"],(0,12):["tca1"],(-1,12):["tcb1"],(-2,12):["tcb2"],
     (1,11):["tstr"],(-2,11):["tstr"],
     (1,10):["tstr"],(-2,10):["tstr"],
     (1,9):["tsb1"],(0,9):["tcb2"],(-2,9):["tstr"],
@@ -658,11 +313,77 @@ while working:
         screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-text.get_height()))
         line_pos = (line_pos + 2) % 280
         pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos) if 0 < line_pos < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
-        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-6) if 0 < line_pos-6     < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-6) if 0 < line_pos-6< 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
         pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-12) if 0 < line_pos-12 < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
         pg.draw.rect(screen,(255,255,255),(screen_size[0]/2-124,screen_size[1]/2+2,248,text.get_height()-4),2)
 
+    elif screen_state == "title":
+        
+        text_color = (200,200,200)
+        screen.fill(tunnel_nothingness)
+        text = font.render(f"Alphen's Isometric Subway Simulator v{version_id}", True, text_color)
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-1.5*text.get_height()))
+        text = font.render(f"1 for game", True, text_color)
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-0.5*text.get_height()))
+        text = font.render(f"2 for editor", True, text_color)
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+0.5*text.get_height()))
 
+        if pg.K_1 in keydowns: 
+            player_pos = [0,0]
+            screen_state = "playing"
+        elif pg.K_2 in keydowns: 
+            player_pos = [0,0]
+            screen_state = "editor"
+
+    elif screen_state == "editor":
+        screen.fill(tunnel_nothingness)
+        editor_block_size = (128,128)
+        block_pos = [int((player_pos[0]-(editor_block_size[0] if player_pos[0] < 0 else 0))/editor_block_size[0]),
+                     int((player_pos[1]-(editor_block_size[1] if player_pos[1] < 0 else 0))/editor_block_size[1])]
+        
+        for block_x in range(-int(screen_size[0]/editor_block_size[0]),int(screen_size[0]/editor_block_size[0])):
+            for block_y in range(-int(screen_size[1]/editor_block_size[1]),int(screen_size[1]/editor_block_size[1])):
+                tile_world_position = (block_pos[0]+block_x,block_pos[1]+block_y)
+                if tile_world_position in world:
+                    pg.draw.rect(screen,(255,255,255),(screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
+                                                       screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1],
+                                                       editor_block_size[0],
+                                                       editor_block_size[1]))
+                    if world[tile_world_position][0] in icons:
+                        pass
+                    else:
+                        icon = None
+                        if world[tile_world_position][0][-4:] == "tstr": icon = "default_tstr"
+                        elif world[tile_world_position][0][-4:] == "tca1": icon = "default_tca1"
+                        elif world[tile_world_position][0][-4:] == "tca2": icon = "default_tca2"
+                        elif world[tile_world_position][0][-4:] == "tcb1": icon = "default_tcb1"
+                        elif world[tile_world_position][0][-4:] == "tcb2": icon = "default_tcb2"
+                        elif world[tile_world_position][0][-4:] == "tsa1": icon = "default_tsa1"
+                        elif world[tile_world_position][0][-4:] == "tsa2": icon = "default_tsa2"
+                        elif world[tile_world_position][0][-4:] == "tsb1": icon = "default_tsb1"
+                        elif world[tile_world_position][0][-4:] == "tsb2": icon = "default_tsb2"
+                        if icon:
+                            screen.blit(pg.transform.scale(icons[icon],editor_block_size
+                                ),(
+                                screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
+                                screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1])
+                            )
+        
+        pressed = pg.key.get_pressed()
+
+        speed = 8 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 2
+        if pressed[pg.K_DOWN]: 
+            player_pos[1]+=speed*clock.get_fps()/60
+        if pressed[pg.K_UP]: 
+            player_pos[1]-=speed*clock.get_fps()/60
+        if pressed[pg.K_LEFT]: 
+            player_pos[0]-=speed*clock.get_fps()/60
+        if pressed[pg.K_RIGHT]: 
+            player_pos[0]+=speed*clock.get_fps()/60
+        if pg.K_ESCAPE in keydowns:
+            screen_state = "title"
+                
+    
     elif screen_state == "playing":
         valid = []
         valid_draw = {}
@@ -1072,7 +793,7 @@ while working:
                 screen.blit(s, (m_pos[0]+10,m_pos[1]+20))
                 screen.blit(annotation, (m_pos[0]+15,m_pos[1]+25))
 
-        if pg.K_TAB in keydowns:
+        if pg.K_TAB in keydowns and trains != {}:
             if controlling == -1:
                 controlling = list(sorted(dict(trains).keys()))[0]
                 controlling_consist = trains[controlling].consist
@@ -1089,7 +810,36 @@ while working:
             if pressed[pg.K_LEFT]: 
                 player_pos[0]-=speed*clock.get_fps()/60
             if pressed[pg.K_RIGHT]: 
-                player_pos[0]+=speed*clock.get_fps()/60   
+                player_pos[0]+=speed*clock.get_fps()/60
+            if pg.K_ESCAPE in keydowns:
+                screen_state = "title"
+                for link in list(consists.keys()):
+                    consists[link].exists = False
+                    consists.pop(link)
+                for link in list(trains.keys()):
+                    trains[link].exists = False
+                    trains.pop(link)
+            if pg.K_s in keydowns:
+                consist_key = random.randint(0,999)
+                consists[consist_key] = Consist("type_a","type_a_bc",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
+            if pg.K_DELETE in keydowns:
+                wipe_list = []
+                wipe_list_consists = []
+                for train_id in trains:
+                    if block_pos == [int((trains[train_id].pos[0]-(block_size[0] if trains[train_id].pos[0] < 0 else 0))/block_size[0]),
+                                     int((trains[train_id].pos[1]-(block_size[1] if trains[train_id].pos[1] < 0 else 0))/block_size[1])]:
+                        consist_key = trains[train_id].consist
+                        if consist_key not in wipe_list_consists: 
+                            wipe_list_consists.append(consist_key)
+                            for link in consists[consist_key].linked_to:
+                                wipe_list.append(link)
+                for link in wipe_list_consists:
+                    consists[link].exists = False
+                    consists.pop(link)
+                for link in wipe_list:
+                    trains[link].exists = False
+                    trains.pop(link)
+
         else:
             player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
             if pg.K_UP in keydowns and consists[controlling_consist].km < consists[controlling_consist].consist_info["max_km"]:
