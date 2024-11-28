@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.4.5.1 да ща слеплю я редачер"
+version = "0.5 редактор"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -49,6 +49,10 @@ sounds = {}
 consists_info = {}
 consists = {}
 progress = 0
+current_tool = -1
+current_toolbar = 0
+custom_tool_parameters = ["","",0]
+toolbar = [["tstr","tca1","tca2","tcb1","tcb2","tsa1","tsa2","tsb1","tsb2","custom_tile"]]
 
 pg.mixer.init()
 channel_rolling = pg.mixer.Channel(1)
@@ -300,8 +304,14 @@ while working:
             working = False
         if evt.type == pg.KEYDOWN:
             keydowns.append(evt.key)
-            if evt.key == pg.K_d:
+            if evt.key == pg.K_d and screen_state == "editor":
                 debug = (debug+1)%3
+            
+            if screen_state == "editor" and custom_tool_parameters[2] != 0:
+                if evt.key == pg.K_BACKSPACE:
+                    custom_tool_parameters[custom_tool_parameters[2]-1] = custom_tool_parameters[custom_tool_parameters[2]-1][:-1]
+                else:
+                    custom_tool_parameters[custom_tool_parameters[2]-1] += evt.unicode
         if evt.type == pg.MOUSEBUTTONDOWN and not m_btn[0] and not m_btn[2]:
             mouse_clicked = True
         elif evt.type == pg.MOUSEBUTTONUP:
@@ -336,24 +346,40 @@ while working:
             screen_state = "editor"
 
     elif screen_state == "editor":
+        
+        editor_block_size = (128,512)
+        iconbar_height = screen_size[1]/8
+        iconbar_size = (editor_block_size[0]/editor_block_size[1]*iconbar_height,iconbar_height)
+        textbox_length = 280
+
         screen.fill(tunnel_nothingness)
-        editor_block_size = (128,128)
         block_pos = [int((player_pos[0]-(editor_block_size[0] if player_pos[0] < 0 else 0))/editor_block_size[0]),
                      int((player_pos[1]-(editor_block_size[1] if player_pos[1] < 0 else 0))/editor_block_size[1])]
         
-        for block_x in range(-int(screen_size[0]/editor_block_size[0]),int(screen_size[0]/editor_block_size[0])):
-            for block_y in range(-int(screen_size[1]/editor_block_size[1]),int(screen_size[1]/editor_block_size[1])):
+        for block_x in range(-1-int(screen_size[0]/editor_block_size[0]),int(screen_size[0]/editor_block_size[0])+2):
+            for block_y in range(-1-int(screen_size[1]/editor_block_size[1]),int(screen_size[1]/editor_block_size[1])+2):
                 tile_world_position = (block_pos[0]+block_x,block_pos[1]+block_y)
+                pg.draw.rect(screen,(30,30,30),(screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
+                                                    screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1],
+                                                    editor_block_size[0],
+                                                    editor_block_size[1]
+                            ),4
+                            
+                )
                 if tile_world_position in world:
-                    pg.draw.rect(screen,(255,255,255),(screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
-                                                       screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1],
-                                                       editor_block_size[0],
-                                                       editor_block_size[1]))
                     if world[tile_world_position][0] in icons:
-                        pass
+                        screen.blit(pg.transform.scale(icons[world[tile_world_position][0]],editor_block_size
+                                ),(
+                                screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
+                                screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1])
+                            )
                     else:
                         icon = None
-                        if world[tile_world_position][0][-4:] == "tstr": icon = "default_tstr"
+                        if world[tile_world_position][0][-8:] == "platform": icon = "generic_st_platform"
+                        elif world[tile_world_position][0][-10:] == "platform_f": icon = "generic_st_platform_f"
+                        elif world[tile_world_position][0][-10:] == "track_tstr": icon = "generic_st_track"
+                        elif world[tile_world_position][0][-12:] == "track_f_tstr": icon = "generic_st_track_f"
+                        elif world[tile_world_position][0][-4:] == "tstr": icon = "default_tstr"
                         elif world[tile_world_position][0][-4:] == "tca1": icon = "default_tca1"
                         elif world[tile_world_position][0][-4:] == "tca2": icon = "default_tca2"
                         elif world[tile_world_position][0][-4:] == "tcb1": icon = "default_tcb1"
@@ -369,9 +395,76 @@ while working:
                                 screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1])
                             )
         
-        pressed = pg.key.get_pressed()
+        pg.draw.rect(screen,(75,75,75),(0,screen_size[1]-iconbar_height,screen_size[0],iconbar_height))
+        for item_pos, item in enumerate(toolbar[current_toolbar]):
 
-        speed = 8 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 2
+            pg.draw.rect(screen,(125,125,125) if current_tool != item_pos else (175,175,175),(
+                screen_size[0]/2+(iconbar_size[0]+16)*(item_pos-len(toolbar[current_toolbar])/2),
+                screen_size[1]-iconbar_height,
+                iconbar_size[0],
+                iconbar_size[1]
+                ))
+            screen.blit(pg.transform.scale(icons[item],iconbar_size),(
+                screen_size[0]/2+(iconbar_size[0]+16)*(item_pos-len(toolbar[current_toolbar])/2),
+                screen_size[1]-iconbar_height
+                )
+            )
+        
+        text = font.render(custom_tool_parameters[0]+" ",True,(10,10,10))
+        textbox_height = text.get_height()+4
+        pg.draw.rect(screen,(200,200,200) if custom_tool_parameters[2] != 1 else (220,220,220),(screen_size[0]-textbox_length-20,screen_size[1]-iconbar_height/2-textbox_height*1.5,textbox_length,textbox_height))
+        screen.blit(text,(screen_size[0]-textbox_length-18,screen_size[1]-iconbar_height/2-textbox_height*1.5+2))
+        text = font.render(custom_tool_parameters[1]+" ",True,(10,10,10))
+        pg.draw.rect(screen,(200,200,200) if custom_tool_parameters[2] != 2 else (220,220,220),(screen_size[0]-textbox_length-20,screen_size[1]-iconbar_height/2+textbox_height*0.5,textbox_length,textbox_height))
+        screen.blit(text,(screen_size[0]-textbox_length-18,screen_size[1]-iconbar_height/2+textbox_height*0.5+2))
+
+        
+        pressed = pg.key.get_pressed()
+        m_pos = pg.mouse.get_pos()
+        m_btn = pg.mouse.get_pressed()
+
+        if m_btn[0] or m_btn[1] or m_btn[2]:
+            if m_pos[1] < screen_size[1]-iconbar_height:
+                m_world_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,
+                               player_pos[1]+m_pos[1]-screen_size[1]/2)
+                m_block_pos = (int((m_world_pos[0]-(editor_block_size[0] if m_world_pos[0] < 0 else 0))/editor_block_size[0]),
+                            int((m_world_pos[1]-(editor_block_size[1] if m_world_pos[1] < 0 else 0))/editor_block_size[1]))
+                if m_btn[0] and current_tool != -1 and m_block_pos not in world:
+                    if toolbar[current_toolbar][current_tool] != "custom_tile":
+                        world[m_block_pos] = [toolbar[current_toolbar][current_tool]]
+                        if toolbar[current_toolbar][current_tool][-4:-1] in ["tsa","tsb"]:
+                            switches[m_block_pos] = False
+                    else:
+                        world[m_block_pos] = [custom_tool_parameters[0],custom_tool_parameters[1]]
+                        if custom_tool_parameters[0][-4:-1] in ["tsa","tsb"]:
+                            switches[m_block_pos] = False
+                elif m_btn[2] and m_block_pos in world:
+                    world.pop(m_block_pos)
+                    if m_block_pos in switches:
+                        switches.pop(m_block_pos)
+            elif mouse_clicked:
+                for item_pos, item in enumerate(toolbar[current_toolbar]):
+                    if (screen_size[0]/2+(iconbar_size[0]+16)*(item_pos-len(toolbar[current_toolbar])/2) <= m_pos[0] and
+                        screen_size[0]/2+(iconbar_size[0]+16)*(item_pos-len(toolbar[current_toolbar])/2)+iconbar_size[0] >= m_pos[0] and
+                        screen_size[1]-iconbar_height <= m_pos[1] and
+                        screen_size[1] >= m_pos[1]):
+                        if item_pos == current_tool: current_tool = -1
+                        else: current_tool = item_pos
+                
+                if current_tool != -1 and toolbar[current_toolbar][current_tool] == "custom_tile":
+                    text = font.render(custom_tool_parameters[0]+" ",True,(10,10,10))
+                    if (screen_size[0]-textbox_length-20 <= m_pos[0] and
+                        screen_size[0]-20 >= m_pos[0] and
+                        screen_size[1]-iconbar_height/2-textbox_height*1.5 <= m_pos[1] and
+                        screen_size[1]-iconbar_height/2-textbox_height*0.5 >= m_pos[1]):
+                        custom_tool_parameters[2] = 1 if custom_tool_parameters[2] != 1 else 0
+                    elif (screen_size[0]-textbox_length-20 <= m_pos[0] and
+                        screen_size[0]-20 >= m_pos[0] and
+                        screen_size[1]-iconbar_height/2+textbox_height*0.5 <= m_pos[1] and
+                        screen_size[1]-iconbar_height/2+textbox_height*1.5 >= m_pos[1]):
+                        custom_tool_parameters[2] = 2 if custom_tool_parameters[2] != 2 else 0
+ 
+        speed = 16 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 4
         if pressed[pg.K_DOWN]: 
             player_pos[1]+=speed*clock.get_fps()/60
         if pressed[pg.K_UP]: 
