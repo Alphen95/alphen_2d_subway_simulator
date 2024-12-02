@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5 редактор"
+version = "0.5.1 горячие клавиши"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -29,6 +29,8 @@ following = -1
 debug = 0
 world_angle = 45
 compression = 2
+volume = 0
+hotkeys = {"vz_1":pg.K_n,"left_doors":pg.K_a,"right_doors":pg.K_d,"close_doors":pg.K_v}
 
 pg.init()
 clock = pg.time.Clock()
@@ -152,7 +154,7 @@ def sprite_load_routine():
                         sounds[key] = {}
                         for sound in train_parameters["sound_loading_info"]:
                             sounds[key][sound] = pg.mixer.Sound(os.path.join(CURRENT_DIRECTORY,"paks",folder,train_parameters["sound_loading_info"][sound]))
-                            sounds[key][sound].set_volume(0.0)
+                            sounds[key][sound].set_volume(volume)
                 if "trains" in pack_parameters:
                     for train in pack_parameters["trains"]:
                         
@@ -296,6 +298,7 @@ sprite_thread.start()
 while working:
     tunnel_nothingness = (15,15,15)
     keydowns = []
+    keyups = []
     mouse_clicked_prev = mouse_clicked
     mouse_clicked = False
     mouse_released = False
@@ -312,6 +315,8 @@ while working:
                     custom_tool_parameters[custom_tool_parameters[2]-1] = custom_tool_parameters[custom_tool_parameters[2]-1][:-1]
                 else:
                     custom_tool_parameters[custom_tool_parameters[2]-1] += evt.unicode
+        if evt.type == pg.KEYUP:
+            keyups.append(evt.key)
         if evt.type == pg.MOUSEBUTTONDOWN and not m_btn[0] and not m_btn[2]:
             mouse_clicked = True
         elif evt.type == pg.MOUSEBUTTONUP:
@@ -348,8 +353,8 @@ while working:
     elif screen_state == "editor":
         
         editor_block_size = (128,512)
-        iconbar_height = screen_size[1]/8
-        iconbar_size = (editor_block_size[0]/editor_block_size[1]*iconbar_height,iconbar_height)
+        iconbar_height = 140
+        iconbar_size = (64,128)
         textbox_length = 280
 
         screen.fill(tunnel_nothingness)
@@ -397,16 +402,23 @@ while working:
         
         pg.draw.rect(screen,(75,75,75),(0,screen_size[1]-iconbar_height,screen_size[0],iconbar_height))
         for item_pos, item in enumerate(toolbar[current_toolbar]):
+            w,h = icons[item].get_size()
+            surf = icons[item].subsurface((
+                (w-min(w,h))/2,
+                (h-min(w,h)*(iconbar_size[1]/iconbar_size[0]))/2,
+                min(w,h),
+                min(w,h)*(iconbar_size[1]/iconbar_size[0])
+            ))
 
             pg.draw.rect(screen,(125,125,125) if current_tool != item_pos else (175,175,175),(
                 screen_size[0]/2+(iconbar_size[0]+16)*(item_pos-len(toolbar[current_toolbar])/2),
-                screen_size[1]-iconbar_height,
+                screen_size[1]-iconbar_height/2-iconbar_size[1]/2,
                 iconbar_size[0],
                 iconbar_size[1]
                 ))
-            screen.blit(pg.transform.scale(icons[item],iconbar_size),(
+            screen.blit(pg.transform.scale(surf,iconbar_size),(
                 screen_size[0]/2+(iconbar_size[0]+16)*(item_pos-len(toolbar[current_toolbar])/2),
-                screen_size[1]-iconbar_height
+                screen_size[1]-iconbar_height/2-iconbar_size[1]/2
                 )
             )
         
@@ -769,8 +781,11 @@ while working:
 
 
             panel = train_sprites["controls"][consists[controlling_consist].train_type]["panel"]
+
+            hotkeys_check = [pressed[hotkeys[key]] or hotkeys[key] in keyups for key in hotkeys]
+
             if (screen_size[0]/2+panel.get_width()/2 >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2 and 
-                screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()):
+                screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()) or True in hotkeys_check:
                 for elem_id, element in enumerate(consists[controlling_consist].consist_info["element_mapouts"]):
                     if element["type"] != "analog_scale":
                         info = element["draw_mappings"][element["state"]]
@@ -780,9 +795,10 @@ while working:
                             if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
                                 screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale): 
                                 annotation = annotation_font.render(element["name"],True,(255,255,255))
+                            self_hotkey = hotkeys[element["connection"]] if element["connection"] in hotkeys else None
                             if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
-                                screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale and (m_btn[0] or mouse_clicked)):
-                                if element["type"] == "button" and (m_btn[0] and element["state"] != element["default"] or mouse_clicked):
+                                screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale and (m_btn[0] or mouse_clicked )) or (self_hotkey != None and pressed[self_hotkey]):
+                                if element["type"] == "button" and (m_btn[0] and element["state"] != element["default"] or mouse_clicked or self_hotkey != None and pressed[self_hotkey]):
                                     consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(element["default"])
                                     #print(element["connection"],"left_doors",element["connection"] == "left_doors",trains[controlling].reversed,element["connection"] == "left_doors" and trains[controlling].reversed)
                                     if element["connection"] == "left_doors" and trains[controlling].reversed:
@@ -791,9 +807,10 @@ while working:
                                         consists[controlling_consist].control_wires["left_doors"] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
                                     elif element["connection"] not in ["left_doors","right_doors"] or not trains[controlling].reversed:
                                         consists[controlling_consist].control_wires[element["connection"]] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
-                                    if mouse_clicked and len(element["draw_mappings"][element["state"]]) == 7:
+                                    if (mouse_clicked or self_hotkey in keydowns) and len(element["draw_mappings"][element["state"]]) == 7:
                                         sounds[consists[controlling_consist].train_type][element["draw_mappings"][element["state"]][6]].play()
-                                elif element["type"] == "switch" and mouse_clicked and not mouse_clicked_prev:
+
+                                elif element["type"] == "switch" and (mouse_clicked and not mouse_clicked_prev or self_hotkey in keydowns):
                                     consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"] = not(consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"])
                                     if element["connection"] == "left_doors" and trains[controlling].reversed:
                                         consists[controlling_consist].control_wires["right_doors"] = consists[controlling_consist].consist_info["element_mapouts"][elem_id]["state"]
@@ -959,6 +976,8 @@ while working:
                     consists[controlling_consist].controlling_direction += 1
                 elif pg.K_0 in keydowns and consists[controlling_consist].km == 0 and consists[controlling_consist].controlling_direction > -1:
                     consists[controlling_consist].controlling_direction -= 1
+            
+            
             #print(consists[trains[controlling].consist].velocity)
             
             if pressed[pg.K_ESCAPE]: controlling = -1
