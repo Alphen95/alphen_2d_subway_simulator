@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.1 горячие клавиши"
+version = "0.5.2 меню спавна (сырое, но рабочее)"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -315,7 +315,7 @@ while working:
             working = False
         if evt.type == pg.KEYDOWN:
             keydowns.append(evt.key)
-            if evt.key == pg.K_d and screen_state == "editor":
+            if evt.key == pg.K_d and screen_state != "editor":
                 debug = (debug+1)%3
             
             if screen_state == "editor" and custom_tool_parameters[2] != 0:
@@ -1009,7 +1009,27 @@ while working:
                 if is_on_button and mouse_clicked:
                     spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][(train_repaint_dictionary[spawn_menu[2]].index(spawn_menu[3])+1)%len(train_repaint_dictionary[spawn_menu[2]])]
             else:
-                consists[consist_key] = Consist("type_e","type_e_bg",train_types["type_e"],consists_info["type_e"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
+                if mouse_clicked and m_btn[0]:
+                    consist_key = random.randint(0,999)
+                    while consist_key in consists: consist_key = random.randint(0,999)
+                    consists[consist_key] = Consist(spawn_menu[2],spawn_menu[3],train_types[spawn_menu[2]],consists_info[spawn_menu[2]],consist_key,world,[256*mouse_block_pos[0]+128,world_mouse_coord[1]])
+                elif mouse_clicked and m_btn[2]:
+                    wipe_list = []
+                    wipe_list_consists = []
+                    for train_id in trains:
+                        if mouse_block_pos == (int((trains[train_id].pos[0]-(block_size[0] if trains[train_id].pos[0] < 0 else 0))/block_size[0]),
+                                        int((trains[train_id].pos[1]-(block_size[1] if trains[train_id].pos[1] < 0 else 0))/block_size[1])):
+                            consist_key = trains[train_id].consist
+                            if consist_key not in wipe_list_consists: 
+                                wipe_list_consists.append(consist_key)
+                                for link in consists[consist_key].linked_to:
+                                    wipe_list.append(link)
+                    for link in wipe_list_consists:
+                        consists[link].exists = False
+                        consists.pop(link)
+                    for link in wipe_list:
+                        trains[link].exists = False
+                        trains.pop(link)
 
         if pg.K_TAB in keydowns and trains != {}:
             if controlling == -1:
@@ -1045,6 +1065,7 @@ while working:
                     spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][0]
                 #consist_key = random.randint(0,999)
                 #consists[consist_key] = Consist("type_e","type_e_bg",train_types["type_e"],consists_info["type_e"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
+            '''
             if pg.K_DELETE in keydowns:
                 wipe_list = []
                 wipe_list_consists = []
@@ -1062,7 +1083,7 @@ while working:
                 for link in wipe_list:
                     trains[link].exists = False
                     trains.pop(link)
-
+                '''
         else:
             player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
             if pg.K_UP in keydowns and consists[controlling_consist].km < consists[controlling_consist].consist_info["max_km"]:
