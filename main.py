@@ -31,6 +31,8 @@ world_angle = 45
 compression = 2
 volume = 0
 hotkeys = {"vz_1":pg.K_n,"left_doors":pg.K_a,"right_doors":pg.K_d,"close_doors":pg.K_v}
+text_color = (200,200,200)
+text_black = (25,25,25)
 
 pg.init()
 clock = pg.time.Clock()
@@ -45,6 +47,7 @@ screen_state = "loading"
 sprite_loading_info = []
 ground_sprites = {}
 train_sprites = {}
+train_repaint_dictionary = {}
 icons = {}
 train_types = {}
 sounds = {}
@@ -54,6 +57,7 @@ progress = 0
 current_tool = -1
 current_toolbar = 0
 custom_tool_parameters = ["","",0]
+spawn_menu = [False, 0, None, None]
 toolbar = [["tstr","tca1","tca2","tcb1","tcb2","tsa1","tsa2","tsb1","tsb2","custom_tile"]]
 
 pg.mixer.init()
@@ -65,7 +69,7 @@ sign = lambda x: math.copysign(1, x)
 
 
 def sprite_load_routine():
-    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons
+    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons,train_repaint_dictionary
     pak_folders = os.listdir(os.path.join(current_dir,"paks"))
     train_sprites["sprites"] = {}
     train_sprites["controls"] = {}
@@ -139,6 +143,7 @@ def sprite_load_routine():
                         base_control_panel_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,train_parameters["control_panel_sprite"]]))).convert_alpha()
                         key = train_parameters["system_name"]
                         train_sprites["controls"][key] = {}
+                        train_repaint_dictionary[key] = []
                         consists_info[key] = train_parameters["traction_info"]
                         sprite_stack_factor = 4
 
@@ -150,6 +155,7 @@ def sprite_load_routine():
 
                         train_types[key] = {}
                         train_types[key]["size"] = train_parameters["clickable_size"]
+                        train_types[key]["name"] = train_parameters["name"]
 
                         sounds[key] = {}
                         for sound in train_parameters["sound_loading_info"]:
@@ -161,6 +167,8 @@ def sprite_load_routine():
                         train_parameters = train
                         key = train_parameters["system_name"]
                         train_sprites["sprites"][key] = {}
+                        train_repaint_dictionary[train_parameters["designed_for"]].append(key)
+                        train_sprites["sprites"][key]["name"] = train_parameters["name"]
                         sprite_stack_factor = 4
                         
                         base_train_sprite = pg.image.load(os.path.join(*([current_dir,"paks",folder,train_parameters["sprite"]]))).convert_alpha()
@@ -710,7 +718,7 @@ while working:
         tx = (dx+ty*b)/a
         world_mouse_coord = [tx,ty]
         mouse_block_pos = (int((player_pos[0]+world_mouse_coord[0]-(block_size[0] if player_pos[0]+world_mouse_coord[0] < 0 else 0))/block_size[0]),int((player_pos[1]+world_mouse_coord[1]-(block_size[1] if player_pos[1]+world_mouse_coord[1] < 0 else 0))/block_size[1]))
-        if m_btn[0] and mouse_clicked:
+        if m_btn[0] and mouse_clicked and not spawn_menu[0]:
             if mouse_block_pos in world and mouse_block_pos in switches:
                 switches[mouse_block_pos] = not(switches[mouse_block_pos])
 
@@ -903,6 +911,106 @@ while working:
                 screen.blit(s, (m_pos[0]+10,m_pos[1]+20))
                 screen.blit(annotation, (m_pos[0]+15,m_pos[1]+25))
 
+        if spawn_menu[1] > 0:
+            div = 6
+            base_img_height = 200
+            pg.draw.rect(screen,(200,200,200),(screen_size[0]/div*((div-1)+(1-spawn_menu[1])**2),0,screen_size[0]/div+128,screen_size[1]))
+            spawn_menu_name = font.render(f"Create a consist",True,text_black)
+            screen.blit(spawn_menu_name, (screen_size[0]/div*((div-1)+(1-spawn_menu[1])**2)+screen_size[0]/div/2-spawn_menu_name.get_width()/2,100))
+
+            sprite = train_sprites["sprites"][spawn_menu[3]]["closed"][world_angle]["r"]
+            screen.blit(sprite,(screen_size[0]/div*((div-1)+(1-spawn_menu[1])**2)+screen_size[0]/div/2-sprite.get_width()/2,base_img_height))
+            sprite = train_sprites["sprites"][spawn_menu[3]]["closed"][world_angle]["l"]
+            screen.blit(sprite,(screen_size[0]/div*((div-1)+(1-spawn_menu[1])**2)+screen_size[0]/div/2-sprite.get_width()/2,base_img_height))
+
+            #descriptions_texts = train_types[spawn_menu[2]]["name"].split("\n")
+            text_height = 20
+            text_delta = text_height + 4
+            emu_type_height = base_img_height+20+sprite.get_height()
+            repaint_height = emu_type_height+text_delta*len(train_types[spawn_menu[2]]["name"].split("\n"))+30+15
+            base_left_pos = screen_size[0]/div*((div-1)+(1-spawn_menu[1])**2)
+            spawn_menu_blocks = [
+                [emu_type_height,"EMU type",train_types[spawn_menu[2]]["name"].split("\n")],
+                [repaint_height,"EMU repaint",train_sprites["sprites"][spawn_menu[3]]["name"].split("\n")]
+            ]
+            for z in spawn_menu_blocks:
+                block_height, block_name, block_set = z
+                pg.draw.rect(screen,(128,128,128),
+                    (base_left_pos+5,
+                    block_height-5,
+                    screen_size[0]/div-10,
+                    text_delta*len(block_set)+40
+                ))
+                for e, i in enumerate(block_set):
+                    spawn_menu_text = font.render(i,True,text_black)
+                    screen.blit(spawn_menu_text, 
+                        (base_left_pos+screen_size[0]/div/2-spawn_menu_text.get_width()/2,
+                        block_height+text_delta*e
+                    ))
+
+                is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0]
+            
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+12,
+                                block_height+text_delta*len(block_set)+2,28,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+10+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,28,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+12+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,24,24))
+                pg.draw.polygon(screen,text_black,
+                                (
+                                    (base_left_pos+16+2*is_on_button,
+                                    block_height+text_delta*len(block_set)+14+2*is_on_button),
+                                    (base_left_pos+10+22+2*is_on_button,
+                                    block_height+text_delta*len(block_set)+6+2*is_on_button),
+                                    (base_left_pos+10+22+2*is_on_button,
+                                    block_height+text_delta*len(block_set)+22+2*is_on_button),
+                                ))
+                
+                is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (block_height+(text_height+2)*len(block_set) <= m_pos[1] <= block_height+text_delta*len(block_set)+30) and m_btn[0]
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+screen_size[0]/div-30-10+2,
+                                block_height+text_delta*len(block_set)+2,28,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+screen_size[0]/div-30-10+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,28,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+screen_size[0]/div-30-10+2+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,24,24))
+                pg.draw.polygon(screen,text_black,
+                                (
+                                    (base_left_pos+screen_size[0]/div-30-10+22+2*is_on_button,
+                                    block_height+text_delta*len(block_set)+14+2*is_on_button),
+                                    (base_left_pos+screen_size[0]/div-30-10+6+2*is_on_button,
+                                    block_height+text_delta*len(block_set)+6+2*is_on_button),
+                                    (base_left_pos+screen_size[0]/div-30-10+6+2*is_on_button,
+                                    block_height+text_delta*len(block_set)+22+2*is_on_button),
+                                ))
+            #←↑→↓
+            #descriptions_texts = train_sprites["sprites"][spawn_menu[3]]["name"].split("\n")
+            if m_pos[0] >= base_left_pos:
+                is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (emu_type_height+text_delta*len(spawn_menu_blocks[0][2]) <= m_pos[1] <= emu_type_height+text_delta*len(spawn_menu_blocks[0][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    spawn_menu[2] = list(consists_info.keys())[list(consists_info.keys()).index(spawn_menu[2])-1]
+                    spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][0]
+
+                is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (emu_type_height+text_delta*len(spawn_menu_blocks[0][2]) <= m_pos[1] <= emu_type_height+text_delta*len(spawn_menu_blocks[0][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    spawn_menu[2] = list(consists_info.keys())[(list(consists_info.keys()).index(spawn_menu[2])+1)%len(consists_info.keys())]
+                    spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][0]
+
+                is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (repaint_height+text_delta*len(spawn_menu_blocks[1][2]) <= m_pos[1] <= repaint_height+text_delta*len(spawn_menu_blocks[1][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][train_repaint_dictionary[spawn_menu[2]].index(spawn_menu[3])-1]
+
+                is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (repaint_height+text_delta*len(spawn_menu_blocks[1][2]) <= m_pos[1] <= repaint_height+text_delta*len(spawn_menu_blocks[1][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][(train_repaint_dictionary[spawn_menu[2]].index(spawn_menu[3])+1)%len(train_repaint_dictionary[spawn_menu[2]])]
+            else:
+                consists[consist_key] = Consist("type_e","type_e_bg",train_types["type_e"],consists_info["type_e"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
+
         if pg.K_TAB in keydowns and trains != {}:
             if controlling == -1:
                 controlling = list(sorted(dict(trains).keys()))[0]
@@ -930,8 +1038,13 @@ while working:
                     trains[link].exists = False
                     trains.pop(link)
             if pg.K_s in keydowns:
-                consist_key = random.randint(0,999)
-                consists[consist_key] = Consist("type_a","type_a_bc",train_types["type_a"],consists_info["type_a"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
+                spawn_menu[0] = not(spawn_menu[0])
+                if spawn_menu[2] == None: 
+                    spawn_menu[2] = list(consists_info.keys())[0]
+                if spawn_menu[3] == None: 
+                    spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][0]
+                #consist_key = random.randint(0,999)
+                #consists[consist_key] = Consist("type_e","type_e_bg",train_types["type_e"],consists_info["type_e"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
             if pg.K_DELETE in keydowns:
                 wipe_list = []
                 wipe_list_consists = []
@@ -983,7 +1096,6 @@ while working:
             if pressed[pg.K_ESCAPE]: controlling = -1
 
         info_blit_list = []
-        text_color = (200,200,200)
         info_blit_list.append(font.render("alphen's subway simulator "+version,True,text_color))
         info_blit_list.append(font.render("fps: "+str(int(clock.get_fps())), False, ((255 if clock.get_fps() < 45 else 0), (255 if clock.get_fps() > 15 else 0), 0)))
         if debug > 0:
@@ -1017,6 +1129,13 @@ while working:
 
         for i, line in enumerate(info_blit_list):
                 screen.blit(line, (0, 20*i))
+
+        if spawn_menu[0] and spawn_menu[1] < 1:
+            spawn_menu[1] += clock.get_fps()/60*0.0167
+            if spawn_menu[1] > 1: spawn_menu[1] = 1
+        elif not spawn_menu[0] and spawn_menu[1] > 0:
+            spawn_menu[1] -= clock.get_fps()/60*0.0167
+            if spawn_menu[1] < 0: spawn_menu[1] = 0
 
     pg.display.update()
     clock.tick(60)
