@@ -21,7 +21,14 @@
                 "wheel_mass":1400,
                 "wheel_radius":0.95,
                 "transmissional_number":3.94,
-                "break_cyllinder_surface":0.1,
+                "brake_cyllinder_surface":0.1,
+
+                "pressure_tank_volume":0.80,
+                "brake_cyllinder_volume":0.1,
+                "compressor_mass_rate":0.142,
+                "peril_pressure":4,
+                "target_pressure":6,
+
                 "underlay_draw_params":[0,-41,5],
                 "valve_params":{
                     "vz_1":[1.3,0.0054], 
@@ -240,6 +247,22 @@
                             [117.5,-17,5,"manometer_overlay",6,6]
                         ]
 
+                    },
+                    {
+                        "name":"Манометр напорной магистрали",
+                        "type":"analog_scale",
+                        "scale":"press_tank",
+                        "angle":0,
+                        "base_angle":45,
+                        "multiplier":45,
+                        "min_value":0,
+                        "max_value":6,
+                        "draw_mappings":[
+                            [0,0,5,null,0,0],
+                            [15.5,15.5,5,"manometer_pointer_red",6,6],
+                            [0,0,null,0,0]
+                        ]
+
                     }
                 ]
             },
@@ -431,6 +454,13 @@
                 "manometer_pointer":{
                     "x":150,
                     "y":122,
+                    "w":21,
+                    "h":1,
+                    "scale":5
+                },
+                "manometer_pointer_red":{
+                    "x":150,
+                    "y":124,
                     "w":21,
                     "h":1,
                     "scale":5

@@ -141,6 +141,7 @@ class Consist():
 
         self.linked_to = []
         self.pressure = 0
+        self.tank_pressure = 0
         self.vz_pressure = 0
         self.velocity = 0
         self.pixel_velocity = 0
@@ -211,7 +212,14 @@ class Consist():
         self.engine_constant = consist_info["engine_constant"]
         self.engine_resistance = consist_info["engine_resistance"]
         self.transmissional_number = consist_info["transmissional_number"]
-        self.break_cyllinder_surface = consist_info["break_cyllinder_surface"]
+        self.brake_cyllinder_surface = consist_info["brake_cyllinder_surface"]
+
+        self.pressure_tank_volume = consist_info["pressure_tank_volume"]
+        self.brake_cyllinder_volume = consist_info["brake_cyllinder_volume"]
+        self.compressor_mass_rate = consist_info["compressor_mass_rate"]
+        self.peril_pressure = consist_info["peril_pressure"]
+        self.target_pressure = consist_info["target_pressure"]
+        self.compressor_active = False
 
         self.controlling_direction = 0
         self.traction_direction = 0
@@ -245,6 +253,7 @@ class Consist():
                     elif element["scale"] == "amps": value = self.engine_current*self.traction_direction*self.control_wires["rp"]
                     elif element["scale"] == "volts": value = self.engine_voltage*self.control_wires["rp"]
                     elif element["scale"] == "press": value = max(self.vz_1,self.vz_2,self.pressure)
+                    elif element["scale"] == "press_tank": value = self.tank_pressure
 
                     if value != element["angle"]:
                         self.consist_info["element_mapouts"][elem_id]["angle"] += (element["max_value"]-element["min_value"])/100*sign(value-element["angle"])
@@ -254,6 +263,12 @@ class Consist():
 
 
             if self.consist_info["control_system_type"] == "direct":
+                if self.control_wires["mk"] and (self.tank_pressure <= self.peril_pressure or self.tank_pressure < self.target_pressure and self.compressor_active):
+                    self.compressor_active = True
+                else: self.compressor_active = False
+
+                if self.compressor_active: self.tank_pressure+=self.compressor_mass_rate*8.31*293/self.pressure_tank_volume/0.029/120/10000
+
                 if self.control_wires["rp_return"] and self.km == 0:
                     self.control_wires["rp"] = True
                 if self.control_wires["right_doors"] and self.doors["r"] == "closed":
@@ -327,7 +342,12 @@ class Consist():
                         if abs(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) < self.consist_info["tk_mapouts"][str(self.tk)]["speed"]:
                             self.pressure = self.consist_info["tk_mapouts"][str(self.tk)]["target"]
                         else:
-                            self.pressure+=-sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"])*self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
+                            if (-sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) > 0 and 
+                                self.tank_pressure > self.consist_info["tk_mapouts"][str(self.tk)]["speed"]*self.brake_cyllinder_volume/self.pressure_tank_volume):
+                                self.tank_pressure-=self.consist_info["tk_mapouts"][str(self.tk)]["speed"]*self.brake_cyllinder_volume/self.pressure_tank_volume
+                                self.pressure+=self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
+                            elif -sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) < 0:
+                                self.pressure-=self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
 
                 self.control_wires["traction"] = engine_power > 0
                 self.control_wires["maximal_traction"] = self.km == self.consist_info["max_km"]
@@ -339,9 +359,9 @@ class Consist():
                 kinetic_energy = self.mass*(self.velocity**2)/2*self.train_amount
                 revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
                 friction_energy = 0.05*self.wheel_mass*9.81*self.angular_velocity
-                break_friction_energy = wheels*1*self.velocity*(max(self.pressure,self.vz_1,self.vz_2)*100000*self.break_cyllinder_surface)
+                brake_friction_energy = wheels*1*self.velocity*(max(self.pressure,self.vz_1,self.vz_2)*100000*self.brake_cyllinder_surface)
 
-                self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-break_friction_energy/120,5)
+                self.energy = round(kinetic_energy+revolutional_energy+engine_power*self.transmissional_number/120-friction_energy/120-brake_friction_energy/120,5)
                 self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
                 self.velocity = round(complex(self.velocity).real,5)
                 self.angular_velocity = round(self.velocity/self.wheel_radius,5)

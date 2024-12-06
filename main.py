@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.2 меню спавна (сырое, но рабочее)"
+version = "0.5.3 пневмосистемы v2"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -867,28 +867,32 @@ while working:
             for element in consists[controlling_consist].consist_info["element_mapouts"]:
                 if element["type"] != "analog_scale":
                     info = element["draw_mappings"][element["state"]]
-                    sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
-                    x,y = info[0], info[1]
-                    scale = info[2]
-                    screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+                    if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
+                        sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
+                        x,y = info[0], info[1]
+                        scale = info[2]
+                        screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                 else:
                     info = element["draw_mappings"][0]
-                    sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
-                    x,y = info[0], info[1]
-                    scale = info[2]
-                    screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+                    if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
+                        sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
+                        x,y = info[0], info[1]
+                        scale = info[2]
+                        screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                     
                     info = element["draw_mappings"][1]
-                    sprite = pg.transform.rotate(train_sprites["controls"][consists[controlling_consist].train_type][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],5))
-                    local_x,local_y = info[0], info[1]
-                    local_scale = info[2]
-                    screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x*scale+local_x*local_scale)-sprite.get_width()/2,2),float(screen_size[1]-panel.get_height()+(int(y*scale+local_y*local_scale)+0.5)-sprite.get_height()/2)))
+                    if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
+                        sprite = pg.transform.rotate(train_sprites["controls"][consists[controlling_consist].train_type][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],5))
+                        local_x,local_y = info[0], info[1]
+                        local_scale = info[2]
+                        screen.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x*scale+local_x*local_scale)-sprite.get_width()/2,2),float(screen_size[1]-panel.get_height()+(int(y*scale+local_y*local_scale)+0.5)-sprite.get_height()/2)))
 
                     info = element["draw_mappings"][2]
-                    sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
-                    x,y = info[0], info[1]
-                    scale = info[2]
-                    screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
+                    if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
+                        sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
+                        x,y = info[0], info[1]
+                        scale = info[2]
+                        screen.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
 
 
             km = train_sprites["controls"][consists[controlling_consist].train_type]["km"]

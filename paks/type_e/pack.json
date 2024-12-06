@@ -21,7 +21,14 @@
                 "wheel_mass":1400,
                 "wheel_radius":0.95,
                 "transmissional_number":3.94,
-                "break_cyllinder_surface":0.1,
+                "brake_cyllinder_surface":0.1,
+
+                "pressure_tank_volume":0.80,
+                "brake_cyllinder_volume":0.1,
+                "compressor_mass_rate":0.142,
+                "peril_pressure":4,
+                "target_pressure":6,
+
                 "underlay_draw_params":[0,-41,5],
                 "valve_params":{
                     "vz_1":[1.3,0.0054], 
