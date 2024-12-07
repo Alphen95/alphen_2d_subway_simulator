@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.3 пневмосистемы v2"
+version = "0.5.3.1 пневмосистемы v2.1"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -315,7 +315,7 @@ while working:
             working = False
         if evt.type == pg.KEYDOWN:
             keydowns.append(evt.key)
-            if evt.key == pg.K_d and screen_state != "editor":
+            if evt.key == pg.K_q and screen_state == "playing":
                 debug = (debug+1)%3
             
             if screen_state == "editor" and custom_tool_parameters[2] != 0:

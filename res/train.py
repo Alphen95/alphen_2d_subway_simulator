@@ -343,7 +343,8 @@ class Consist():
                             self.pressure = self.consist_info["tk_mapouts"][str(self.tk)]["target"]
                         else:
                             if (-sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) > 0 and 
-                                self.tank_pressure > self.consist_info["tk_mapouts"][str(self.tk)]["speed"]*self.brake_cyllinder_volume/self.pressure_tank_volume):
+                                self.tank_pressure > self.consist_info["tk_mapouts"][str(self.tk)]["speed"]*self.brake_cyllinder_volume/self.pressure_tank_volume and
+                                self.tank_pressure >= self.pressure):
                                 self.tank_pressure-=self.consist_info["tk_mapouts"][str(self.tk)]["speed"]*self.brake_cyllinder_volume/self.pressure_tank_volume
                                 self.pressure+=self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
                             elif -sign(self.pressure - self.consist_info["tk_mapouts"][str(self.tk)]["target"]) < 0:
