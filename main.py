@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.3.1 пневмосистемы v2.1"
+version = "0.5.4 базовый комплект инструментов для разработки"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -53,7 +53,18 @@ train_types = {}
 sounds = {}
 consists_info = {}
 consists = {}
+
+sdk_params = {
+    "folder_list":[],
+    "folder_pointer":-1,
+    "consist_pointer":-1,
+    "scale":4,
+    "editing":False
+}
+sdk_loaded_pack = {"graphics":{},"info":{}}
+
 progress = 0
+load_timer = 0
 current_tool = -1
 current_toolbar = 0
 custom_tool_parameters = ["","",0]
@@ -66,10 +77,12 @@ channel_rolling.set_volume(0.125)
 
 sign = lambda x: math.copysign(1, x)
 
-
+def text_splitter(base_string, char_width,max_width):
+    max_char_per_line = int(max_width/char_width)
+    return [base_string[i:i+max_char_per_line] for i in range(0, len(base_string), max_char_per_line)]
 
 def sprite_load_routine():
-    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons,train_repaint_dictionary
+    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons,train_repaint_dictionary, load_timer
     pak_folders = os.listdir(os.path.join(current_dir,"paks"))
     train_sprites["sprites"] = {}
     train_sprites["controls"] = {}
@@ -226,6 +239,7 @@ def sprite_load_routine():
         progress+=1
 
     screen_state = "title"
+    load_timer = 200
     consists = {}
 
 world = {
@@ -323,6 +337,20 @@ while working:
                     custom_tool_parameters[custom_tool_parameters[2]-1] = custom_tool_parameters[custom_tool_parameters[2]-1][:-1]
                 else:
                     custom_tool_parameters[custom_tool_parameters[2]-1] += evt.unicode
+            if screen_state == "sdk" and sdk_params["editing"]:
+                element_name = list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys())[sdk_params["element_pointer"]]
+                element_name_new = element_name
+                if evt.key == pg.K_BACKSPACE:
+                    element_name_new=element_name[:-1]
+                elif evt.key == pg.K_RETURN:
+                    sdk_params["editing"] = False
+                else:
+                    element_name_new += evt.unicode
+                
+                tmp = sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][element_name]
+                sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].pop(element_name)
+                sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][element_name_new] = tmp
+                sdk_params["element_pointer"] = list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys()).index(element_name_new)
         if evt.type == pg.KEYUP:
             keyups.append(evt.key)
         if evt.type == pg.MOUSEBUTTONDOWN and not m_btn[0] and not m_btn[2]:
@@ -341,25 +369,394 @@ while working:
         pg.draw.rect(screen,(255,255,255),(screen_size[0]/2-124,screen_size[1]/2+2,248,text.get_height()-4),2)
 
     elif screen_state == "title":
+        pressed = pg.key.get_pressed()
+        m_pos = pg.mouse.get_pos()
+        m_btn = pg.mouse.get_pressed()
         
         text_color = (200,200,200)
         screen.fill(tunnel_nothingness)
         text = font.render(f"Alphen's Isometric Subway Simulator v{version_id}", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-1.5*text.get_height()))
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-2*text.get_height()))
         text = font.render(f"1 for game", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-0.5*text.get_height()))
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-1*text.get_height()))
         text = font.render(f"2 for editor", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+0.5*text.get_height()))
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+0*text.get_height()))
+        text = font.render(f"3 for SDK", True, text_color)
+        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+1*text.get_height()))
 
-        if pg.K_1 in keydowns: 
-            player_pos = [0,0]
-            screen_state = "playing"
-        elif pg.K_2 in keydowns: 
-            player_pos = [0,0]
-            screen_state = "editor"
+        if load_timer > 0:
+            loadscreen_surf = pg.Surface(screen_size)
+            text_color = (200,200,200)
+            loadscreen_surf.fill(tunnel_nothingness)
+            text = font.render("загрузка...", True, text_color)
+            loadscreen_surf.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-text.get_height()))
+            line_pos = (line_pos + 2) % 280
+            pg.draw.rect(loadscreen_surf,(128,255,0),((screen_size[0]/2-124+line_pos) if 0 < line_pos < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+            pg.draw.rect(loadscreen_surf,(128,255,0),((screen_size[0]/2-124+line_pos-6) if 0 < line_pos-6< 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+            pg.draw.rect(loadscreen_surf,(128,255,0),((screen_size[0]/2-124+line_pos-12) if 0 < line_pos-12 < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+            pg.draw.rect(loadscreen_surf,(255,255,255),(screen_size[0]/2-124,screen_size[1]/2+2,248,text.get_height()-4),2)
+            loadscreen_surf.convert()
+            loadscreen_surf.set_alpha(255*(load_timer/200))
+            screen.blit(loadscreen_surf,(0,0))
+            load_timer -= 2
+        if load_timer <= 200:
+            if pg.K_1 in keydowns: 
+                player_pos = [0,0]
+                screen_state = "playing"
+            elif pg.K_2 in keydowns: 
+                player_pos = [0,0]
+                screen_state = "editor"
+            elif pg.K_3 in keydowns: 
+                screen_state = "sdk"
+                sdk_params["folder_list"] = []
+                pak_folders = os.listdir(os.path.join(current_dir,"paks"))
+
+                for folder in pak_folders:
+                    folder_contents = os.listdir(os.path.join(current_dir,"paks",folder))
+                    if "pack.json" in folder_contents:
+                        sdk_params["folder_list"].append(folder)
+
+            
+    elif screen_state == "sdk":
+        old_m_pos = m_pos
+        screen.fill(tunnel_nothingness)
+        div = 4
+        
+        pressed = pg.key.get_pressed()
+        m_pos = pg.mouse.get_pos()
+        m_btn = pg.mouse.get_pressed()
+
+        temp_text = font.render("abcdefghijklmnopqrtsuvwxyz",True,(0,0,0))
+        char_width = temp_text.get_width()/26
+        text_height = 20
+        text_delta = 26
+        base_left_pos = screen_size[0]/div*(div-1)
+
+        folder_height = 20
+        consist_height = folder_height+text_delta*len(["Select a folder" if sdk_params["folder_pointer"] == -1 else sdk_params["folder_list"][sdk_params["folder_pointer"]]])+30+15
+        element_height = consist_height+text_delta*len(["Select a consist" if sdk_params["consist_pointer"] == -1 else sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["name"]])+30+15
+
+        if "panel" in sdk_loaded_pack["graphics"]:
+            screen.blit(pg.transform.scale(sdk_loaded_pack["graphics"]["panel"],
+                    (sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"],sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"])),
+                (screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0],
+                 screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1])
+                )
+            if sdk_params["element_pointer"] != -1:
+                key = list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys())[sdk_params["element_pointer"]]
+                param = sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][key]
+                tmp_surf = pg.Surface((param["w"]*sdk_params["scale"],param["h"]*sdk_params["scale"]))
+                pg.draw.rect(tmp_surf,(240,240,240),(
+                    0,
+                    0,
+                    param["w"]*sdk_params["scale"],
+                    param["h"]*sdk_params["scale"]
+                ))
+                tmp_surf.convert()
+                tmp_surf.set_alpha(64)
+                screen.blit(tmp_surf,(
+                    screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0]+param["x"]*sdk_params["scale"],
+                    screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1]+param["y"]*sdk_params["scale"]))
+                pg.draw.rect(screen,(240,240,240),(
+                    screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0]+param["x"]*sdk_params["scale"],
+                    screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1]+param["y"]*sdk_params["scale"],
+                    param["w"]*sdk_params["scale"],
+                    param["h"]*sdk_params["scale"]
+                ),2)
+
+        if m_btn[1]:
+            sdk_loaded_pack["pos"][0] += m_pos [0] - old_m_pos[0]
+            sdk_loaded_pack["pos"][1] += m_pos [1] - old_m_pos[1]
+
+        if (m_btn[0] or m_btn[2]) and mouse_clicked and m_pos[0] < base_left_pos:
+            if "panel" in sdk_loaded_pack["graphics"] and sdk_params["element_pointer"] != -1:
+                key = list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys())[sdk_params["element_pointer"]]
+                param = sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][key]
+                x1,y1,x2,y2 = param["x"],param["y"],param["x"]+param["w"],param["y"]+param["h"]
+                click_x = int((m_pos[0]-(screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0]))/sdk_params["scale"])
+                click_y = int((m_pos[1]-(screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1]))/sdk_params["scale"])
+                if m_btn[0]:
+                    if click_x < x2: x1 = click_x
+                    elif click_x > x2:
+                        x1 = x2
+                        x2 = click_x
+
+                    if click_y < y2: y1 = click_y
+                    elif click_y > y2:
+                        y1 = y2
+                        y2  = click_y
+
+                elif m_btn[2]:
+                    if click_x > x1: x2 = click_x
+                    elif click_x < x1:
+                        x2 = x1
+                        x1 = click_x
+
+                    if click_y > y1: y2 = click_y
+                    elif click_y < y1:
+                        y2 = y1
+                        y1 = click_y
+                sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][key]["x"] = x1
+                sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][key]["y"] = y1
+                sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][key]["w"] = x2-x1
+                sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][key]["h"] = y2-y1
+
+
+        pg.draw.rect(screen,(200,200,200),(screen_size[0]/div*(div-1),0,screen_size[0]/div+128,screen_size[1]))
+        sdk_menu_blocks = [
+            [folder_height,"",["Select a folder" if sdk_params["folder_pointer"] == -1 else sdk_params["folder_list"][sdk_params["folder_pointer"]]]],
+        ]
+
+        if sdk_loaded_pack["info"] != {}:
+            sdk_menu_blocks.append([consist_height,"",["Select a consist" if sdk_params["consist_pointer"] == -1 else sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["name"]]])
+        
+        if sdk_params["consist_pointer"] != -1:
+            sdk_menu_blocks.append([element_height,"",["Select an sprite"] if sdk_params["element_pointer"] == -1 else text_splitter(
+                list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys())[sdk_params["element_pointer"]],
+                char_width,
+                screen_size[0]/div-30
+            )])
+
+        for l, z in enumerate(sdk_menu_blocks):
+            block_height, block_name, block_set = z
+            pg.draw.rect(screen,(128,128,128),
+                (base_left_pos+5,
+                block_height-5,
+                screen_size[0]/div-10,
+                text_delta*len(block_set)+40
+            ))
+            for e, i in enumerate(block_set):
+                spawn_menu_text = font.render(i,True,(80,10,10 ) if l == 2 and sdk_params["editing"] else text_black)
+                screen.blit(spawn_menu_text, 
+                    (base_left_pos+screen_size[0]/div/2-spawn_menu_text.get_width()/2,
+                    block_height+text_delta*e
+                ))
+
+            is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0]
+        
+            pg.draw.rect(screen,(15,15,15),
+                            (base_left_pos+12,
+                            block_height+text_delta*len(block_set)+2,28,28))
+            pg.draw.rect(screen,(50,50,50),
+                            (base_left_pos+10+2*is_on_button,
+                            block_height+text_delta*len(block_set)+2*is_on_button,28,28))
+            pg.draw.rect(screen,(100,100,100),
+                            (base_left_pos+12+2*is_on_button,
+                            block_height+text_delta*len(block_set)+2+2*is_on_button,24,24))
+            pg.draw.polygon(screen,text_black,
+                            (
+                                (base_left_pos+16+2*is_on_button,
+                                block_height+text_delta*len(block_set)+14+2*is_on_button),
+                                (base_left_pos+10+22+2*is_on_button,
+                                block_height+text_delta*len(block_set)+6+2*is_on_button),
+                                (base_left_pos+10+22+2*is_on_button,
+                                block_height+text_delta*len(block_set)+22+2*is_on_button),
+                            ))
+            
+            if l == 0:
+                is_on_button = (base_left_pos+screen_size[0]/div/2-120 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2-10) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0] and sdk_params["folder_pointer"] != -1
+
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+screen_size[0]/div/2-118,
+                                block_height+text_delta*len(block_set)+2,108,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+screen_size[0]/div/2-120+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,108,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+screen_size[0]/div/2-118+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,104,24))
+                text = font.render("Load",True,text_black)
+                screen.blit(text, (base_left_pos+screen_size[0]/div/2-10-108/2-text.get_width()/2+2*is_on_button, block_height+text_delta*len(block_set)+14+2*is_on_button-text.get_height()/2))
+
+                is_on_button = (base_left_pos+screen_size[0]/div/2+10 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2+120) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0] and sdk_params["folder_pointer"] != -1 and sdk_loaded_pack["info"] != {}
+
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+screen_size[0]/div/2+12,
+                                block_height+text_delta*len(block_set)+2,108,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+screen_size[0]/div/2+10+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,108,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+screen_size[0]/div/2+12+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,104,24))
+                text = font.render("Save",True,text_black)
+                screen.blit(text, (base_left_pos+screen_size[0]/div/2+12+108/2-text.get_width()/2+2*is_on_button, block_height+text_delta*len(block_set)+14+2*is_on_button-text.get_height()/2))
+
+            if l == 2:
+                is_on_button = (base_left_pos+screen_size[0]/div/2-120 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2-120+70) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0]
+
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+screen_size[0]/div/2-118,
+                                block_height+text_delta*len(block_set)+2,68,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+screen_size[0]/div/2-120+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,68,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+screen_size[0]/div/2-118+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,64,24))
+                text = font.render("Add",True,text_black)
+                screen.blit(text, (base_left_pos+screen_size[0]/div/2-120+68/2-text.get_width()/2+2*is_on_button, block_height+text_delta*len(block_set)+14+2*is_on_button-text.get_height()/2))
+
+                is_on_button = (base_left_pos+screen_size[0]/div/2-40 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2+40) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0] and sdk_params["element_pointer"] != -1
+
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+screen_size[0]/div/2-40+2,
+                                block_height+text_delta*len(block_set)+2,78,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+screen_size[0]/div/2-40+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,78,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+screen_size[0]/div/2-40+2+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,74,24))
+                text = font.render("Delete",True,text_black)
+                screen.blit(text, (base_left_pos+screen_size[0]/div/2-text.get_width()/2+2*is_on_button, block_height+text_delta*len(block_set)+14+2*is_on_button-text.get_height()/2))
+
+                is_on_button = (base_left_pos+screen_size[0]/div/2+120-70 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2+120) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0] and sdk_params["element_pointer"] != -1
+
+                pg.draw.rect(screen,(15,15,15),
+                                (base_left_pos+screen_size[0]/div/2+120-70+2,
+                                block_height+text_delta*len(block_set)+2,68,28))
+                pg.draw.rect(screen,(50,50,50),
+                                (base_left_pos+screen_size[0]/div/2+120-70+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2*is_on_button,68,28))
+                pg.draw.rect(screen,(100,100,100),
+                                (base_left_pos+screen_size[0]/div/2+120-70+2+2*is_on_button,
+                                block_height+text_delta*len(block_set)+2+2*is_on_button,64,24))
+                text = font.render("Edit",True,text_black)
+                screen.blit(text, (base_left_pos+screen_size[0]/div/2+120-68/2-text.get_width()/2+2*is_on_button, block_height+text_delta*len(block_set)+14+2*is_on_button-text.get_height()/2))
+            
+            is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (block_height+(text_height+2)*len(block_set) <= m_pos[1] <= block_height+text_delta*len(block_set)+30) and m_btn[0]
+            pg.draw.rect(screen,(15,15,15),
+                            (base_left_pos+screen_size[0]/div-30-10+2,
+                            block_height+text_delta*len(block_set)+2,28,28))
+            pg.draw.rect(screen,(50,50,50),
+                            (base_left_pos+screen_size[0]/div-30-10+2*is_on_button,
+                            block_height+text_delta*len(block_set)+2*is_on_button,28,28))
+            pg.draw.rect(screen,(100,100,100),
+                            (base_left_pos+screen_size[0]/div-30-10+2+2*is_on_button,
+                            block_height+text_delta*len(block_set)+2+2*is_on_button,24,24))
+            pg.draw.polygon(screen,text_black,
+                            (
+                                (base_left_pos+screen_size[0]/div-30-10+22+2*is_on_button,
+                                block_height+text_delta*len(block_set)+14+2*is_on_button),
+                                (base_left_pos+screen_size[0]/div-30-10+6+2*is_on_button,
+                                block_height+text_delta*len(block_set)+6+2*is_on_button),
+                                (base_left_pos+screen_size[0]/div-30-10+6+2*is_on_button,
+                                block_height+text_delta*len(block_set)+22+2*is_on_button),
+                            ))
+        
+        if pg.K_EQUALS in keydowns: sdk_params["scale"]+=1
+        elif pg.K_MINUS in keydowns: sdk_params["scale"]-=(1 if sdk_params["scale"] > 1 else 0)
+        if pressed[pg.K_ESCAPE]:
+            sdk_params = {
+                "folder_list":[],
+                "folder_pointer":-1,
+                "consist_pointer":-1,
+                "scale":4,
+                "editing":False
+            }
+            sdk_loaded_pack = {"graphics":{},"info":{}}
+            screen_state = "title"
+
+        if m_pos[0] >= base_left_pos:
+            is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (folder_height+text_delta*len(sdk_menu_blocks[0][2]) <= m_pos[1] <= folder_height+text_delta*len(sdk_menu_blocks[0][2])+30) and m_btn[0]
+            if is_on_button and mouse_clicked:
+                sdk_params["folder_pointer"]=(sdk_params["folder_pointer"]-1)%len(sdk_params["folder_list"])
+                sdk_params["consist_pointer"] = -1
+                sdk_params["editing"] = False
+                sdk_loaded_pack = {"graphics":{},"info":{},"pos":[0,0],"selection":(-1,-1,0,0)}
+
+
+            is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (folder_height+text_delta*len(sdk_menu_blocks[0][2]) <= m_pos[1] <= folder_height+text_delta*len(sdk_menu_blocks[0][2])+30) and m_btn[0]
+            if is_on_button and mouse_clicked:
+                sdk_params["folder_pointer"]=(sdk_params["folder_pointer"]-1)%len(sdk_params["folder_list"])
+                sdk_params["consist_pointer"] = -1
+                sdk_params["editing"] = False
+                sdk_loaded_pack = {"graphics":{},"info":{},"pos":[0,0],"selection":(-1,-1,0,0)}
+
+            is_on_button = (base_left_pos+screen_size[0]/div/2-120 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2-10) and (folder_height+text_delta*len(sdk_menu_blocks[0][2]) <= m_pos[1] <= folder_height+(text_height+2)*len(sdk_menu_blocks[0][2])+30) and m_btn[0] and sdk_params["folder_pointer"] != -1
+            if is_on_button and mouse_clicked:
+                with open(os.path.join(CURRENT_DIRECTORY,"paks",sdk_params["folder_list"][sdk_params["folder_pointer"]],"pack.json"),encoding="utf-8") as file:
+                    pack_parameters = json.loads(file.read())
+                    if "consists" in pack_parameters:
+                        sdk_params["consist_pointer"] = -1
+                        sdk_loaded_pack["info"] = pack_parameters["consists"]
+                        sdk_loaded_pack["pos"]=[0,0]
+                        sdk_loaded_pack["selection"]=(-1,-1,0,0)
+                    else:
+                        sdk_params["consist_pointer"] = -1
+                        sdk_loaded_pack = {"graphics":{},"info":{},"pos":[0,0],"selection":(-1,-1,0,0)}
+            
+            is_on_button = (base_left_pos+screen_size[0]/div/2+10 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2+120) and (folder_height+text_delta*len(sdk_menu_blocks[0][2]) <= m_pos[1] <= folder_height+(text_height+2)*len(sdk_menu_blocks[0][2])+30) and m_btn[0] and sdk_params["folder_pointer"] != -1 and sdk_loaded_pack["info"] != {}
+            if is_on_button and mouse_clicked:
+                pack_parameters = ""
+                with open(os.path.join(CURRENT_DIRECTORY,"paks",sdk_params["folder_list"][sdk_params["folder_pointer"]],"pack.json"),encoding="utf-8") as file:
+                    pack_parameters = json.loads(file.read())
+                
+                pack_parameters["consists"] = sdk_loaded_pack["info"]
+
+                with open(os.path.join(CURRENT_DIRECTORY,"paks",sdk_params["folder_list"][sdk_params["folder_pointer"]],"pack.json"),"w",encoding="utf-8") as file:
+                    json.dump(pack_parameters, file, ensure_ascii=False, sort_keys=True,indent=4)
+
+            if len(sdk_menu_blocks) == 3:
+                is_on_button = (base_left_pos+screen_size[0]/div/2-120 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2-120+70) and (element_height+text_delta*len(sdk_menu_blocks[2][2]) <= m_pos[1] <= element_height+(text_height+2)*len(sdk_menu_blocks[2][2])+30) and m_btn[0]
+
+                if is_on_button and mouse_clicked:
+                    sprite_id = 0
+                    while f"sprite_{sprite_id}" in sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"]:
+                        sprite_id+=1
+                    sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"][f"sprite_{sprite_id}"] = {
+                        "x":0,
+                        "y":0,
+                        "w":1,
+                        "h":1,
+                        "scale":1
+                    }
+                    sdk_params["element_pointer"] = list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys()).index(f"sprite_{sprite_id}")
+                    
+                
+                is_on_button = (base_left_pos+screen_size[0]/div/2-40 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2+40) and (block_height+text_delta*len(block_set) <= m_pos[1] <= block_height+(text_height+2)*len(block_set)+30) and m_btn[0] and sdk_params["element_pointer"] != -1
+
+                if is_on_button and mouse_clicked:
+                    key = list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys())[sdk_params["element_pointer"]]
+                    sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].pop(key)
+                    sdk_params["element_pointer"] = min(sdk_params["element_pointer"],len(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"])-1) 
+
+
+                is_on_button = (base_left_pos+screen_size[0]/div/2+120-70 <= m_pos[0] <= base_left_pos+screen_size[0]/div/2+120) and (element_height+text_delta*len(sdk_menu_blocks[2][2]) <= m_pos[1] <= element_height+(text_height+2)*len(sdk_menu_blocks[2][2])+30) and m_btn[0] and sdk_params["element_pointer"] != -1
+
+                if is_on_button and mouse_clicked:
+                    sdk_params["editing"] = True
+
+            if sdk_loaded_pack["info"] != {}:
+                is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (consist_height+text_delta*len(sdk_menu_blocks[1][2]) <= m_pos[1] <= consist_height+text_delta*len(sdk_menu_blocks[1][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    sdk_params["consist_pointer"]=(sdk_params["consist_pointer"]-1)%len(sdk_loaded_pack["info"])
+                    sdk_params["element_pointer"] = -1
+                    sdk_loaded_pack["graphics"]["panel"] = pg.image.load(
+                        os.path.join(*([CURRENT_DIRECTORY,"paks",sdk_params["folder_list"][sdk_params["folder_pointer"]],sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_sprite"]]))).convert_alpha()
+
+                is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (consist_height+text_delta*len(sdk_menu_blocks[1][2]) <= m_pos[1] <= consist_height+text_delta*len(sdk_menu_blocks[1][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    sdk_params["consist_pointer"]=(sdk_params["consist_pointer"]+1)%len(sdk_loaded_pack["info"])
+                    sdk_params["element_pointer"] = -1
+                    sdk_loaded_pack["graphics"]["panel"] = pg.image.load(
+                        os.path.join(*([CURRENT_DIRECTORY,"paks",sdk_params["folder_list"][sdk_params["folder_pointer"]],sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_sprite"]]))).convert_alpha()
+                    
+            if sdk_params["consist_pointer"] != -1:
+                is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (element_height+text_delta*len(sdk_menu_blocks[1][2]) <= m_pos[1] <= element_height+text_delta*len(sdk_menu_blocks[1][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    sdk_params["element_pointer"]=(sdk_params["element_pointer"]-1)%len(list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys()))
+                    sdk_params["editing"] = False
+
+                is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (element_height+text_delta*len(sdk_menu_blocks[1][2]) <= m_pos[1] <= element_height+text_delta*len(sdk_menu_blocks[1][2])+30) and m_btn[0]
+                if is_on_button and mouse_clicked:
+                    sdk_params["element_pointer"]=(sdk_params["element_pointer"]+1)%len(list(sdk_loaded_pack["info"][sdk_params["consist_pointer"]]["control_panel_info"].keys()))
+                    sdk_params["editing"] = False
+
+
 
     elif screen_state == "editor":
-        
         editor_block_size = (128,512)
         iconbar_height = 140
         iconbar_size = (64,128)

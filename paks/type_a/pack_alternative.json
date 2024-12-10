@@ -1,0 +1,985 @@
+{
+    "consists": [
+        {
+            "clickable_size": [
+                112,
+                312
+            ],
+            "control_panel_info": {
+                "ammeter_bottom": {
+                    "h": 30,
+                    "scale": 2.5,
+                    "w": 50,
+                    "x": 300,
+                    "y": 208
+                },
+                "ammeter_overlay": {
+                    "h": 30,
+                    "scale": 2.5,
+                    "w": 50,
+                    "x": 352,
+                    "y": 208
+                },
+                "ammeter_pointer": {
+                    "h": 2,
+                    "scale": 2.5,
+                    "w": 42,
+                    "x": 300,
+                    "y": 240
+                },
+                "blue_lamp_off": {
+                    "h": 12,
+                    "scale": 2.5,
+                    "w": 12,
+                    "x": 314,
+                    "y": 112
+                },
+                "blue_lamp_on": {
+                    "h": 12,
+                    "scale": 2.5,
+                    "w": 12,
+                    "x": 300,
+                    "y": 112
+                },
+                "green_lamp_off": {
+                    "h": 12,
+                    "scale": 2.5,
+                    "w": 12,
+                    "x": 314,
+                    "y": 98
+                },
+                "green_lamp_on": {
+                    "h": 12,
+                    "scale": 2.5,
+                    "w": 12,
+                    "x": 300,
+                    "y": 98
+                },
+                "km": {
+                    "h": 16,
+                    "scale": 2.5,
+                    "w": 80,
+                    "x": 300,
+                    "y": 2
+                },
+                "manometer_bottom": {
+                    "h": 62,
+                    "scale": 2.5,
+                    "w": 62,
+                    "x": 404,
+                    "y": 208
+                },
+                "manometer_overlay": {
+                    "h": 62,
+                    "scale": 2.5,
+                    "w": 62,
+                    "x": 404,
+                    "y": 272
+                },
+                "manometer_pointer": {
+                    "h": 2,
+                    "scale": 2.5,
+                    "w": 42,
+                    "x": 300,
+                    "y": 244
+                },
+                "manometer_pointer_red": {
+                    "h": 2,
+                    "scale": 2.5,
+                    "w": 42,
+                    "x": 300,
+                    "y": 248
+                },
+                "overlay": {
+                    "h": 128,
+                    "scale": 2.5,
+                    "w": 296,
+                    "x": 2,
+                    "y": 132
+                },
+                "panel": {
+                    "h": 128,
+                    "scale": 2.5,
+                    "w": 296,
+                    "x": 2,
+                    "y": 2
+                },
+                "red_lamp_off": {
+                    "h": 12,
+                    "scale": 2.5,
+                    "w": 12,
+                    "x": 314,
+                    "y": 84
+                },
+                "red_lamp_on": {
+                    "h": 12,
+                    "scale": 2.5,
+                    "w": 12,
+                    "x": 300,
+                    "y": 84
+                },
+                "rr_-1": {
+                    "h": 20,
+                    "scale": 2.5,
+                    "w": 48,
+                    "x": 362,
+                    "y": 30
+                },
+                "rr_0": {
+                    "h": 8,
+                    "scale": 2.5,
+                    "w": 48,
+                    "x": 362,
+                    "y": 20
+                },
+                "rr_1": {
+                    "h": 20,
+                    "scale": 2.5,
+                    "w": 48,
+                    "x": 362,
+                    "y": 52
+                },
+                "speedometer_bottom": {
+                    "h": 80,
+                    "scale": 2.5,
+                    "w": 80,
+                    "x": 382,
+                    "y": 126
+                },
+                "speedometer_overlay": {
+                    "h": 80,
+                    "scale": 2.5,
+                    "w": 80,
+                    "x": 300,
+                    "y": 126
+                },
+                "speedometer_pointer": {
+                    "h": 2,
+                    "scale": 2.5,
+                    "w": 90,
+                    "x": 328,
+                    "y": 122
+                },
+                "tk": {
+                    "h": 20,
+                    "scale": 2.5,
+                    "w": 60,
+                    "x": 300,
+                    "y": 20
+                },
+                "underlay": {
+                    "h": 210,
+                    "scale": 2.5,
+                    "w": 306,
+                    "x": 2,
+                    "y": 262
+                },
+                "vu_22_off": {
+                    "h": 36,
+                    "scale": 2.5,
+                    "w": 22,
+                    "x": 352,
+                    "y": 84
+                },
+                "vu_22_on": {
+                    "h": 36,
+                    "scale": 2.5,
+                    "w": 22,
+                    "x": 328,
+                    "y": 84
+                }
+            },
+            "control_panel_sprite": "controls.png",
+            "name": "Метропоезд типа А",
+            "sound_loading_info": {
+                "engine1": "sounds/engine1.wav",
+                "engine2": "sounds/engine2.wav",
+                "engine3": "sounds/engine3.wav",
+                "engine4": "sounds/engine4.wav",
+                "engine5": "sounds/engine5.wav",
+                "engine6": "sounds/engine6.wav",
+                "engine7": "sounds/engine7.wav",
+                "km_minus": "sounds/km_minus.wav",
+                "km_plus": "sounds/km_plus.wav",
+                "switch_off": "sounds/vu_off.mp3",
+                "switch_on": "sounds/vu_on.mp3",
+                "tk_minus": "sounds/tk_minus.mp3",
+                "tk_plus": "sounds/tk_plus.mp3"
+            },
+            "system_name": "type_a",
+            "traction_info": {
+                "brake_cyllinder_surface": 0.1,
+                "brake_cyllinder_volume": 0.1,
+                "compressor_mass_rate": 0.142,
+                "control_system_type": "direct",
+                "default_km": 0,
+                "default_tk": 2,
+                "door_animation_states": {
+                    "closed": 0,
+                    "inter_1": 20,
+                    "inter_2": 20,
+                    "inter_3": 20,
+                    "inter_4": 20,
+                    "open": 0
+                },
+                "drive_sounds": [
+                    [
+                        "engine1",
+                        0.5,
+                        8
+                    ],
+                    [
+                        "engine2",
+                        8,
+                        16
+                    ],
+                    [
+                        "engine3",
+                        16,
+                        24
+                    ],
+                    [
+                        "engine4",
+                        24,
+                        32
+                    ],
+                    [
+                        "engine5",
+                        32,
+                        40
+                    ],
+                    [
+                        "engine6",
+                        40,
+                        48
+                    ],
+                    [
+                        "engine7",
+                        48,
+                        1005
+                    ]
+                ],
+                "element_mapouts": [
+                    {
+                        "connection": "rp_return",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                55,
+                                28,
+                                5,
+                                "vu_22_off",
+                                11,
+                                17,
+                                "switch_off"
+                            ],
+                            [
+                                55,
+                                28,
+                                5,
+                                "vu_22_on",
+                                11,
+                                17,
+                                "switch_on"
+                            ]
+                        ],
+                        "name": "Возврат РП",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "left_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                67,
+                                28,
+                                5,
+                                "vu_22_off",
+                                11,
+                                17,
+                                "switch_off"
+                            ],
+                            [
+                                67,
+                                28,
+                                5,
+                                "vu_22_on",
+                                11,
+                                17,
+                                "switch_on"
+                            ]
+                        ],
+                        "name": "Открытие дверей левых",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "right_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                80,
+                                28,
+                                5,
+                                "vu_22_off",
+                                11,
+                                17,
+                                "switch_off"
+                            ],
+                            [
+                                80,
+                                28,
+                                5,
+                                "vu_22_on",
+                                11,
+                                17,
+                                "switch_on"
+                            ]
+                        ],
+                        "name": "Открытие дверей правых",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "close_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                92,
+                                28,
+                                5,
+                                "vu_22_off",
+                                11,
+                                17,
+                                "switch_off"
+                            ],
+                            [
+                                92,
+                                28,
+                                5,
+                                "vu_22_on",
+                                11,
+                                17,
+                                "switch_on"
+                            ]
+                        ],
+                        "name": "Выключатель управления дверьми",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "vz_1",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                80,
+                                46,
+                                5,
+                                "vu_22_off",
+                                11,
+                                17,
+                                "switch_off"
+                            ],
+                            [
+                                80,
+                                46,
+                                5,
+                                "vu_22_on",
+                                11,
+                                17,
+                                "switch_on"
+                            ]
+                        ],
+                        "name": "Вентиль замещения №1",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "mk",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                92,
+                                46,
+                                5,
+                                "vu_22_off",
+                                11,
+                                17,
+                                "switch_off"
+                            ],
+                            [
+                                92,
+                                46,
+                                5,
+                                "vu_22_on",
+                                11,
+                                17,
+                                "switch_on"
+                            ]
+                        ],
+                        "name": "Мотор-компрессор",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "rp",
+                        "draw_mappings": [
+                            [
+                                140,
+                                38,
+                                2.5,
+                                "red_lamp_on",
+                                12,
+                                12
+                            ],
+                            [
+                                140,
+                                38,
+                                2.5,
+                                "red_lamp_off",
+                                12,
+                                12
+                            ]
+                        ],
+                        "name": "Лампа сработки РП",
+                        "state": true,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "unused",
+                        "draw_mappings": [
+                            [
+                                156,
+                                38,
+                                2.5,
+                                "green_lamp_off",
+                                12,
+                                12
+                            ],
+                            [
+                                156,
+                                38,
+                                2.5,
+                                "green_lamp_on",
+                                12,
+                                12
+                            ]
+                        ],
+                        "name": "Зелёная лампа РП",
+                        "state": true,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "doors_open",
+                        "draw_mappings": [
+                            [
+                                172,
+                                38,
+                                2.5,
+                                "blue_lamp_on",
+                                12,
+                                12
+                            ],
+                            [
+                                172,
+                                38,
+                                2.5,
+                                "blue_lamp_off",
+                                12,
+                                12
+                            ]
+                        ],
+                        "name": "Лампа контроля дверей",
+                        "state": true,
+                        "type": "lamp"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 180,
+                        "draw_mappings": [
+                            [
+                                1.5,
+                                -32,
+                                5,
+                                "speedometer_bottom",
+                                6,
+                                6
+                            ],
+                            [
+                                7.5,
+                                32.5,
+                                5,
+                                "speedometer_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                1.5,
+                                -32,
+                                5,
+                                "speedometer_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 100,
+                        "min_value": 0,
+                        "multiplier": -1,
+                        "name": "Скоростемер",
+                        "scale": "velocity",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": -90,
+                        "draw_mappings": [
+                            [
+                                120.5,
+                                -31,
+                                5,
+                                "ammeter_bottom",
+                                6,
+                                6
+                            ],
+                            [
+                                12.5,
+                                12.5,
+                                5,
+                                "ammeter_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                120.5,
+                                -31,
+                                5,
+                                "ammeter_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 600,
+                        "min_value": -600,
+                        "multiplier": 0.15,
+                        "name": "Амперметр",
+                        "scale": "amps",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "draw_mappings": [
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                "manometer_bottom",
+                                6,
+                                6
+                            ],
+                            [
+                                15.5,
+                                15.5,
+                                5,
+                                "manometer_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                "manometer_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "Манометр тормозных цилиндров",
+                        "scale": "press",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "draw_mappings": [
+                            [
+                                0,
+                                0,
+                                5,
+                                null,
+                                0,
+                                0
+                            ],
+                            [
+                                15.5,
+                                15.5,
+                                5,
+                                "manometer_pointer_red",
+                                6,
+                                6
+                            ],
+                            [
+                                0,
+                                0,
+                                null,
+                                0,
+                                0
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "Манометр напорной магистрали",
+                        "scale": "press_tank",
+                        "type": "analog_scale"
+                    }
+                ],
+                "engine_constant": 100,
+                "engine_resistance": 1,
+                "has_als": false,
+                "has_ars": false,
+                "km_draw_mapouts": {
+                    "-1": [
+                        19,
+                        32
+                    ],
+                    "-2": [
+                        19,
+                        35
+                    ],
+                    "0": [
+                        19,
+                        29
+                    ],
+                    "1": [
+                        19,
+                        26
+                    ],
+                    "2": [
+                        19,
+                        23
+                    ],
+                    "3": [
+                        19,
+                        20
+                    ],
+                    "4": [
+                        19,
+                        17
+                    ],
+                    "5": [
+                        19,
+                        14
+                    ],
+                    "scale": 5
+                },
+                "km_mapouts": {
+                    "-1": {
+                        "coil_engagement": 100,
+                        "type": "accel",
+                        "voltage": -150
+                    },
+                    "-2": {
+                        "coil_engagement": 100,
+                        "type": "accel",
+                        "voltage": -300
+                    },
+                    "0": {
+                        "type": "neutral",
+                        "voltage": 0
+                    },
+                    "1": {
+                        "coil_engagement": 100,
+                        "type": "accel",
+                        "voltage": 175
+                    },
+                    "2": {
+                        "coil_engagement": 100,
+                        "type": "accel",
+                        "voltage": 350
+                    },
+                    "3": {
+                        "coil_engagement": 100,
+                        "type": "accel",
+                        "voltage": 525
+                    },
+                    "4": {
+                        "coil_engagement": 100,
+                        "type": "accel",
+                        "voltage": 700
+                    },
+                    "5": {
+                        "coil_engagement": 65,
+                        "type": "accel",
+                        "voltage": 700
+                    }
+                },
+                "mass": 51700,
+                "max_km": 5,
+                "max_tk": 5,
+                "min_km": -2,
+                "min_tk": 1,
+                "peril_current": 300,
+                "peril_pressure": 4,
+                "pressure_tank_volume": 0.8,
+                "rr_draw_mapouts": {
+                    "-1": [
+                        -18,
+                        52
+                    ],
+                    "0": [
+                        -18,
+                        52
+                    ],
+                    "1": [
+                        -18,
+                        45
+                    ],
+                    "scale": 5
+                },
+                "target_pressure": 6,
+                "tk_draw_mapouts": {
+                    "1": [
+                        210,
+                        34
+                    ],
+                    "2": [
+                        210,
+                        46
+                    ],
+                    "3": [
+                        210,
+                        58
+                    ],
+                    "4": [
+                        210,
+                        70
+                    ],
+                    "5": [
+                        210,
+                        82
+                    ],
+                    "scale": 2.5
+                },
+                "tk_mapouts": {
+                    "1": {
+                        "speed": 0.018,
+                        "target": 0,
+                        "type": "press"
+                    },
+                    "2": {
+                        "speed": 0.009,
+                        "target": 0,
+                        "type": "press"
+                    },
+                    "3": {
+                        "type": "neutral"
+                    },
+                    "4": {
+                        "speed": 0.009,
+                        "target": 3.5,
+                        "type": "press"
+                    },
+                    "5": {
+                        "speed": 0.018,
+                        "target": 3.5,
+                        "type": "press"
+                    }
+                },
+                "transmissional_number": 3.94,
+                "underlay_draw_params": [
+                    0,
+                    -41,
+                    5
+                ],
+                "valve_params": {
+                    "stopkran": [
+                        3.5,
+                        0.2
+                    ],
+                    "vz_1": [
+                        1.3,
+                        0.0054
+                    ],
+                    "vz_2": []
+                },
+                "wheel_mass": 1400,
+                "wheel_radius": 0.95
+            }
+        }
+    ],
+    "trains": [
+        {
+            "designed_for": "type_a",
+            "name": "Зелёно-горчичный окрас",
+            "sprite": "type_a_gm.png",
+            "sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "system_name": "type_a_gm"
+        },
+        {
+            "designed_for": "type_a",
+            "name": "Корчинево-горчичный окрас",
+            "sprite": "type_a_bm.png",
+            "sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "system_name": "type_a_bm"
+        },
+        {
+            "designed_for": "type_a",
+            "name": "Сине-циановый окрас",
+            "sprite": "type_a_bc.png",
+            "sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "system_name": "type_a_bc"
+        }
+    ]
+}

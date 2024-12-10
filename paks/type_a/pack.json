@@ -16,7 +16,7 @@
                 "default_km":0,
                 "engine_constant":100,
                 "engine_resistance":1,
-                "peril_current":30000,
+                "peril_current":300,
                 "mass":51700,
                 "wheel_mass":1400,
                 "wheel_radius":0.95,
@@ -45,14 +45,14 @@
                     ["engine7",48,1005]
                 ],
                 "km_mapouts":{
-                    "5":{"type":"accel","voltage":700},
-                    "4":{"type":"accel","voltage":600},
-                    "3":{"type":"accel","voltage":475},
-                    "2":{"type":"accel","voltage":350},
-                    "1":{"type":"accel","voltage":150},
+                    "5":{"type":"accel","voltage":700,"coil_engagement":65},
+                    "4":{"type":"accel","voltage":700,"coil_engagement":100},
+                    "3":{"type":"accel","voltage":525,"coil_engagement":100},
+                    "2":{"type":"accel","voltage":350,"coil_engagement":100},
+                    "1":{"type":"accel","voltage":175,"coil_engagement":100},
                     "0":{"type":"neutral","voltage":0},
-                    "-1":{"type":"accel","voltage":-150},
-                    "-2":{"type":"accel","voltage":-300}
+                    "-1":{"type":"accel","voltage":-150,"coil_engagement":100},
+                    "-2":{"type":"accel","voltage":-300,"coil_engagement":100}
                 },
                 "tk_mapouts":{
                     "1":{"type":"press","speed":0.018,"target":0},

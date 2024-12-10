@@ -155,8 +155,8 @@ class Consist():
         self.current_roll_sound = -1
 
         self.control_wires ={
-            "main_power":False, #1 Главный разъединитель и главный автомат
-            "reserve_controls":False, #1 Резервное управление
+            "main_power":False, #Главный разъединитель и главный автомат
+            "reserve_controls":False, #Резервное управление
             "batteries":False, #2 Питание батарей
             "mk":False, #3 Питание мотор-компрессора
             "reserve_mk":False, #4 Питание резервного мотор-компрессора
@@ -169,6 +169,7 @@ class Consist():
             "traction":False, #11 Сбор схемы на ход
             "electro_brake":False, #12 Сбор схемы на торможение
             "maximal_traction":False, #13 Сбор схемы на максимальный ход
+            "rk_fail":False, #33 Несбор схемы (N=0 при U!=0)
             "rk_spin":False, #14 Вращение реостатного контроллера
             "rk_maxed":False, #15 Схема собрана (РК на максимальной допустимой позиции)
             "left_doors":False, #16 Открытие левых дверей
@@ -318,7 +319,7 @@ class Consist():
                             self.doors["action_l"] = None
                     if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
 
-                self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number
+                self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["km_mapouts"][str(self.km)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["km_mapouts"][str(self.km)] else 1)
                 engine_power = 0
                 if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0 and self.control_wires["rp"]:
                     self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
@@ -351,6 +352,7 @@ class Consist():
                                 self.pressure-=self.consist_info["tk_mapouts"][str(self.tk)]["speed"]
 
                 self.control_wires["traction"] = engine_power > 0
+                self.control_wires["rk_fail"] = engine_power == 0 and self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel"
                 self.control_wires["maximal_traction"] = self.km == self.consist_info["max_km"]
                 self.control_wires["reversor_forwards"] = self.controlling_direction == 1
                 self.control_wires["reversor_backwards"] = self.controlling_direction == -1
