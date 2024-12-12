@@ -96,26 +96,62 @@
                 },
                 "element_mapouts":[
                     {
+                        "name":"Включение освещения",
+                        "type":"button",
+                        "connection":"light_on",
+                        "default":false,
+                        "state":false,
+                        "draw_mappings":[
+                            [58,32,5,"btn_gray_off",6,6],
+                            [58,32,5,"btn_gray_on",6,6]
+                        ]
+
+                    },
+                    {
+                        "name":"Выключение освещения",
+                        "type":"button",
+                        "connection":"light_off",
+                        "default":false,
+                        "state":false,
+                        "draw_mappings":[
+                            [65,32,5,"btn_gray_off",6,6],
+                            [65,32,5,"btn_gray_on",6,6]
+                        ]
+
+                    },
+                    {
                         "name":"Возврат РП",
                         "type":"button",
                         "connection":"rp_return",
                         "default":false,
                         "state":false,
                         "draw_mappings":[
-                            [55,28,5,"vu_22_off",11,17,"switch_off"],
-                            [55,28,5,"vu_22_on",11,17,"switch_on"]
+                            [72,32,5,"btn_gray_off",6,6],
+                            [72,32,5,"btn_gray_on",6,6]
                         ]
 
                     },
                     {
-                        "name":"Открытие дверей левых",
+                        "name":"Сигнализация неисправности",
                         "type":"button",
-                        "connection":"left_doors",
+                        "connection":"unused",
                         "default":false,
                         "state":false,
                         "draw_mappings":[
-                            [67,28,5,"vu_22_off",11,17,"switch_off"],
-                            [67,28,5,"vu_22_on",11,17,"switch_on"]
+                            [80,32,5,"btn_orange_off",6,6],
+                            [80,32,5,"btn_orange_on",6,6]
+                        ]
+
+                    },
+                    {
+                        "name":"Сигнализация дверей",
+                        "type":"button",
+                        "connection":"unused",
+                        "default":false,
+                        "state":false,
+                        "draw_mappings":[
+                            [87,32,5,"btn_gray_off",6,6],
+                            [87,32,5,"btn_gray_on",6,6]
                         ]
 
                     },
@@ -126,32 +162,32 @@
                         "default":false,
                         "state":false,
                         "draw_mappings":[
-                            [80,28,5,"vu_22_off",11,17,"switch_off"],
-                            [80,28,5,"vu_22_on",11,17,"switch_on"]
+                            [94,32,5,"btn_gray_off",6,6],
+                            [94,32,5,"btn_gray_on",6,6]
                         ]
 
                     },
                     {
-                        "name":"Выключатель управления дверьми",
-                        "type":"switch",
+                        "name":"Открытие дверей левых",
+                        "type":"button",
+                        "connection":"left_doors",
+                        "default":false,
+                        "state":false,
+                        "draw_mappings":[
+                            [69,40,5,"btn_gray_off",6,6],
+                            [69,40,5,"btn_gray_on",6,6]
+                        ]
+
+                    },
+                    {
+                        "name":"Резервное закрытие дверей",
+                        "type":"button",
                         "connection":"close_doors",
                         "default":false,
                         "state":false,
                         "draw_mappings":[
-                            [92,28,5,"vu_22_off",11,17,"switch_off"],
-                            [92,28,5,"vu_22_on",11,17,"switch_on"]
-                        ]
-
-                    },
-                    {
-                        "name":"Вентиль замещения №1",
-                        "type":"button",
-                        "connection":"vz_1",
-                        "default":false,
-                        "state":false,
-                        "draw_mappings":[
-                            [80,46,5,"vu_22_off",11,17,"switch_off"],
-                            [80,46,5,"vu_22_on",11,17,"switch_on"]
+                            [83,40,5,"btn_orange_off",6,6],
+                            [83,40,5,"btn_orange_on",6,6]
                         ]
 
                     },
@@ -162,41 +198,87 @@
                         "default":false,
                         "state":false,
                         "draw_mappings":[
-                            [92,46,5,"vu_22_off",11,17,"switch_off"],
-                            [92,46,5,"vu_22_on",11,17,"switch_on"]
+                            [62,45,5,"switch_off",6,6],
+                            [62,45,5,"switch_on",6,6]
                         ]
 
                     },
                     {
-                        "name":"Лампа сработки РП",
-                        "type":"lamp",
-                        "state":true,
-                        "connection":"rp",
+                        "name":"Регулировка РУТ (пониженное ускорение)",
+                        "type":"switch",
+                        "connection":"slow_accel",
+                        "default":false,
+                        "state":false,
                         "draw_mappings":[
-                            [68,19,5,"red_lamp_on",6,6],
-                            [68,19,5,"red_lamp_off",6,6]
+                            [76,45,5,"switch_off",6,6],
+                            [76,45,5,"switch_on",6,6]
                         ]
 
                     },
                     {
-                        "name":"Зелёная лампа РП",
-                        "type":"lamp",
-                        "state":true,
-                        "connection":"unused",
+                        "name":"Выключатель управления дверьми",
+                        "type":"switch",
+                        "connection":"reserve_close_doors",
+                        "default":false,
+                        "state":false,
                         "draw_mappings":[
-                            [76,19,5,"green_lamp_off",6,6],
-                            [76,19,5,"green_lamp_on",6,6]
+                            [90,45,5,"switch_off",6,6],
+                            [90,45,5,"switch_on",6,6]
                         ]
 
                     },
                     {
-                        "name":"Лампа контроля дверей",
+                        "name":"Сбор схемы на ход",
                         "type":"lamp",
-                        "state":true,
+                        "state":false,
+                        "connection":"traction",
+                        "draw_mappings":[
+                            [61,24,5,"traction_lamp_off",5,5],
+                            [61,24,5,"traction_lamp_on",5,5]
+                        ]
+
+                    },
+                    {
+                        "name":"Сбор схемы на тормоз",
+                        "type":"lamp",
+                        "state":false,
+                        "connection":"electro_brake",
+                        "draw_mappings":[
+                            [67,24,5,"brake_lamp_off",5,5],
+                            [67,24,5,"brake_lamp_on",5,5]
+                        ]
+
+                    },
+                    {
+                        "name":"Несбор схемы (сработка РП)",
+                        "type":"lamp",
+                        "state":false,
+                        "connection":"rk_fail",
+                        "draw_mappings":[
+                            [73,24,5,"fail_lamp_off",5,5],
+                            [73,24,5,"fail_lamp_on",5,5]
+                        ]
+
+                    },
+                    {
+                        "name":"Лампа контроля дверей состава",
+                        "type":"lamp",
+                        "state":false,
                         "connection":"doors_open",
                         "draw_mappings":[
-                            [84,19,5,"blue_lamp_on",6,6],
-                            [84,19,5,"blue_lamp_off",6,6]
+                            [86,24,5,"doors_b_lamp_on",5,5],
+                            [86,24,5,"doors_b_lamp_off",5,5]
+                        ]
+
+                    },
+                    {
+                        "name":"Лампа контроля дверей вагона",
+                        "type":"lamp",
+                        "state":false,
+                        "connection":"doors_open",
+                        "draw_mappings":[
+                            [92,24,5,"doors_w_lamp_on",5,5],
+                            [92,24,5,"doors_w_lamp_off",5,5]
                         ]
 
                     },

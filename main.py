@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.4 базовый комплект инструментов для разработки"
+version = "0.5.4.1 потихоньку леплю 81-703"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -30,7 +30,7 @@ debug = 0
 world_angle = 45
 compression = 2
 volume = 0
-hotkeys = {"vz_1":pg.K_n,"left_doors":pg.K_a,"right_doors":pg.K_d,"close_doors":pg.K_v}
+hotkeys = {"vz_1":pg.K_n,"rp":pg.K_v,"left_doors":pg.K_a,"right_doors":pg.K_d,"close_doors":pg.K_v}
 text_color = (200,200,200)
 text_black = (25,25,25)
 
@@ -1542,6 +1542,7 @@ while working:
                 info_blit_list.append(font.render(f"RP {consists[controlling_consist].control_wires['rp']}",True,text_color))
                 info_blit_list.append(font.render(f"vz1 {consists[controlling_consist].vz_1}",True,text_color))
                 info_blit_list.append(font.render(f"doors {consists[controlling_consist].doors}",True,text_color))
+                info_blit_list.append(font.render(f"tractiom {consists[controlling_consist].control_wires['traction']}",True,text_color))
                 info_blit_list.append(font.render(f"CW doors {consists[controlling_consist].control_wires['left_doors'],consists[controlling_consist].control_wires['right_doors']}",True,text_color))
                 if debug > 1:
                     info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))

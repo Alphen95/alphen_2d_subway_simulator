@@ -180,6 +180,7 @@ class Consist():
             "doors_open_duplicate":False, #21 Двери открыты
             "light_on":False, #22 Включение освещения
             "light_off":False, #23 Выключение освещения
+            "slow_accel":False, #33 Понижение ускорения (Регулировка РУТ)
             "ars":False, #24 Включение АРС
             "als":False, #25 Включение АЛС
             "ars_0":False, #26 АРС - 0
@@ -276,7 +277,7 @@ class Consist():
                     self.doors["action_r"] = "open"
                 if self.control_wires["left_doors"] and self.doors["l"] == "closed":
                     self.doors["action_l"] = "open"
-                if self.control_wires["close_doors"]:
+                if self.control_wires["close_doors"] or self.control_wires["reserve_close_doors"]:
                     self.doors["action_r"] = "close" if self.doors["r"] != "closed" else None
                     self.doors["action_l"] = "close" if self.doors["l"] != "closed" else None
                 self.control_wires["doors_open"] = self.doors["r"] != "closed" or self.doors["l"] != "closed"
