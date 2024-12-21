@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.4.1 потихоньку леплю 81-703"
+version = "0.5.4.2 тяга для 81-703"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -1409,7 +1409,8 @@ while working:
                 is_on_button = (base_left_pos+screen_size[0]/div-30-10 <= m_pos[0] <= base_left_pos+screen_size[0]/div-10) and (repaint_height+text_delta*len(spawn_menu_blocks[1][2]) <= m_pos[1] <= repaint_height+text_delta*len(spawn_menu_blocks[1][2])+30) and m_btn[0]
                 if is_on_button and mouse_clicked:
                     spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][(train_repaint_dictionary[spawn_menu[2]].index(spawn_menu[3])+1)%len(train_repaint_dictionary[spawn_menu[2]])]
-            else:
+                    
+            elif controlling == -1:
                 if mouse_clicked and m_btn[0]:
                     consist_key = random.randint(0,999)
                     while consist_key in consists: consist_key = random.randint(0,999)
@@ -1487,6 +1488,10 @@ while working:
                 '''
         else:
             player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
+
+            if pg.K_s in keydowns and spawn_menu[0]:
+                spawn_menu[0] = not(spawn_menu[0])
+
             if pg.K_UP in keydowns and consists[controlling_consist].km < consists[controlling_consist].consist_info["max_km"]:
                 consists[controlling_consist].km += 1
                 sounds[consists[controlling_consist].train_type]["km_plus"].play()
@@ -1542,8 +1547,11 @@ while working:
                 info_blit_list.append(font.render(f"RP {consists[controlling_consist].control_wires['rp']}",True,text_color))
                 info_blit_list.append(font.render(f"vz1 {consists[controlling_consist].vz_1}",True,text_color))
                 info_blit_list.append(font.render(f"doors {consists[controlling_consist].doors}",True,text_color))
-                info_blit_list.append(font.render(f"tractiom {consists[controlling_consist].control_wires['traction']}",True,text_color))
+                info_blit_list.append(font.render(f"traction {consists[controlling_consist].control_wires['traction']}",True,text_color))
                 info_blit_list.append(font.render(f"CW doors {consists[controlling_consist].control_wires['left_doors'],consists[controlling_consist].control_wires['right_doors']}",True,text_color))
+                if consists[controlling_consist].consist_info["control_system_type"] == "reostat":
+                    info_blit_list.append(font.render(f"rk {consists[controlling_consist].rk}",True,text_color))
+
                 if debug > 1:
                     info_blit_list.append(font.render(f"reverser {consists[controlling_consist].controlling_direction}",True,text_color))
                     info_blit_list.append(font.render(f"traction {consists[controlling_consist].traction_direction}",True,text_color))
