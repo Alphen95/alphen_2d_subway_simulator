@@ -8,7 +8,7 @@ import random
 import pathlib
 from res.train import *
 
-version = "0.5.4.2 тяга для 81-703"
+version = "0.5.5 сейчас будем рефакторить (электродинамика малоэффективна)"
 version_id = version.split(" ")[0]
 scale = 1
 CURRENT_DIRECTORY = ""
@@ -36,11 +36,11 @@ text_black = (25,25,25)
 
 pg.init()
 clock = pg.time.Clock()
-screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
+screen = pg.display.set_mode((0, 0), pg.FULLSCREEN, pg.SRCALPHA)
 font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),20)
 annotation_font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),12)
 screen_size = screen.get_size()
-screen = pg.display.set_mode(screen_size, pg.SRCALPHA)
+#screen = pg.display.set_mode(screen_size, pg.SRCALPHA)
 pg.display.set_caption(f"Alphen's Isometric Subway Simulator v{version_id}")
 screen_state = "loading"
 
@@ -1313,7 +1313,7 @@ while working:
                 screen.blit(annotation, (m_pos[0]+15,m_pos[1]+25))
 
         if spawn_menu[1] > 0:
-            div = 6
+            div = 4 
             base_img_height = 200
             pg.draw.rect(screen,(200,200,200),(screen_size[0]/div*((div-1)+(1-spawn_menu[1])**2),0,screen_size[0]/div+128,screen_size[1]))
             spawn_menu_name = font.render(f"Create a consist",True,text_black)

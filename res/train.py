@@ -212,6 +212,7 @@ class Consist():
         self.engine_power = 0
         self.engine_voltage = 0
         self.engine_current = 0
+        self.ballast_resistance = 0
         self.electromotive_force = 0
         self.vz_1 = 0
         self.vz_2 = 0
@@ -290,6 +291,9 @@ class Consist():
             #логика обсчёта РКСУ
             self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["rk_mapouts"][str(self.rk)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["rk_mapouts"][str(self.rk)] else 1)
             if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel":
+
+                #режим разгона
+
                 if self.controlling_direction != 0 and self.control_wires["rp"]:
                     if str(self.rk) != "0":
                         self.engine_voltage = self.consist_info["rk_mapouts"][str(self.rk)]["voltage"]
@@ -317,8 +321,41 @@ class Consist():
                     self.engine_current = 0
                     self.engine_voltage = 0
                 self.engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
+            elif self.consist_info["km_mapouts"][str(self.km)]["type"] == "brake":
+                #print("z")
+                #режим торможения
+
+                if self.controlling_direction != 0 and self.control_wires["rp"]:
+                    if str(self.rk) != "0":
+                        self.ballast_resistance = self.consist_info["rk_mapouts"][str(self.rk)]["resistance"]
+
+                    if (self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] < self.rk and 
+                        (
+                            (self.consist_info["rk_mapouts"][str(self.rk)]["switch_current"] > self.engine_current 
+                             and self.rk_timer <= 0) or
+                             self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]
+                        )):
+                        if self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]:
+                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][0]
+                        elif self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] < self.rk:
+                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][self.consist_info["km_mapouts"][str(self.km)]["rk_positions"].index(self.rk)+1]
+                        self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"]
+                    self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["rk_mapouts"][str(self.rk)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["rk_mapouts"][str(self.rk)] else 1)
+                    self.engine_current = ((self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/(self.engine_resistance+self.ballast_resistance)
+                    if self.engine_current <= 0: self.rk_timer = 12
+                else:
+                    self.rk_timer = 0
+                    self.engine_voltage = 0
+
+                if self.engine_current > 0 and self.control_wires["rp"] and self.ballast_resistance != 0:
+                    self.engine_power = -self.electromotive_force**2*(self.velocity_direction*self.traction_direction)/self.ballast_resistance
+                else: self.engine_power = 0
+
             else:
                 self.rk = 0
+                self.engine_current = 0
+                self.engine_voltage = 0
+                self.ballast_resistance = 0
 
     def cycle_pneumo(self):
         # блок логики обсчёта пневматических систем - МК, РМК, ТЦ, ВЗ№1 и ВЗ№2

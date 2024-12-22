@@ -206,9 +206,9 @@
                         "scale":"velocity",
                         "angle":0,
                         "base_angle":180,
-                        "multiplier":-1,
+                        "multiplier":-1.125,
                         "min_value":0,
-                        "max_value":100,
+                        "max_value":90,
                         "draw_mappings":[
                             [1.5,-32,5,"speedometer_bottom",6,6],
                             [7.5,32.5,5,"speedometer_pointer",6,6],
