@@ -14,15 +14,15 @@ options = {
     'build_exe': {
         'include_msvcr': True,
         'includes': includes,
-        "include_files":["res","trains"]
+        "include_files":["res","paks"]
         #'excludes': excludes,
         #   'zip_include_packages': zip_include_packages,
         #'build_exe': 'build_windows',
     }
 }
 
-setup(name='hello_world',
-      version='0.4.3',
-      description='Isometric Subway Simulator',
+setup(name='aims',
+      version='0.6.1',
+      description="Alphen's Isometric Subway Simulator",
       executables=executables,
       options=options)
