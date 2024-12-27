@@ -42,32 +42,38 @@ class Train():
                     if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                         self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tca1":
-                    if local_pos[1] > 4*(256-39):
-                        self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                    else:
-                        self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
+                    #if local_pos[1] > 4*(256-39):
+                    #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
+                    #else:
+                    #    self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
+                    self.angle = 180-14 if 270 >= self.angle >= 90 else 14
                 elif curblock[-4:] == "tca2":
-                    if local_pos[1] < 4*(39):
-                        self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                    else:
-                        self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
+                    #if local_pos[1] < 4*(39):
+                    #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
+                    #else:
+                    #    self.angle = 180-16.5 if 270 >= self.angle >= 90 else 16.5
+                    self.angle = 180-14 if 270 >= self.angle >= 90 else 14
                 elif curblock[-4:] == "tcb1":
-                    if local_pos[1] > 4*(256-39):
-                        self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                    else:
-                        self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
+                    #if local_pos[1] > 4*(256-39):
+                    #    self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
+                    #else:
+                    #    self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
+                    self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
                 elif curblock[-4:] == "tcb2":
-                    if local_pos[1] < 4*(39):
-                        self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                    else:
-                        self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
+                    #if local_pos[1] < 4*(39):
+                    #    self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
+                    #else:
+                    #    self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
+                    self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
                 
                 elif curblock[-4:] == "tsa1":
                     if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] > 4*(256-39):
-                            self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                        elif local_pos[1] > 4*64:
-                            self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        #if local_pos[1] > 4*(256-39):
+                        #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
+                        #elif local_pos[1] > 4*64:
+                        #    self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        if local_pos[1] > 4*64:
+                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
                         else:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
@@ -81,10 +87,12 @@ class Train():
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsa2":
                     if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] < 4*(39):
-                            self.angle = 180-8.25 if 270 >= self.angle >= 90 else 8.25
-                        elif local_pos[1] < 4*(64*3):
-                            self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        #if local_pos[1] < 4*(39):
+                        #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 8.25
+                        #elif local_pos[1] < 4*(64*3):
+                        #    self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
+                        if local_pos[1] < 4*64*3:
+                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
                         else:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
@@ -98,10 +106,13 @@ class Train():
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb1":
                     if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
+                        #if local_pos[1] > 4*(256-39):
+                        #    self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
+                        #elif local_pos[1] > 4*64:
+                        #    self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
+                        
                         if local_pos[1] > 4*(256-39):
-                            self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        elif local_pos[1] > 4*64:
-                            self.angle = 180+16.5 if 270 >= self.angle >= 90 else 360-16.5
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
                         else:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
@@ -115,10 +126,13 @@ class Train():
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb2":
                     if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
-                        if local_pos[1] < 4*(39):
-                            self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        elif local_pos[1] < 4*(64*3):
-                            self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
+                        #if local_pos[1] < 4*(39):
+                        #    self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
+                        #elif local_pos[1] < 4*(64*3):
+                        #    self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
+
+                        if local_pos[1] < 4*(64*3):
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
                         else:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
@@ -166,6 +180,8 @@ class Consist():
             "rp_return":False, #8 Возврат реле перегрузки
             "vz_1":False, #9 Вентиль замещения №1
             "vz_2":False, #10 Вентиль замещения №2
+            "vz_1_km":False, # Вентиль замещения №1 от ходового режима
+            "vz_2_km":False, # Вентиль замещения №2 от ходового режима
             "traction":False, #11 Сбор схемы на ход
             "electro_brake":False, #12 Сбор схемы на торможение
             "maximal_traction":False, #13 Сбор схемы на максимальный ход
@@ -271,6 +287,21 @@ class Consist():
         pi = 3.1415
         self.engine_power = 0
         
+        
+        #вентиль замещения 1
+        if "vz_1" in self.consist_info["km_mapouts"][str(self.km)] and self.consist_info["km_mapouts"][str(self.km)]["vz_1"]:
+            if "vz_1_pos" in self.consist_info["km_mapouts"][str(self.km)] and self.rk in self.consist_info["km_mapouts"][str(self.km)]["vz_1_pos"] or "vz_1_pos" not in self.consist_info["km_mapouts"][str(self.km)]:
+                self.control_wires["vz_1_km"] = True
+            else: self.control_wires["vz_1_km"] = False
+        else: self.control_wires["vz_1_km"] = False
+
+        #вентиль замещения 2
+        if "vz_2" in self.consist_info["km_mapouts"][str(self.km)] and self.consist_info["km_mapouts"][str(self.km)]["vz_2"]:
+            if "vz_2_pos" in self.consist_info["km_mapouts"][str(self.km)] and self.rk in self.consist_info["km_mapouts"][str(self.km)]["vz_2_pos"] or "vz_2_pos" not in self.consist_info["km_mapouts"][str(self.km)]:
+                self.control_wires["vz_2_km"] = True
+            else: self.control_wires["vz_2_km"] = False
+        else: self.control_wires["vz_2_km"] = False
+
         if self.consist_info["control_system_type"] == "direct":
             self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["km_mapouts"][str(self.km)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["km_mapouts"][str(self.km)] else 1)
             # логика обсчёта НСУ (непосредственной системы управления)
@@ -322,9 +353,9 @@ class Consist():
                     self.engine_voltage = 0
                 self.engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
             elif self.consist_info["km_mapouts"][str(self.km)]["type"] == "brake":
-                #print("z")
                 #режим торможения
 
+                #электродинамическое торможение
                 if self.controlling_direction != 0 and self.control_wires["rp"]:
                     if str(self.rk) != "0":
                         self.ballast_resistance = self.consist_info["rk_mapouts"][str(self.rk)]["resistance"]
@@ -334,15 +365,16 @@ class Consist():
                             (self.consist_info["rk_mapouts"][str(self.rk)]["switch_current"] > self.engine_current 
                              and self.rk_timer <= 0) or
                              self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]
-                        )):
+                        )): #переключиться, если вышел таймер и нужное напряжение и не макспозиция ИЛИ позиция не в словаре
                         if self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]:
-                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][0]
+                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][0] #первая, если старой нету
                         elif self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] < self.rk:
-                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][self.consist_info["km_mapouts"][str(self.km)]["rk_positions"].index(self.rk)+1]
-                        self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"]
+                            rk_index = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"].index(self.rk)+1
+                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][rk_index] #переход на следующую, если есть
+                        self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"] #восстановка таймера
                     self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["rk_mapouts"][str(self.rk)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["rk_mapouts"][str(self.rk)] else 1)
                     self.engine_current = ((self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/(self.engine_resistance+self.ballast_resistance)
-                    if self.engine_current <= 0: self.rk_timer = 12
+                    if self.engine_current <= 0: self.rk_timer = 12 #если нету напряжения, то урезать таймер
                 else:
                     self.rk_timer = 0
                     self.engine_voltage = 0
@@ -365,9 +397,14 @@ class Consist():
             self.tank_pressure+=self.compressor_mass_rate*8.31*293/self.pressure_tank_volume/0.029/120/10000
 
         # обсчёт вентиля замещения №1
-        self.vz_1 = (self.vz_1 + (2*self.control_wires["vz_1"]-1)*self.consist_info["valve_params"]["vz_1"][1]) 
+        self.vz_1 = (self.vz_1 + (2*(self.control_wires["vz_1"] or self.control_wires["vz_1_km"])-1)*self.consist_info["valve_params"]["vz_1"][1]) 
         self.vz_1 = (self.vz_1 if self.vz_1 >= 0 else 0)
         self.vz_1 = (self.vz_1 if self.vz_1 <= self.consist_info["valve_params"]["vz_1"][0] else self.consist_info["valve_params"]["vz_1"][0])
+
+        # обсчёт вентиля замещения №2
+        self.vz_2 = (self.vz_2 + (2*(self.control_wires["vz_2"] or self.control_wires["vz_2_km"])-1)*self.consist_info["valve_params"]["vz_2"][1]) 
+        self.vz_2 = (self.vz_2 if self.vz_2 >= 0 else 0)
+        self.vz_2 = (self.vz_2 if self.vz_2 <= self.consist_info["valve_params"]["vz_2"][0] else self.consist_info["valve_params"]["vz_2"][0])
 
         # обсчёт тормозных цилиндров
         if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
@@ -472,11 +509,12 @@ class Consist():
                 self.consist_info["element_mapouts"][elem_id]["state"] = self.control_wires[element["connection"]]
             elif element["type"] == "analog_scale":
                 value = 0
-                if element["scale"] == "velocity": value = self.velocity*3.6
-                elif element["scale"] == "amps": value = self.engine_current*self.traction_direction*self.control_wires["rp"]
-                elif element["scale"] == "volts": value = self.engine_voltage*self.control_wires["rp"]
-                elif element["scale"] == "press": value = max(self.vz_1,self.vz_2,self.pressure)
-                elif element["scale"] == "press_tank": value = self.tank_pressure
+                if element["scale"] == "velocity": value = round(complex(self.velocity*3.6).real,2)
+                elif element["scale"] == "amps": value = round(
+                    self.engine_current*self.traction_direction*self.velocity_direction*self.control_wires["rp"],2)
+                elif element["scale"] == "volts": value = round(self.engine_voltage*self.control_wires["rp"],2)
+                elif element["scale"] == "press": value = round(max(self.vz_1,self.vz_2,self.pressure),2)
+                elif element["scale"] == "press_tank": value = round(self.tank_pressure,2)
 
                 if value != element["angle"]:
                     self.consist_info["element_mapouts"][elem_id]["angle"] += (element["max_value"]-element["min_value"])/100*sign(value-element["angle"])

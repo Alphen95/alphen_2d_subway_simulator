@@ -6,10 +6,15 @@ import time
 import threading
 import random
 import pathlib
+import pprint
 from res.train import *
 
-version = "0.5.5 сейчас будем рефакторить (электродинамика малоэффективна)"
+version = "0.6 Е-обноволение"
 version_id = version.split(" ")[0]
+changelog = [
+    "v0.6 'E-type update'",
+    "-added type 'E' 81-703 EMU"
+]
 scale = 1
 CURRENT_DIRECTORY = ""
 current_dir = CURRENT_DIRECTORY
@@ -30,15 +35,22 @@ debug = 0
 world_angle = 45
 compression = 2
 volume = 0
-hotkeys = {"vz_1":pg.K_n,"rp":pg.K_v,"left_doors":pg.K_a,"right_doors":pg.K_d,"close_doors":pg.K_v}
+hotkeys = {"vz_1":pg.K_n,"rp_return":pg.K_b,"left_doors":pg.K_a,"right_doors":pg.K_d,"close_doors":pg.K_v}
 text_color = (200,200,200)
 text_black = (25,25,25)
+
+main_font_height = 20
+title_font_height = 30
 
 pg.init()
 clock = pg.time.Clock()
 screen = pg.display.set_mode((0, 0), pg.FULLSCREEN, pg.SRCALPHA)
-font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),20)
+title_font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),title_font_height)
+font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),main_font_height)
 annotation_font = pg.font.Font(os.path.join(CURRENT_DIRECTORY,"res","verdana.ttf"),12)
+temp_text = font.render("abcdefghijklmnopqrtsuvwxyz",True,(0,0,0))
+char_width = temp_text.get_width()/26
+
 screen_size = screen.get_size()
 #screen = pg.display.set_mode(screen_size, pg.SRCALPHA)
 pg.display.set_caption(f"Alphen's Isometric Subway Simulator v{version_id}")
@@ -50,6 +62,7 @@ train_sprites = {}
 train_repaint_dictionary = {}
 icons = {}
 train_types = {}
+misc_sprites = {}
 sounds = {}
 consists_info = {}
 consists = {}
@@ -82,7 +95,7 @@ def text_splitter(base_string, char_width,max_width):
     return [base_string[i:i+max_char_per_line] for i in range(0, len(base_string), max_char_per_line)]
 
 def sprite_load_routine():
-    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons,train_repaint_dictionary, load_timer
+    global ground_sprites, train_sprites,train_types, sounds, consists_info,CURRENT_DIRECTORY,sprite_loading_info,screen_state,consists,progress,icons,train_repaint_dictionary, load_timer, misc_sprites
     pak_folders = os.listdir(os.path.join(current_dir,"paks"))
     train_sprites["sprites"] = {}
     train_sprites["controls"] = {}
@@ -94,12 +107,13 @@ def sprite_load_routine():
             with open(os.path.join(CURRENT_DIRECTORY,"paks",folder,"pack.json"),encoding="utf-8") as file:
                 pack_parameters = json.loads(file.read())
 
+                temp_sprites = {}
+                filenames = os.listdir(os.path.join(CURRENT_DIRECTORY,"paks",folder))
+                for filename in filenames:
+                    if filename[-4:] == ".png":
+                        temp_sprites[filename[:-4]] = pg.image.load(os.path.join(*([CURRENT_DIRECTORY,"paks",folder,filename]))).convert_alpha()
+
                 if "tiles" in pack_parameters:
-                    temp_sprites = {}
-                    filenames = os.listdir(os.path.join(CURRENT_DIRECTORY,"paks",folder))
-                    for filename in filenames:
-                        if filename[-4:] == ".png":
-                            temp_sprites[filename[:-4]] = pg.image.load(os.path.join(*([CURRENT_DIRECTORY,"paks",folder,filename]))).convert_alpha()
                     
                     for info_pack in pack_parameters["tiles"]:
 
@@ -143,6 +157,14 @@ def sprite_load_routine():
                             progress+=1
                         ground_sprites[info_pack["name"]]["height"] = (info_pack["params"][4]+info_pack["params"][5])*sprite_stack_factor-1
                 
+                if "misc" in pack_parameters:
+                    for misc_sprite_param in pack_parameters["misc"]:
+                        misc_sprites[misc_sprite_param["name"]] = pg.transform.flip(
+                            temp_sprites[misc_sprite_param["filename"]].subsurface(
+                                misc_sprite_param["params"][0],misc_sprite_param["params"][1],
+                                misc_sprite_param["params"][2],misc_sprite_param["params"][3]),
+                            misc_sprite_param["params"][4],misc_sprite_param["params"][5])
+
                 if "icons" in pack_parameters:
                     for icon_param in pack_parameters["icons"]:
                         icons[icon_param["name"]] = pg.transform.flip(
@@ -196,7 +218,7 @@ def sprite_load_routine():
                                 base_layers.append(pg.transform.scale(base_train_sprite.subsurface(x_pos,sprite_params["y"],sprite_params["w"],sprite_params["h"]),(sprite_params["w"]*4,sprite_params["h"]*4)))
 
 
-                            for rotation in [0,180,world_angle,world_angle+180]+[8.25+world_angle,16.5+world_angle,-8.25+world_angle,-16.5+world_angle,180-8.25+world_angle,180-16.5+world_angle,180+8.25+world_angle,180+16.5+world_angle]:
+                            for rotation in [0,180,world_angle,world_angle+180]+[8.25+world_angle,14+world_angle,-8.25+world_angle,-14+world_angle,180-8.25+world_angle,180-14+world_angle,180+8.25+world_angle,180+14+world_angle]:
                                 w, h = pg.transform.rotate(base_layers[0],rotation).get_size()
                                 h/=compression
                                 rotation = rotation%360
@@ -208,8 +230,9 @@ def sprite_load_routine():
 
                                 for i in range(sprite_params["layers"]*sprite_stack_factor):
                                     pos = (0,global_l_surface.get_height()-i-h)
-                                    l_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
-                                    r_surface = pg.Surface(base_layers[int(i/sprite_stack_factor)].get_size())
+                                    surf_size = base_layers[int(i/sprite_stack_factor)].get_size()
+                                    l_surface = pg.Surface(size=surf_size,masks=None)
+                                    r_surface = pg.Surface(size=surf_size,masks=None)
                                     l_surface.set_colorkey((0,0,0))
                                     r_surface.set_colorkey((0,0,0))
 
@@ -241,7 +264,7 @@ def sprite_load_routine():
     screen_state = "title"
     load_timer = 200
     consists = {}
-
+'''
 world = {
     (0,17):["tstr"],
     (0,16):["tsb1"],(-1,16):["tcb2"],
@@ -260,7 +283,7 @@ world = {
     (1,3):["tstr"],(-2,3):["tstr"],
     (1,2):["tstr"],(-2,2):["tstr"],
     (1,1):["tstr"],(-2,1):["tstr"],
-    (1,0):["park_kultury_track_tstr"],(0,0):["park_kultury_platform","park_kultury_walls"],(-1,0):["park_kultury_platform_f","park_kultury_walls_f"],(-2,0):["park_kultury_track_f_tstr"],
+    (1,0):["sterlitamakskaya_track_tstr"],(0,0):["sterlitamakskaya_platform","sterlitamakskaya_walls"],(-1,0):["sterlitamakskaya_platform_f","sterlitamakskaya_walls_f"],(-2,0):["sterlitamakskaya_track_f_tstr"],
     (1,-1):["tstr"],(-2,-1):["tstr"],
     (1,-2):["tstr"],(-2,-2):["tstr"],
     (1,-3):["tstr"],(-2,-3):["tstr"],
@@ -277,32 +300,137 @@ world = {
     (0,-14):["tstr"],(-1,-14):["tstr"],
     (0,-15):["tsa2"],(-1,-15):["tsa1"],
     (0,-16):["tstr"],(-1,-16):["tstr"]}
-
 '''
-world = {
-    (0,2):"tstr",
-    (0,1):"tsb1",(-1,1):"tcb2",
-    (1,0):"tozolosh_platform_r",(0,0):"tozolosh_track_r_tstr",(-1,0):"tozolosh_track_l_tstr",(-2,0):"tozolosh_platform_l",
-    (0,-1):"tstr",(-1,-1):"tstr",
-    (0,-2):"tstr",(-1,-2):"tstr",
-    (1,-3):"tca2",(0,-3):"tca1",(-1,-3):"tcb1",(-2,-3):"tcb2",
-    (1,-4):"tstr",(-2,-4):"tstr",
-    (1,-5):"tstr",(-2,-5):"tstr",
-    (1,-6):"aktau_track_l_tstr",(0,-6):"aktau_platform_l",(-1,-6):"aktau_platform_r",(-2,-6):"aktau_track_r_tstr",
-    (1,-7):"tstr",(-2,-7):"tstr",
-    (1,-8):"tcb1",(0,-8):"tcb2",(-1,-8):"tca2",(-2,-8):"tca1",
-    (0,-9):"tstr",(-1,-9):"tstr",
-    (0,-10):"tsa2",(-1,-10):"tsa1",
-    (0,-11):"tstr",(-1,-11):"tstr",
-}
-'''
-switches = {
-    (0,16):False,
-    (1,9):False,
-    (-2,7):True,
-    (0,-15):True,
-    (-1,-15):True
-}
+world = {(-6, 26): ['tca1'],
+ (-6, 27): ['tstr'],
+ (-6, 28): ['sovetskaya_track_f_tstr', ''],
+ (-6, 29): ['tstr'],
+ (-6, 30): ['tcb2'],
+ (-5, 25): ['tca1'],
+ (-5, 26): ['tca2'],
+ (-5, 28): ['sovetskaya_platform_f', 'sovetskaya_walls_f'],
+ (-5, 30): ['tcb1'],
+ (-5, 31): ['tcb2'],
+ (-4, 18): ['tca1'],
+ (-4, 19): ['tstr'],
+ (-4, 20): ['vokzalnaya_track_f_tstr', ''],
+ (-4, 21): ['tsb2'],
+ (-4, 22): ['tstr'],
+ (-4, 23): ['tstr'],
+ (-4, 24): ['tstr'],
+ (-4, 25): ['tca2'],
+ (-4, 28): ['sovetskaya_platform', 'sovetskaya_walls'],
+ (-4, 31): ['tcb1'],
+ (-4, 32): ['tcb2'],
+ (-3, 17): ['tca1'],
+ (-3, 18): ['tca2'],
+ (-3, 20): ['vokzalnaya_platform_f', 'vokzalnaya_walls_f'],
+ (-3, 21): ['tcb1'],
+ (-3, 22): ['tcb2'],
+ (-3, 26): ['tca1'],
+ (-3, 27): ['tstr'],
+ (-3, 28): ['sovetskaya_track_tstr', ''],
+ (-3, 29): ['tstr'],
+ (-3, 30): ['tcb2'],
+ (-3, 32): ['tcb1'],
+ (-3, 33): ['tstr'],
+ (-3, 34): ['sterlitamakskaya_track_f_tstr', ''],
+ (-3, 35): ['tsb2'],
+ (-3, 36): ['tstr'],
+ (-3, 37): ['tstr'],
+ (-2, 16): ['tca1'],
+ (-2, 17): ['tca2'],
+ (-2, 20): ['vokzalnaya_platform', 'vokzalnaya_walls'],
+ (-2, 22): ['tcb1'],
+ (-2, 23): ['tcb2'],
+ (-2, 25): ['tca1'],
+ (-2, 26): ['tca2'],
+ (-2, 30): ['tcb1'],
+ (-2, 31): ['tcb2'],
+ (-2, 34): ['sterlitamakskaya_platform_f', 'sterlitamakskaya_walls_f'],
+ (-2, 35): ['tcb1'],
+ (-2, 36): ['tsa1'],
+ (-2, 37): ['tstr'],
+ (-1, -3): ['tstr'],
+ (-1, -2): ['tstr'],
+ (-1, -1): ['tstr'],
+ (-1, 0): ['tstr'],
+ (-1, 1): ['tsa1'],
+ (-1, 2): ['tstr'],
+ (-1, 3): ['sodovaya_track_f_tstr', ''],
+ (-1, 4): ['tstr'],
+ (-1, 5): ['tstr'],
+ (-1, 6): ['tstr'],
+ (-1, 7): ['tstr'],
+ (-1, 8): ['tstr'],
+ (-1, 9): ['kochetova_track_f_tstr', ''],
+ (-1, 10): ['tstr'],
+ (-1, 11): ['tstr'],
+ (-1, 12): ['tstr'],
+ (-1, 13): ['tstr'],
+ (-1, 14): ['park_kultury_track_f_tstr', ''],
+ (-1, 15): ['tstr'],
+ (-1, 16): ['tca2'],
+ (-1, 18): ['tca1'],
+ (-1, 19): ['tstr'],
+ (-1, 20): ['vokzalnaya_track_tstr', ''],
+ (-1, 21): ['tstr'],
+ (-1, 22): ['tstr'],
+ (-1, 23): ['tsb1'],
+ (-1, 24): ['tstr'],
+ (-1, 25): ['tca2'],
+ (-1, 31): ['tcb1'],
+ (-1, 32): ['tcb2'],
+ (-1, 34): ['sterlitamakskaya_platform', 'sterlitamakskaya_walls'],
+ (-1, 35): ['tca1'],
+ (-1, 36): ['tca2'],
+ (0, 0): ['tca1'],
+ (0, 1): ['tca2'],
+ (0, 3): ['sodovaya_platform_f', 'sodovaya_walls_f'],
+ (0, 9): ['kochetova_platform_f', 'kochetova_walls_f'],
+ (0, 14): ['park_kultury_platform_f', 'park_kultury_walls_f'],
+ (0, 17): ['tca1'],
+ (0, 18): ['tca2'],
+ (0, 32): ['tcb1'],
+ (0, 33): ['tstr'],
+ (0, 34): ['sterlitamakskaya_track_tstr', ''],
+ (0, 35): ['tsa2'],
+ (0, 36): ['tstr'],
+ (0, 37): ['tstr'],
+ (1, -1): ['tca1'],
+ (1, 0): ['tca2'],
+ (1, 3): ['sodovaya_platform', 'sodovaya_walls'],
+ (1, 9): ['kochetova_platform', 'kochetova_walls'],
+ (1, 14): ['park_kultury_platform', 'park_kultury_walls'],
+ (1, 16): ['tca1'],
+ (1, 17): ['tca2'],
+ (2, -3): ['tstr'],
+ (2, -2): ['tstr'],
+ (2, -1): ['tsa2'],
+ (2, 0): ['tstr'],
+ (2, 1): ['tstr'],
+ (2, 2): ['tstr'],
+ (2, 3): ['sodovaya_track_tstr', ''],
+ (2, 4): ['tstr'],
+ (2, 5): ['tstr'],
+ (2, 6): ['tstr'],
+ (2, 7): ['tstr'],
+ (2, 8): ['tstr'],
+ (2, 9): ['kochetova_track_tstr', ''],
+ (2, 10): ['tstr'],
+ (2, 11): ['tstr'],
+ (2, 12): ['tstr'],
+ (2, 13): ['tstr'],
+ (2, 14): ['park_kultury_track_tstr', ''],
+ (2, 15): ['tstr'],
+ (2, 16): ['tca2']}
+switches = {(-4, 21): False,
+ (-3, 35): False,
+ (-2, 36): False,
+ (-1, 1): False,
+ (-1, 23): False,
+ (0, 35): False,
+ (2, -1): False}
 
 #trains = {}
 
@@ -363,9 +491,10 @@ while working:
         text = font.render("загрузка...", True, text_color)
         screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-text.get_height()))
         line_pos = (line_pos + 2) % 280
-        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos) if 0 < line_pos < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
-        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-6) if 0 < line_pos-6< 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
-        pg.draw.rect(screen,(128,255,0),((screen_size[0]/2-124+line_pos-12) if 0 < line_pos-12 < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        thingy_color = (128,255,0) if sprite_thread.is_alive() else (204,20,20)
+        pg.draw.rect(screen,thingy_color,((screen_size[0]/2-124+line_pos) if 0 < line_pos < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        pg.draw.rect(screen,thingy_color,((screen_size[0]/2-124+line_pos-6) if 0 < line_pos-6< 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
+        pg.draw.rect(screen,thingy_color,((screen_size[0]/2-124+line_pos-12) if 0 < line_pos-12 < 246 else -100,screen_size[1]/2+2,2,text.get_height()-6))
         pg.draw.rect(screen,(255,255,255),(screen_size[0]/2-124,screen_size[1]/2+2,248,text.get_height()-4),2)
 
     elif screen_state == "title":
@@ -375,14 +504,42 @@ while working:
         
         text_color = (200,200,200)
         screen.fill(tunnel_nothingness)
-        text = font.render(f"Alphen's Isometric Subway Simulator v{version_id}", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-2*text.get_height()))
-        text = font.render(f"1 for game", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-1*text.get_height()))
-        text = font.render(f"2 for editor", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+0*text.get_height()))
-        text = font.render(f"3 for SDK", True, text_color)
-        screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2+1*text.get_height()))
+        #text = font.render(f"Alphen's Isometric Subway Simulator v{version_id}", True, text_color)
+        #screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-2*text.get_height()))
+        
+        screen.blit(
+            pg.transform.scale(
+                misc_sprites["game_icon"],(
+                misc_sprites["game_icon"].get_width(),
+                misc_sprites["game_icon"].get_height()
+            )),(
+                36,
+                36
+            ))
+        text = font.render("alphen's isometric", True, text_black)
+        screen.blit(text,(36+128+20,36+64-text.get_height()-2))
+        text = font.render("subway simulator", True, text_black)
+        screen.blit(text,(36+128+20,36+64+2))
+
+        text_lines = [
+            [font.render("Start a new game",True,text_color),"playing"],
+            None,
+            [font.render("Map editor",True,text_color),"editor"],
+            [font.render("Pack editor",True,text_color),"sdk_load"],
+            None,
+            [font.render("Options",True,text_color),None],
+            None,
+            [font.render("Quit",True,text_color),"exit"]
+        ]
+
+        for i,line in enumerate(text_lines):
+            if line != None:
+                screen.blit(line[0],(64,36+128+20+(main_font_height+4)*i))
+                if line[1] != None and m_btn[0] and load_timer <= 200:
+                    if (64 <= m_pos[0] <= 64+line[0].get_width() and 
+                    36+128+20+(main_font_height+4)*i <= m_pos[1] <= 36+128+20+(main_font_height+4)*(i+1)):
+                        player_pos = [0,0]
+                        screen_state = line[1]
 
         if load_timer > 0:
             loadscreen_surf = pg.Surface(screen_size)
@@ -399,22 +556,6 @@ while working:
             loadscreen_surf.set_alpha(255*(load_timer/200))
             screen.blit(loadscreen_surf,(0,0))
             load_timer -= 2
-        if load_timer <= 200:
-            if pg.K_1 in keydowns: 
-                player_pos = [0,0]
-                screen_state = "playing"
-            elif pg.K_2 in keydowns: 
-                player_pos = [0,0]
-                screen_state = "editor"
-            elif pg.K_3 in keydowns: 
-                screen_state = "sdk"
-                sdk_params["folder_list"] = []
-                pak_folders = os.listdir(os.path.join(current_dir,"paks"))
-
-                for folder in pak_folders:
-                    folder_contents = os.listdir(os.path.join(current_dir,"paks",folder))
-                    if "pack.json" in folder_contents:
-                        sdk_params["folder_list"].append(folder)
 
             
     elif screen_state == "sdk":
@@ -785,10 +926,19 @@ while working:
                             )
                     else:
                         icon = None
-                        if world[tile_world_position][0][-8:] == "platform": icon = "generic_st_platform"
-                        elif world[tile_world_position][0][-10:] == "platform_f": icon = "generic_st_platform_f"
-                        elif world[tile_world_position][0][-10:] == "track_tstr": icon = "generic_st_track"
-                        elif world[tile_world_position][0][-12:] == "track_f_tstr": icon = "generic_st_track_f"
+                        text = None
+                        if world[tile_world_position][0][-8:] == "platform": 
+                            icon = "generic_st_platform"
+                            text = world[tile_world_position][0][:-8]
+                        elif world[tile_world_position][0][-10:] == "platform_f": 
+                            icon = "generic_st_platform_f"
+                            text = world[tile_world_position][0][:-10]
+                        elif world[tile_world_position][0][-10:] == "track_tstr": 
+                            icon = "generic_st_track"
+                            text = world[tile_world_position][0][:-10]
+                        elif world[tile_world_position][0][-12:] == "track_f_tstr": 
+                            icon = "generic_st_track_f"
+                            text = world[tile_world_position][0][:-12]
                         elif world[tile_world_position][0][-4:] == "tstr": icon = "default_tstr"
                         elif world[tile_world_position][0][-4:] == "tca1": icon = "default_tca1"
                         elif world[tile_world_position][0][-4:] == "tca2": icon = "default_tca2"
@@ -803,6 +953,14 @@ while working:
                                 ),(
                                 screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
                                 screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1])
+                            )
+                        if text:
+                            if text[-1] == "_": text = text[:-1]
+                            text = font.render(text, True,(60,60,60))
+                            text = pg.transform.rotate(text,-90)
+                            screen.blit(text,(
+                                screen_size[0]/2+(block_x+0.5)*editor_block_size[0]-player_pos[0]%editor_block_size[0]-text.get_width()/2,
+                                screen_size[1]/2+(block_y+0.5)*editor_block_size[1]-player_pos[1]%editor_block_size[1]-text.get_height()/2)
                             )
         
         pg.draw.rect(screen,(75,75,75),(0,screen_size[1]-iconbar_height,screen_size[0],iconbar_height))
@@ -892,6 +1050,9 @@ while working:
             player_pos[0]+=speed*clock.get_fps()/60
         if pg.K_ESCAPE in keydowns:
             screen_state = "title"
+        if pg.K_d in keydowns:
+            pprint.pprint(world)
+            pprint.pprint(switches)
                 
     
     elif screen_state == "playing":
@@ -958,8 +1119,7 @@ while working:
                 x_offset = object[3][0]+block_size[0]/2-player_pos[0]%(block_size[0])
                 y_offset = object[3][1]+block_size[1]/2-player_pos[1]%(block_size[1])
                 screen.blit(
-                    #pg.transform.scale(
-                    ground_sprites[object[2]][world_angle]#,block_size)
+                    ground_sprites[object[2]][world_angle]
                     ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,0),
                     round(screen_size[1]/2+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-ground_sprites[object[2]]["height"]/compression-h/2,0)
                     )
@@ -995,7 +1155,6 @@ while working:
         for z in valid_draw:
             for i, train_params in enumerate(sorted(valid_draw[z],key=lambda x:x[1])):
                 angle = (train_params[2]+world_angle)%360
-                #sprite = train_sprites[train.type][(angle+train_params[3]*180)%360]
                 w, h = train_params[4][0]*0,train_params[4][1]*0
                 x_offset = train_params[0][0]+(w*math.cos(math.radians(180-train_params[2]))-h*math.sin(math.radians(180-train_params[2])))
                 y_offset = train_params[0][1]+(w*math.sin(math.radians(180-train_params[2]))+h*math.cos(math.radians(180-train_params[2])))
@@ -1010,8 +1169,6 @@ while working:
                         train_params[5], train_params[3]
                     ])
                     
-        
-        #for object in sorted(object_draw_queue,key= lambda z:-(abs(camera_pos[1]-z[1][1])**2+abs(camera_pos[0]-z[1][0])**2)): #олег помог с сортировкой #ОЛЕГКОГДАВИСТЕРИЯ
         for object in sorted(object_draw_queue,key= lambda z:(z[1][1]-z[1][0])):
             if object[0] == "world":
                 w, h = ground_sprites[object[2]][object[3]].get_size()
@@ -1114,59 +1271,23 @@ while working:
         ty = (dy*a-dx*c)/(a*d+b*c)
         tx = (dx+ty*b)/a
         world_mouse_coord = [tx,ty]
-        mouse_block_pos = (int((player_pos[0]+world_mouse_coord[0]-(block_size[0] if player_pos[0]+world_mouse_coord[0] < 0 else 0))/block_size[0]),int((player_pos[1]+world_mouse_coord[1]-(block_size[1] if player_pos[1]+world_mouse_coord[1] < 0 else 0))/block_size[1]))
+        mouse_block_pos = (
+            int((player_pos[0]+world_mouse_coord[0])/block_size[0]-(1 if player_pos[0]+world_mouse_coord[0] < 0 else 0)),
+            int((player_pos[1]+world_mouse_coord[1])/block_size[1]-(1 if player_pos[1]+world_mouse_coord[1] < 0 else 0)))
         if m_btn[0] and mouse_clicked and not spawn_menu[0]:
             if mouse_block_pos in world and mouse_block_pos in switches:
                 switches[mouse_block_pos] = not(switches[mouse_block_pos])
 
-        #text =annotation_font.render(f"{world_mouse_coord}",True,(255,255,255))
-        #screen.blit(text,(
-        #    m_pos[0]+20,m_pos[1]+20
-        #))
-        #text =annotation_font.render(f"{dx,dy}",True,(255,255,255))
-        #screen.blit(text,(
-        #    m_pos[0]+20,m_pos[1]+40
-        #))
+        if mouse_clicked and m_btn[0] and controlling == -1 and not spawn_menu[0]:
+            for temp1 in valid:
+                train_id = temp1[0]
+                if (trains[train_id].pos[0]-trains[train_id].size[0]/2<=player_pos[0]+world_mouse_coord[0] and
+                    player_pos[0]+world_mouse_coord[0]<=trains[train_id].pos[0]+trains[train_id].size[0]/2 and
+                    trains[train_id].pos[1]-trains[train_id].size[1]/2<=player_pos[1]+world_mouse_coord[1] and
+                    player_pos[1]+world_mouse_coord[1]<=trains[train_id].pos[1]+trains[train_id].size[1]/2):
+                    controlling = train_id
+                    controlling_consist = trains[train_id].consist
 
-
-        '''
-        #
-        for train_params in sorted(valid,key=lambda x:x[1],reverse=True):
-            localized_m_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,player_pos[1]+m_pos[1]-screen_size[1]/2)
-            train = trains[train_params[0]]
-            if train.pos[0]-train.size[0] < localized_m_pos[0] < train.pos[0]+train.size[0] and train.pos[1]-train.size[1] < localized_m_pos[1] < train.pos[1]+train.size[1]+train.size[2]:
-                x_coords = []
-                y_coords = []
-                for i in range(2):
-                    x_coords.append(train.pos[0]+(train.size[0]*math.cos(math.radians(train.angle))/2+train.size[1]*math.sin(math.radians(train.angle))/2))
-                    x_coords.append(train.pos[0]-(train.size[0]*math.cos(math.radians(train.angle))/2-train.size[1]*math.sin(math.radians(train.angle))/2))
-                    x_coords.append(train.pos[0]-(train.size[0]*math.cos(math.radians(train.angle))/2+train.size[1]*math.sin(math.radians(train.angle))/2))
-                    x_coords.append(train.pos[0]+(train.size[0]*math.cos(math.radians(train.angle))/2-train.size[1]*math.sin(math.radians(train.angle))/2))
-                    y_coords.append(train.pos[1]+(train.size[1]*math.cos(math.radians(train.angle))/2-train.size[0]*math.sin(math.radians(train.angle))/2)-train.size[2]*i)
-                    y_coords.append(train.pos[1]+(train.size[1]*math.cos(math.radians(train.angle))/2+train.size[0]*math.sin(math.radians(train.angle))/2)-train.size[2]*i)
-                    y_coords.append(train.pos[1]-(train.size[1]*math.cos(math.radians(train.angle))/2-train.size[0]*math.sin(math.radians(train.angle))/2)-train.size[2]*i)
-                    y_coords.append(train.pos[1]-(train.size[1]*math.cos(math.radians(train.angle))/2+train.size[0]*math.sin(math.radians(train.angle))/2)-train.size[2]*i)
-                colors = [(255,0,0),(0,255,0),(0,0,255),(255,255,0)]
-                #pg.draw.polygon(screen,(255,0,0),[(x_coords[i]-player_pos[0]+screen_size[0]/2,y_coords[i]-player_pos[1]+screen_size[1]/2) for i in range(4)])
-                for i in range(4):
-                    pg.draw.circle(screen,colors[i],(x_coords[i]-player_pos[0]+screen_size[0]/2,y_coords[i]-player_pos[1]+screen_size[1]/2),4)
-                for i in range(4):
-                    pg.draw.circle(screen,colors[i],(x_coords[i+4]-player_pos[0]+screen_size[0]/2,y_coords[i+4]-player_pos[1]+screen_size[1]/2),4)
-        ''' #здесь были маты, но на случай передачи кода их теперь тут нету
-        '''
-        for train_params in sorted(valid,key=lambda x:x[1]):
-            if controlling == -1:
-                localized_m_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,player_pos[1]+m_pos[1]-screen_size[1]/2)
-                train = trains[train_params[0]]
-                trains[train_params[0]].switches = switches
-                width = abs(train.size[0]*math.cos(math.radians(train.angle))/2-train.size[1]*math.sin(math.radians(train.angle))/2) 
-                height = abs(train.size[1]*math.cos(math.radians(train.angle))/2-train.size[0]*math.sin(math.radians(train.angle))/2)
-                if train.pos[0]-width< localized_m_pos[0] < train.pos[0]+width and train.pos[1]-height-train.size[2] < localized_m_pos[1] < train.pos[1]+height:
-                    #pg.draw.rect(screen,(255,0,0),(train.pos[0]-width-player_pos[0]+screen_size[0]/2,train.pos[1]-height-player_pos[1]+screen_size[1]/2-train.size[2],width*2,height*2+train.size[2]))
-                    if mouse_clicked and m_btn[0]:
-                        controlling = train_params[0]
-                        controlling_consist = trains[controlling].consist
-        ''' #временно без этого. оно не рабоатет с новой системой.
         annotation = None
 
         if controlling != -1:
@@ -1190,16 +1311,18 @@ while working:
             hotkeys_check = [pressed[hotkeys[key]] or hotkeys[key] in keyups for key in hotkeys]
 
             if (screen_size[0]/2+panel.get_width()/2 >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2 and 
-                screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height()) or True in hotkeys_check:
+                screen_size[1] >= m_pos[1] >= screen_size[1]-panel.get_height() or True) or True in hotkeys_check:
                 for elem_id, element in enumerate(consists[controlling_consist].consist_info["element_mapouts"]):
-                    if element["type"] != "analog_scale":
-                        info = element["draw_mappings"][element["state"]]
-                        x,y,w,h = info[0], info[1],info[4], info[5]
-                        scale = info[2]
+                    #if element["type"] != "analog_scale":
+                    info = element["draw_mappings"][element["state"] if "state" in element else 0]
+                    x,y,w,h = info[0], info[1],info[4], info[5]
+                    scale = info[2]
+                    if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
+                        screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale) or hotkeys_check: 
+                        if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
+                        screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale):
+                            annotation = element["name"] if element["type"] != "analog_scale" else element["name"].replace("%s",str(element["angle"]))
                         if element["type"] in ["button","switch"]:
-                            if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
-                                screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale): 
-                                annotation = annotation_font.render(element["name"],True,(255,255,255))
                             self_hotkey = hotkeys[element["connection"]] if element["connection"] in hotkeys else None
                             if (screen_size[0]/2-panel.get_width()/2+x*scale+w*scale >= m_pos[0] >= screen_size[0]/2-panel.get_width()/2+x*scale and 
                                 screen_size[1]-panel.get_height()+y*scale+h*scale >= m_pos[1] >= screen_size[1]-panel.get_height()+y*scale and (m_btn[0] or mouse_clicked )) or (self_hotkey != None and pressed[self_hotkey]):
@@ -1306,11 +1429,20 @@ while working:
             screen.blit(overlay,(screen_size[0]/2-overlay.get_width()/2,screen_size[1]-overlay.get_height()))
 
             if annotation:
-                s = pg.Surface((annotation.get_width()+8,annotation.get_height()+8))
+                width_max = 0
+                lines = []
+                for annotation_line in annotation.split("\n"):
+                    lines.append(annotation_font.render(annotation_line, True, (255,255,255)))
+                    if lines[-1].get_width() > width_max: width_max = lines[-1].get_width() 
+                
+                s = pg.Surface((width_max+8,(lines[-1].get_height()+2)*len(lines)+6))
                 s.set_alpha(128)
                 s.fill((0,0,0))
                 screen.blit(s, (m_pos[0]+10,m_pos[1]+20))
-                screen.blit(annotation, (m_pos[0]+15,m_pos[1]+25))
+                for i,e in enumerate(lines):
+                    screen.blit(e, (m_pos[0]+10+(8+width_max)/2-e.get_width()/2,
+                                    m_pos[1]+24+(lines[-1].get_height()+2)*i))
+
 
         if spawn_menu[1] > 0:
             div = 4 
@@ -1389,8 +1521,7 @@ while working:
                                     (base_left_pos+screen_size[0]/div-30-10+6+2*is_on_button,
                                     block_height+text_delta*len(block_set)+22+2*is_on_button),
                                 ))
-            #←↑→↓
-            #descriptions_texts = train_sprites["sprites"][spawn_menu[3]]["name"].split("\n")
+                
             if m_pos[0] >= base_left_pos:
                 is_on_button = (base_left_pos+10 <= m_pos[0] <= base_left_pos+40) and (emu_type_height+text_delta*len(spawn_menu_blocks[0][2]) <= m_pos[1] <= emu_type_height+text_delta*len(spawn_menu_blocks[0][2])+30) and m_btn[0]
                 if is_on_button and mouse_clicked:
@@ -1414,7 +1545,7 @@ while working:
                 if mouse_clicked and m_btn[0]:
                     consist_key = random.randint(0,999)
                     while consist_key in consists: consist_key = random.randint(0,999)
-                    consists[consist_key] = Consist(spawn_menu[2],spawn_menu[3],train_types[spawn_menu[2]],consists_info[spawn_menu[2]],consist_key,world,[256*mouse_block_pos[0]+128,world_mouse_coord[1]])
+                    consists[consist_key] = Consist(spawn_menu[2],spawn_menu[3],train_types[spawn_menu[2]],consists_info[spawn_menu[2]],consist_key,world,[256*mouse_block_pos[0]+128,player_pos[1]+world_mouse_coord[1]])
                 elif mouse_clicked and m_btn[2]:
                     wipe_list = []
                     wipe_list_consists = []
@@ -1431,18 +1562,11 @@ while working:
                         consists.pop(link)
                     for link in wipe_list:
                         trains[link].exists = False
-                        trains.pop(link)
-
-        if pg.K_TAB in keydowns and trains != {}:
-            if controlling == -1:
-                controlling = list(sorted(dict(trains).keys()))[0]
-                controlling_consist = trains[controlling].consist
-            else:
-                controlling = list(sorted(dict(trains).keys()))[(list(sorted(dict(trains).keys())).index(controlling)+1)%len(trains)]
-                controlling_consist = trains[controlling].consist            
+                        trains.pop(link)           
 
         if controlling == -1:
             speed = 8 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 2
+            if pressed[pg.K_RALT]: speed = 32
             if pressed[pg.K_DOWN]: 
                 player_pos[1]+=speed*clock.get_fps()/60
             if pressed[pg.K_UP]: 
@@ -1465,27 +1589,6 @@ while working:
                     spawn_menu[2] = list(consists_info.keys())[0]
                 if spawn_menu[3] == None: 
                     spawn_menu[3] = train_repaint_dictionary[spawn_menu[2]][0]
-                #consist_key = random.randint(0,999)
-                #consists[consist_key] = Consist("type_e","type_e_bg",train_types["type_e"],consists_info["type_e"],consist_key,world,[256*block_pos[0]+128,1024*block_pos[1]])
-            '''
-            if pg.K_DELETE in keydowns:
-                wipe_list = []
-                wipe_list_consists = []
-                for train_id in trains:
-                    if block_pos == [int((trains[train_id].pos[0]-(block_size[0] if trains[train_id].pos[0] < 0 else 0))/block_size[0]),
-                                     int((trains[train_id].pos[1]-(block_size[1] if trains[train_id].pos[1] < 0 else 0))/block_size[1])]:
-                        consist_key = trains[train_id].consist
-                        if consist_key not in wipe_list_consists: 
-                            wipe_list_consists.append(consist_key)
-                            for link in consists[consist_key].linked_to:
-                                wipe_list.append(link)
-                for link in wipe_list_consists:
-                    consists[link].exists = False
-                    consists.pop(link)
-                for link in wipe_list:
-                    trains[link].exists = False
-                    trains.pop(link)
-                '''
         else:
             player_pos = [trains[controlling].pos[0],trains[controlling].pos[1]-screen_size[1]/8*2*(1 if 90 <= (trains[controlling].angle+trains[controlling].reversed*180)%360 <= 270 else -1)]
 
@@ -1567,6 +1670,19 @@ while working:
         elif not spawn_menu[0] and spawn_menu[1] > 0:
             spawn_menu[1] -= clock.get_fps()/60*0.0167
             if spawn_menu[1] < 0: spawn_menu[1] = 0
+
+    elif screen_state == "exit": #техническое состояние для выхода из игры
+        working = False
+    
+    elif screen_state == "sdk_load": #техническое состояние для прогрузки пакетов в SDK
+        sdk_params["folder_list"] = []
+        pak_folders = os.listdir(os.path.join(current_dir,"paks"))
+
+        for folder in pak_folders:
+            folder_contents = os.listdir(os.path.join(current_dir,"paks",folder))
+            if "pack.json" in folder_contents:
+                sdk_params["folder_list"].append(folder)
+        screen_state = "sdk"
 
     pg.display.update()
     clock.tick(60)
