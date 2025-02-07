@@ -28,7 +28,7 @@ if "pack.json" in folder_contents:
                 
                 base_train_sprite = pg.image.load(os.path.join(*([current_dir,"paks",train_folder,train_parameters["sprite"]]))).convert_alpha()
 
-                for sprite_params in train_parameters["sprite_info"]:
+                for sprite_params in train_parameters["render_sprite_info"]:
                     if sprite_params["type"] == "closed":
                         base_layers = []
 

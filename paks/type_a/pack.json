@@ -267,6 +267,7 @@
                 ]
             },
             "sound_loading_info":{
+                "ambient":"sounds/ambient.wav",
                 "switch_on":"sounds/vu_on.mp3",
                 "switch_off":"sounds/vu_off.mp3",
                 "km_plus":"sounds/km_plus.wav",
@@ -474,119 +475,7 @@
             "name":"Зелёно-горчичный окрас",
             "designed_for":"type_a",
             "sprite":"type_a_gm.png",
-            "sprite_info":[
-                {
-                    "type":"closed",
-                    "x":0,
-                    "y":0,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_1",
-                    "x":0,
-                    "y":96,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_2",
-                    "x":0,
-                    "y":192,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_3",
-                    "x":0,
-                    "y":288,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_4",
-                    "x":0,
-                    "y":384,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"open",
-                    "x":0,
-                    "y":480,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                }
-            ]
-        },
-        {   
-            "system_name":"type_a_bm",
-            "name":"Корчинево-горчичный окрас",
-            "designed_for":"type_a",
-            "sprite":"type_a_bm.png",
-            "sprite_info":[
-                {
-                    "type":"closed",
-                    "x":0,
-                    "y":0,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_1",
-                    "x":0,
-                    "y":96,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_2",
-                    "x":0,
-                    "y":192,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_3",
-                    "x":0,
-                    "y":288,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"inter_4",
-                    "x":0,
-                    "y":384,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                },
-                {
-                    "type":"open",
-                    "x":0,
-                    "y":480,
-                    "w":32,
-                    "h":96,
-                    "layers":20
-                }
-            ]
-        },
-        {   
-            "system_name":"type_a_bc",
-            "name":"Сине-циановый окрас",
-            "designed_for":"type_a",
-            "sprite":"type_a_bc.png",
-            "sprite_info":[
+            "render_sprite_info":[
                 {
                     "type":"closed",
                     "x":0,

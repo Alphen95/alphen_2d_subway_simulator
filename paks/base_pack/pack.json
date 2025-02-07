@@ -1,4 +1,7 @@
 {
+    "editor_tiles":[
+        "custom_tile","tstr","tca1","tca2","tcb2","tcb1","tsa1","tsa2","tsb2","tsb1","tsx1","tsx2"
+    ],
     "tiles":[
         {"name":"tstr","filename":"tracks","params":[0,0,64,256,1,0,false,false]},
         {"name":"tca1","filename":"tracks","params":[64,0,64,256,1,0,false,false]},
@@ -8,9 +11,12 @@
         {"name":"tsa1","filename":"tracks","params":[192,0,64,256,1,0,false,false]},
         {"name":"tsa2","filename":"tracks","params":[256,0,64,256,1,0,false,false]},
         {"name":"tsb1","filename":"tracks","params":[192,0,64,256,1,0,true,false]},
-        {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,0,true,false]}
+        {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,0,true,false]},
+        {"name":"tsx1","filename":"tracks","params":[0,256,64,256,1,0,false,false]},
+        {"name":"tsx2","filename":"tracks","params":[64,256,64,256,1,0,false,false]}
     ],
     "icons":[
+        {"name":"unknown","params":[256,256,64,256,false,false]},
         {"name":"default_tstr","params":[0,0,64,256,false,false]},
         {"name":"default_tca1","params":[64,0,64,256,false,false]},
         {"name":"default_tca2","params":[128,0,64,256,false,false]},
@@ -20,6 +26,8 @@
         {"name":"default_tsa2","params":[128,256,64,256,false,false]},
         {"name":"default_tsb1","params":[64,256,64,256,true,false]},
         {"name":"default_tsb2","params":[128,256,64,256,true,false]},
+        {"name":"default_tsx1","params":[320,0,64,256,false,false]},
+        {"name":"default_tsx2","params":[384,0,64,256,false,false]},
         {"name":"custom_tile","params":[256,0,64,256,false,false]},
         {"name":"generic_st_track","params":[192,0,64,256,false,false]},
         {"name":"generic_st_platform","params":[192,256,64,256,false,false]},
@@ -33,9 +41,17 @@
         {"name":"tsa1","params":[64,256,64,256,false,false]},
         {"name":"tsa2","params":[128,256,64,256,false,false]},
         {"name":"tsb1","params":[64,256,64,256,true,false]},
-        {"name":"tsb2","params":[128,256,64,256,true,false]}
+        {"name":"tsb2","params":[128,256,64,256,true,false]},
+        {"name":"tsx1","params":[320,0,64,256,false,false]},
+        {"name":"tsx2","params":[384,0,64,256,false,false]}
     ],
     "misc":[
-        {"name":"game_icon","filename":"icon","params":[0,0,384,128,false,false]}
+        {"name":"game_icon","filename":"icon","params":[0,0,384,128,false,false]},
+        {"name":"loco_light_base","filename":"loco_lights","params":[0,0,14,54,false,false]},
+        {"name":"loco_light_green","filename":"loco_lights","params":[15,1,8,8,false,false]},
+        {"name":"loco_light_yellow","filename":"loco_lights","params":[15,10,8,8,false,false]},
+        {"name":"loco_light_red_yellow","filename":"loco_lights","params":[15,19,8,8,false,false]},
+        {"name":"loco_light_red","filename":"loco_lights","params":[15,28,8,8,false,false]},
+        {"name":"loco_light_white","filename":"loco_lights","params":[15,37,8,8,false,false]}
     ]
 }

@@ -1,0 +1,1617 @@
+{
+    "consists": [
+        {
+            "clickable_size": [
+                112,
+                312
+            ],
+            "control_panel_info": {
+                "ammeter_bottom": {
+                    "h": 30,
+                    "scale": 3,
+                    "w": 50,
+                    "x": 300,
+                    "y": 208
+                },
+                "ammeter_overlay": {
+                    "h": 30,
+                    "scale": 3,
+                    "w": 50,
+                    "x": 352,
+                    "y": 208
+                },
+                "ammeter_pointer": {
+                    "h": 2,
+                    "scale": 3,
+                    "w": 42,
+                    "x": 300,
+                    "y": 240
+                },
+                "brake_lamp_off": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 312,
+                    "y": 84
+                },
+                "brake_lamp_on": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 300,
+                    "y": 84
+                },
+                "btn_gray_off": {
+                    "h": 12,
+                    "scale": 3,
+                    "w": 12,
+                    "x": 348,
+                    "y": 84
+                },
+                "btn_gray_on": {
+                    "h": 12,
+                    "scale": 3,
+                    "w": 12,
+                    "x": 362,
+                    "y": 84
+                },
+                "btn_orange_off": {
+                    "h": 12,
+                    "scale": 3,
+                    "w": 12,
+                    "x": 348,
+                    "y": 98
+                },
+                "btn_orange_on": {
+                    "h": 12,
+                    "scale": 3,
+                    "w": 12,
+                    "x": 362,
+                    "y": 98
+                },
+                "doors_b_lamp_off": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 336,
+                    "y": 84
+                },
+                "doors_b_lamp_on": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 324,
+                    "y": 84
+                },
+                "doors_w_lamp_off": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 336,
+                    "y": 96
+                },
+                "doors_w_lamp_on": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 324,
+                    "y": 96
+                },
+                "fail_lamp_off": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 312,
+                    "y": 108
+                },
+                "fail_lamp_on": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 300,
+                    "y": 108
+                },
+                "km": {
+                    "h": 16,
+                    "scale": 3,
+                    "w": 80,
+                    "x": 300,
+                    "y": 2
+                },
+                "manometer_bottom": {
+                    "h": 62,
+                    "scale": 3,
+                    "w": 62,
+                    "x": 404,
+                    "y": 208
+                },
+                "manometer_overlay": {
+                    "h": 62,
+                    "scale": 3,
+                    "w": 62,
+                    "x": 404,
+                    "y": 272
+                },
+                "manometer_pointer": {
+                    "h": 2,
+                    "scale": 3,
+                    "w": 42,
+                    "x": 300,
+                    "y": 244
+                },
+                "manometer_pointer_red": {
+                    "h": 2,
+                    "scale": 3,
+                    "w": 42,
+                    "x": 300,
+                    "y": 248
+                },
+                "overlay": {
+                    "h": 128,
+                    "scale": 3,
+                    "w": 296,
+                    "x": 2,
+                    "y": 132
+                },
+                "panel": {
+                    "h": 128,
+                    "scale": 3,
+                    "w": 296,
+                    "x": 2,
+                    "y": 2
+                },
+                "rr_-1": {
+                    "h": 20,
+                    "scale": 3,
+                    "w": 48,
+                    "x": 362,
+                    "y": 30
+                },
+                "rr_0": {
+                    "h": 8,
+                    "scale": 3,
+                    "w": 48,
+                    "x": 362,
+                    "y": 20
+                },
+                "rr_1": {
+                    "h": 20,
+                    "scale": 3,
+                    "w": 48,
+                    "x": 362,
+                    "y": 52
+                },
+                "speedometer_bottom": {
+                    "h": 80,
+                    "scale": 3,
+                    "w": 80,
+                    "x": 382,
+                    "y": 126
+                },
+                "speedometer_overlay": {
+                    "h": 80,
+                    "scale": 3,
+                    "w": 80,
+                    "x": 300,
+                    "y": 126
+                },
+                "speedometer_pointer": {
+                    "h": 2,
+                    "scale": 3,
+                    "w": 90,
+                    "x": 328,
+                    "y": 122
+                },
+                "switch_off": {
+                    "h": 12,
+                    "scale": 3,
+                    "w": 12,
+                    "x": 390,
+                    "y": 84
+                },
+                "switch_on": {
+                    "h": 12,
+                    "scale": 3,
+                    "w": 12,
+                    "x": 376,
+                    "y": 84
+                },
+                "tk": {
+                    "h": 40,
+                    "scale": 3,
+                    "w": 60,
+                    "x": 300,
+                    "y": 42
+                },
+                "traction_lamp_off": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 312,
+                    "y": 96
+                },
+                "traction_lamp_on": {
+                    "h": 10,
+                    "scale": 3,
+                    "w": 10,
+                    "x": 300,
+                    "y": 96
+                },
+                "underlay": {
+                    "h": 210,
+                    "scale": 3,
+                    "w": 306,
+                    "x": 2,
+                    "y": 262
+                }
+            },
+            "control_panel_sprite": "controls.png",
+            "name": "Метропоезд типа Е (81-703)",
+            "sound_loading_info": {
+                "ambient": "sounds/ambient.wav",
+                "engine1": "sounds/engine1.wav",
+                "engine2": "sounds/engine2.wav",
+                "engine3": "sounds/engine3.wav",
+                "engine4": "sounds/engine4.wav",
+                "engine5": "sounds/engine5.wav",
+                "engine6": "sounds/engine6.wav",
+                "engine7": "sounds/engine7.wav"
+            },
+            "system_name": "type_e",
+            "traction_info": {
+                "brake_cyllinder_surface": 0.1,
+                "brake_cyllinder_volume": 0.1,
+                "compressor_mass_rate": 0.142,
+                "control_system_type": "reostat",
+                "default_km": 0,
+                "default_tk": 2,
+                "door_animation_states": {
+                    "closed": 0,
+                    "inter_1": 20,
+                    "inter_2": 20,
+                    "inter_3": 20,
+                    "inter_4": 20,
+                    "open": 0
+                },
+                "drive_sounds": [
+                    [
+                        "engine1",
+                        0.5,
+                        8
+                    ],
+                    [
+                        "engine2",
+                        8,
+                        16
+                    ],
+                    [
+                        "engine3",
+                        16,
+                        24
+                    ],
+                    [
+                        "engine4",
+                        24,
+                        32
+                    ],
+                    [
+                        "engine5",
+                        32,
+                        40
+                    ],
+                    [
+                        "engine6",
+                        40,
+                        48
+                    ],
+                    [
+                        "engine7",
+                        48,
+                        1005
+                    ]
+                ],
+                "element_mapouts": [
+                    {
+                        "connection": "light_on",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                58,
+                                32,
+                                5,
+                                "btn_gray_off",
+                                6,
+                                6
+                            ],
+                            [
+                                58,
+                                32,
+                                5,
+                                "btn_gray_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Включение освещения",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "light_off",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                65,
+                                32,
+                                5,
+                                "btn_gray_off",
+                                6,
+                                6
+                            ],
+                            [
+                                65,
+                                32,
+                                5,
+                                "btn_gray_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Выключение освещения",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "rp_return",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                72,
+                                32,
+                                5,
+                                "btn_gray_off",
+                                6,
+                                6
+                            ],
+                            [
+                                72,
+                                32,
+                                5,
+                                "btn_gray_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Возврат РП",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "unused",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                80,
+                                32,
+                                5,
+                                "btn_orange_off",
+                                6,
+                                6
+                            ],
+                            [
+                                80,
+                                32,
+                                5,
+                                "btn_orange_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Сигнализация неисправности",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "unused",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                87,
+                                32,
+                                5,
+                                "btn_gray_off",
+                                6,
+                                6
+                            ],
+                            [
+                                87,
+                                32,
+                                5,
+                                "btn_gray_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Сигнализация дверей",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "right_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                94,
+                                32,
+                                5,
+                                "btn_gray_off",
+                                6,
+                                6
+                            ],
+                            [
+                                94,
+                                32,
+                                5,
+                                "btn_gray_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Открытие дверей правых",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "left_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                69,
+                                40,
+                                5,
+                                "btn_gray_off",
+                                6,
+                                6
+                            ],
+                            [
+                                69,
+                                40,
+                                5,
+                                "btn_gray_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Открытие дверей левых",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "close_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                83,
+                                40,
+                                5,
+                                "btn_orange_off",
+                                6,
+                                6
+                            ],
+                            [
+                                83,
+                                40,
+                                5,
+                                "btn_orange_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Резервное закрытие дверей",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "mk",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                62,
+                                45,
+                                5,
+                                "switch_off",
+                                6,
+                                6
+                            ],
+                            [
+                                62,
+                                45,
+                                5,
+                                "switch_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Мотор-компрессор",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "slow_accel",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                76,
+                                45,
+                                5,
+                                "switch_off",
+                                6,
+                                6
+                            ],
+                            [
+                                76,
+                                45,
+                                5,
+                                "switch_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Регулировка РУТ (пониженное ускорение)",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "reserve_close_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                90,
+                                45,
+                                5,
+                                "switch_off",
+                                6,
+                                6
+                            ],
+                            [
+                                90,
+                                45,
+                                5,
+                                "switch_on",
+                                6,
+                                6
+                            ]
+                        ],
+                        "name": "Выключатель управления дверьми",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "traction",
+                        "draw_mappings": [
+                            [
+                                61,
+                                24,
+                                5,
+                                "traction_lamp_off",
+                                5,
+                                5
+                            ],
+                            [
+                                61,
+                                24,
+                                5,
+                                "traction_lamp_on",
+                                5,
+                                5
+                            ]
+                        ],
+                        "name": "Сбор схемы на ход",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "electro_brake",
+                        "draw_mappings": [
+                            [
+                                67,
+                                24,
+                                5,
+                                "brake_lamp_off",
+                                5,
+                                5
+                            ],
+                            [
+                                67,
+                                24,
+                                5,
+                                "brake_lamp_on",
+                                5,
+                                5
+                            ]
+                        ],
+                        "name": "Сбор схемы на тормоз",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "rk_fail",
+                        "draw_mappings": [
+                            [
+                                73,
+                                24,
+                                5,
+                                "fail_lamp_off",
+                                5,
+                                5
+                            ],
+                            [
+                                73,
+                                24,
+                                5,
+                                "fail_lamp_on",
+                                5,
+                                5
+                            ]
+                        ],
+                        "name": "Несбор схемы (сработка РП)",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "doors_open",
+                        "draw_mappings": [
+                            [
+                                86,
+                                24,
+                                5,
+                                "doors_b_lamp_on",
+                                5,
+                                5
+                            ],
+                            [
+                                86,
+                                24,
+                                5,
+                                "doors_b_lamp_off",
+                                5,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа контроля дверей состава",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "doors_open",
+                        "draw_mappings": [
+                            [
+                                92,
+                                24,
+                                5,
+                                "doors_w_lamp_on",
+                                5,
+                                5
+                            ],
+                            [
+                                92,
+                                24,
+                                5,
+                                "doors_w_lamp_off",
+                                5,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа контроля дверей вагона",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 180,
+                        "draw_mappings": [
+                            [
+                                1.5,
+                                -32,
+                                5,
+                                "speedometer_bottom",
+                                40,
+                                40
+                            ],
+                            [
+                                7.5,
+                                32.5,
+                                5,
+                                "speedometer_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                1.5,
+                                -32,
+                                5,
+                                "speedometer_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 90,
+                        "min_value": 0,
+                        "multiplier": -1.125,
+                        "name": "Скоростемер\n[%s км/ч]",
+                        "scale": "velocity",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": -90,
+                        "draw_mappings": [
+                            [
+                                120.5,
+                                -31,
+                                5,
+                                "ammeter_bottom",
+                                25,
+                                15
+                            ],
+                            [
+                                12.5,
+                                12.5,
+                                5,
+                                "ammeter_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                120.5,
+                                -31,
+                                5,
+                                "ammeter_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 600,
+                        "min_value": -600,
+                        "multiplier": 0.15,
+                        "name": "Амперметр\n[%s А]",
+                        "scale": "amps",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "draw_mappings": [
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                "manometer_bottom",
+                                31,
+                                31
+                            ],
+                            [
+                                15.5,
+                                15.5,
+                                5,
+                                "manometer_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                "manometer_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "Манометр тормозных цилиндров\n[%s атм]",
+                        "scale": "press",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "draw_mappings": [
+                            [
+                                0,
+                                0,
+                                5,
+                                null,
+                                0,
+                                0
+                            ],
+                            [
+                                15.5,
+                                15.5,
+                                5,
+                                "manometer_pointer_red",
+                                6,
+                                6
+                            ],
+                            [
+                                0,
+                                0,
+                                null,
+                                0,
+                                0
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "Манометр напорной магистрали",
+                        "scale": "press_tank",
+                        "type": "analog_scale"
+                    }
+                ],
+                "engine_constant": 40,
+                "engine_resistance": 0.2,
+                "has_als": false,
+                "has_ars": false,
+                "km_draw_mapouts": {
+                    "-1": [
+                        19,
+                        28
+                    ],
+                    "-2": [
+                        19,
+                        31
+                    ],
+                    "-3": [
+                        19,
+                        34
+                    ],
+                    "0": [
+                        19,
+                        25
+                    ],
+                    "1": [
+                        19,
+                        22
+                    ],
+                    "2": [
+                        19,
+                        19
+                    ],
+                    "3": [
+                        19,
+                        16
+                    ],
+                    "scale": 6
+                },
+                "km_mapouts": {
+                    "-1": {
+                        "rk_positions": [
+                            -1,
+                            -2
+                        ],
+                        "switch_time": 24,
+                        "type": "brake"
+                    },
+                    "-2": {
+                        "rk_positions": [
+                            -1,
+                            -2,
+                            -3,
+                            -4,
+                            -5,
+                            -6,
+                            -7,
+                            -8
+                        ],
+                        "switch_time": 24,
+                        "type": "brake"
+                    },
+                    "-3": {
+                        "rk_positions": [
+                            -1,
+                            -2,
+                            -3,
+                            -4,
+                            -5,
+                            -6,
+                            -7,
+                            -8,
+                            -9,
+                            -10,
+                            -11,
+                            -12,
+                            -13,
+                            -14,
+                            -15,
+                            -16,
+                            -17,
+                            -18,
+                            -19,
+                            -20,
+                            -21,
+                            -22,
+                            -23,
+                            -24,
+                            -25,
+                            -26,
+                            -27,
+                            -28,
+                            -29,
+                            -30,
+                            -31,
+                            -32,
+                            -33
+                        ],
+                        "switch_time": 24,
+                        "type": "brake",
+                        "vz_1": true,
+                        "vz_1_pos": [
+                            -26,
+                            -27,
+                            -28,
+                            -29,
+                            -30,
+                            -31,
+                            -32,
+                            -33
+                        ]
+                    },
+                    "0": {
+                        "type": "neutral",
+                        "voltage": 0
+                    },
+                    "1": {
+                        "rk_positions": [
+                            1
+                        ],
+                        "switch_time": 24,
+                        "type": "accel"
+                    },
+                    "2": {
+                        "rk_positions": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12,
+                            13,
+                            14,
+                            15,
+                            16,
+                            17,
+                            18
+                        ],
+                        "switch_time": 24,
+                        "type": "accel"
+                    },
+                    "3": {
+                        "rk_positions": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12,
+                            13,
+                            14,
+                            15,
+                            16,
+                            17,
+                            18,
+                            19,
+                            20,
+                            21,
+                            22,
+                            23,
+                            24,
+                            25,
+                            26,
+                            27,
+                            28,
+                            29,
+                            30,
+                            31,
+                            32,
+                            33,
+                            34,
+                            35,
+                            36
+                        ],
+                        "switch_time": 24,
+                        "type": "accel"
+                    }
+                },
+                "mass": 40500,
+                "max_km": 3,
+                "max_tk": 5,
+                "min_km": -3,
+                "min_tk": 1,
+                "peril_current": 420,
+                "peril_pressure": 4,
+                "pressure_tank_volume": 0.8,
+                "rk_mapouts": {
+                    "-1": {
+                        "coil_engagement": 30,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-10": {
+                        "coil_engagement": 100,
+                        "resistance": 2.48,
+                        "switch_current": 300
+                    },
+                    "-11": {
+                        "coil_engagement": 100,
+                        "resistance": 2.25,
+                        "switch_current": 300
+                    },
+                    "-12": {
+                        "coil_engagement": 100,
+                        "resistance": 2.03,
+                        "switch_current": 300
+                    },
+                    "-13": {
+                        "coil_engagement": 100,
+                        "resistance": 1.81,
+                        "switch_current": 300
+                    },
+                    "-14": {
+                        "coil_engagement": 100,
+                        "resistance": 1.62,
+                        "switch_current": 300
+                    },
+                    "-15": {
+                        "coil_engagement": 100,
+                        "resistance": 1.44,
+                        "switch_current": 300
+                    },
+                    "-16": {
+                        "coil_engagement": 100,
+                        "resistance": 1.31,
+                        "switch_current": 300
+                    },
+                    "-17": {
+                        "coil_engagement": 100,
+                        "resistance": 1.18,
+                        "switch_current": 300
+                    },
+                    "-18": {
+                        "coil_engagement": 100,
+                        "resistance": 1.18,
+                        "switch_current": 300
+                    },
+                    "-19": {
+                        "coil_engagement": 100,
+                        "resistance": 1.04,
+                        "switch_current": 300
+                    },
+                    "-2": {
+                        "coil_engagement": 35,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-20": {
+                        "coil_engagement": 100,
+                        "resistance": 0.925,
+                        "switch_current": 300
+                    },
+                    "-21": {
+                        "coil_engagement": 100,
+                        "resistance": 0.85,
+                        "switch_current": 300
+                    },
+                    "-22": {
+                        "coil_engagement": 100,
+                        "resistance": 0.755,
+                        "switch_current": 300
+                    },
+                    "-23": {
+                        "coil_engagement": 100,
+                        "resistance": 0.729,
+                        "switch_current": 300
+                    },
+                    "-24": {
+                        "coil_engagement": 100,
+                        "resistance": 0.685,
+                        "switch_current": 300
+                    },
+                    "-25": {
+                        "coil_engagement": 100,
+                        "resistance": 0.653,
+                        "switch_current": 250
+                    },
+                    "-26": {
+                        "coil_engagement": 100,
+                        "resistance": 0.607,
+                        "switch_current": 250
+                    },
+                    "-27": {
+                        "coil_engagement": 100,
+                        "resistance": 0.541,
+                        "switch_current": 250
+                    },
+                    "-28": {
+                        "coil_engagement": 100,
+                        "resistance": 0.462,
+                        "switch_current": 250
+                    },
+                    "-29": {
+                        "coil_engagement": 100,
+                        "resistance": 0.412,
+                        "switch_current": 250
+                    },
+                    "-3": {
+                        "coil_engagement": 44,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-30": {
+                        "coil_engagement": 100,
+                        "resistance": 0.363,
+                        "switch_current": 250
+                    },
+                    "-31": {
+                        "coil_engagement": 100,
+                        "resistance": 0.281,
+                        "switch_current": 250
+                    },
+                    "-32": {
+                        "coil_engagement": 100,
+                        "resistance": 0.281,
+                        "switch_current": 250
+                    },
+                    "-33": {
+                        "coil_engagement": 100,
+                        "resistance": 0.281,
+                        "switch_current": 250
+                    },
+                    "-34": {
+                        "coil_engagement": 0,
+                        "resistance": 0,
+                        "switch_current": 250
+                    },
+                    "-35": {
+                        "coil_engagement": 0,
+                        "resistance": 0,
+                        "switch_current": 250
+                    },
+                    "-36": {
+                        "coil_engagement": 0,
+                        "resistance": 0,
+                        "switch_current": 250
+                    },
+                    "-4": {
+                        "coil_engagement": 55,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-5": {
+                        "coil_engagement": 78,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-6": {
+                        "coil_engagement": 100,
+                        "resistance": 3.2,
+                        "switch_current": 300
+                    },
+                    "-7": {
+                        "coil_engagement": 100,
+                        "resistance": 3.07,
+                        "switch_current": 300
+                    },
+                    "-8": {
+                        "coil_engagement": 100,
+                        "resistance": 2.89,
+                        "switch_current": 300
+                    },
+                    "-9": {
+                        "coil_engagement": 100,
+                        "resistance": 2.7,
+                        "switch_current": 300
+                    },
+                    "0": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 0.0
+                    },
+                    "1": {
+                        "coil_engagement": 35,
+                        "switch_current": 100,
+                        "voltage": 26.04
+                    },
+                    "10": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 71.43
+                    },
+                    "11": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 80.21
+                    },
+                    "12": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 90.85
+                    },
+                    "13": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 105.12
+                    },
+                    "14": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 120.58
+                    },
+                    "15": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 141.51
+                    },
+                    "16": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 161.29
+                    },
+                    "17": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 187.5
+                    },
+                    "18": {
+                        "coil_engagement": 80,
+                        "switch_current": 100,
+                        "voltage": 187.5
+                    },
+                    "19": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 93.17
+                    },
+                    "2": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 26.04
+                    },
+                    "20": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 93.17
+                    },
+                    "21": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 111.44
+                    },
+                    "22": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 129.09
+                    },
+                    "23": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 129.09
+                    },
+                    "24": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 129.09
+                    },
+                    "25": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 159.91
+                    },
+                    "26": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 210.08
+                    },
+                    "27": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 210.08
+                    },
+                    "28": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 283.02
+                    },
+                    "29": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 329.01
+                    },
+                    "3": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 31.51
+                    },
+                    "30": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "31": {
+                        "coil_engagement": 88,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "32": {
+                        "coil_engagement": 77,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "33": {
+                        "coil_engagement": 66,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "34": {
+                        "coil_engagement": 55,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "35": {
+                        "coil_engagement": 55,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "36": {
+                        "coil_engagement": 55,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "4": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 37.78
+                    },
+                    "5": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 44.12
+                    },
+                    "6": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 49.34
+                    },
+                    "7": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 55.76
+                    },
+                    "8": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 59.76
+                    },
+                    "9": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 64.66
+                    }
+                },
+                "rr_draw_mapouts": {
+                    "-1": [
+                        -18,
+                        52
+                    ],
+                    "0": [
+                        -18,
+                        52
+                    ],
+                    "1": [
+                        -18,
+                        45
+                    ],
+                    "scale": 6
+                },
+                "target_pressure": 6,
+                "tk_draw_mapouts": {
+                    "1": [
+                        100,
+                        20
+                    ],
+                    "2": [
+                        102,
+                        24
+                    ],
+                    "3": [
+                        105,
+                        29
+                    ],
+                    "4": [
+                        108,
+                        34
+                    ],
+                    "5": [
+                        110,
+                        38
+                    ],
+                    "scale": 6
+                },
+                "tk_mapouts": {
+                    "1": {
+                        "speed": 0.018,
+                        "target": 0,
+                        "type": "press"
+                    },
+                    "2": {
+                        "speed": 0.009,
+                        "target": 0,
+                        "type": "press"
+                    },
+                    "3": {
+                        "type": "neutral"
+                    },
+                    "4": {
+                        "speed": 0.009,
+                        "target": 3.5,
+                        "type": "press"
+                    },
+                    "5": {
+                        "speed": 0.018,
+                        "target": 3.5,
+                        "type": "press"
+                    }
+                },
+                "transmissional_number": 3.94,
+                "underlay_draw_params": [
+                    0,
+                    -41,
+                    5
+                ],
+                "valve_params": {
+                    "stopkran": [
+                        3.5,
+                        0.2
+                    ],
+                    "vz_1": [
+                        1.3,
+                        0.0054
+                    ],
+                    "vz_2": [
+                        2,
+                        0.021
+                    ]
+                },
+                "wheel_mass": 1400,
+                "wheel_radius": 0.95
+            }
+        }
+    ],
+    "trains": [
+        {
+            "designed_for": "type_e",
+            "name": "Сине-зелёный окрас",
+            "render_sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "sprite": "type_e_bg.png",
+            "system_name": "type_e_bg"
+        },
+        {
+            "designed_for": "type_e",
+            "name": "Сине-голубой окрас",
+            "render_sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "sprite": "type_e_bc.png",
+            "system_name": "type_e_bc"
+        }
+    ]
+}

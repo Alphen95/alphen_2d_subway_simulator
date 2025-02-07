@@ -1,0 +1,1816 @@
+{
+    "consists": [
+        {
+            "clickable_size": [
+                112,
+                312
+            ],
+            "control_panel_info": {
+                "ammeter_bottom": {
+                    "h": 15,
+                    "scale": 5,
+                    "w": 25,
+                    "x": 150,
+                    "y": 104
+                },
+                "ammeter_overlay": {
+                    "h": 15,
+                    "scale": 5,
+                    "w": 25,
+                    "x": 176,
+                    "y": 104
+                },
+                "ammeter_pointer": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 21,
+                    "x": 150,
+                    "y": 120
+                },
+                "ars_0": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 3,
+                    "x": 158,
+                    "y": 68
+                },
+                "ars_40": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 162,
+                    "y": 68
+                },
+                "ars_60": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 170,
+                    "y": 68
+                },
+                "ars_70": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 178,
+                    "y": 68
+                },
+                "ars_80": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 178,
+                    "y": 68
+                },
+                "ars_och": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 150,
+                    "y": 68
+                },
+                "km": {
+                    "h": 8,
+                    "scale": 5,
+                    "w": 40,
+                    "x": 150,
+                    "y": 1
+                },
+                "kvt_off": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 10,
+                    "x": 150,
+                    "y": 42
+                },
+                "kvt_on": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 10,
+                    "x": 161,
+                    "y": 42
+                },
+                "lamp_green_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 172,
+                    "y": 47
+                },
+                "lamp_green_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 172,
+                    "y": 42
+                },
+                "lamp_red_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 182,
+                    "y": 47
+                },
+                "lamp_red_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 182,
+                    "y": 42
+                },
+                "lamp_white_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 187,
+                    "y": 47
+                },
+                "lamp_white_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 187,
+                    "y": 42
+                },
+                "lamp_yellow_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 177,
+                    "y": 47
+                },
+                "lamp_yellow_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 177,
+                    "y": 42
+                },
+                "manometer_bottom": {
+                    "h": 31,
+                    "scale": 5,
+                    "w": 31,
+                    "x": 202,
+                    "y": 104
+                },
+                "manometer_overlay": {
+                    "h": 31,
+                    "scale": 5,
+                    "w": 31,
+                    "x": 202,
+                    "y": 136
+                },
+                "manometer_pointer": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 21,
+                    "x": 150,
+                    "y": 122
+                },
+                "manometer_pointer_red": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 21,
+                    "x": 150,
+                    "y": 124
+                },
+                "overlay": {
+                    "h": 64,
+                    "scale": 5,
+                    "w": 148,
+                    "x": 1,
+                    "y": 66
+                },
+                "panel": {
+                    "h": 64,
+                    "scale": 5,
+                    "w": 148,
+                    "x": 1,
+                    "y": 1
+                },
+                "rr_-1": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 24,
+                    "x": 181,
+                    "y": 15
+                },
+                "rr_0": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 24,
+                    "x": 181,
+                    "y": 10
+                },
+                "rr_1": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 24,
+                    "x": 181,
+                    "y": 26
+                },
+                "speedometer_bottom": {
+                    "h": 19,
+                    "scale": 5,
+                    "w": 23,
+                    "x": 174,
+                    "y": 84
+                },
+                "speedometer_overlay": {
+                    "h": 19,
+                    "scale": 5,
+                    "w": 23,
+                    "x": 150,
+                    "y": 84
+                },
+                "speedometer_pointer": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 17,
+                    "x": 150,
+                    "y": 82
+                },
+                "switch_off": {
+                    "h": 8,
+                    "scale": 5,
+                    "w": 6,
+                    "x": 150,
+                    "y": 53
+                },
+                "switch_on": {
+                    "h": 8,
+                    "scale": 5,
+                    "w": 6,
+                    "x": 157,
+                    "y": 53
+                },
+                "switch_small_off": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 3,
+                    "x": 164,
+                    "y": 53
+                },
+                "switch_small_on": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 3,
+                    "x": 168,
+                    "y": 53
+                },
+                "tk": {
+                    "h": 20,
+                    "scale": 5,
+                    "w": 30,
+                    "x": 150,
+                    "y": 21
+                },
+                "underlay": {
+                    "h": 105,
+                    "scale": 5,
+                    "w": 153,
+                    "x": 1,
+                    "y": 131
+                }
+            },
+            "control_panel_sprite": "controls.png",
+            "name": "Метропоезд типа Еж (81-707)",
+            "sound_loading_info": {
+                "ars_beep": "sounds/ars_beep.wav",
+                "ambient": "sounds/ambient.wav",
+                "engine1": "sounds/engine1.wav",
+                "engine2": "sounds/engine2.wav",
+                "engine3": "sounds/engine3.wav",
+                "engine4": "sounds/engine4.wav",
+                "engine5": "sounds/engine5.wav",
+                "engine6": "sounds/engine6.wav",
+                "engine7": "sounds/engine7.wav"
+            },
+            "system_name": "type_ezh",
+            "traction_info": {
+                "brake_cyllinder_surface": 0.1,
+                "brake_cyllinder_volume": 0.1,
+                "compressor_mass_rate": 0.142,
+                "control_system_type": "reostat",
+                "default_km": 0,
+                "default_tk": 2,
+                "door_animation_states": {
+                    "closed": 0,
+                    "inter_1": 20,
+                    "inter_2": 20,
+                    "inter_3": 20,
+                    "inter_4": 20,
+                    "open": 0
+                },
+                "drive_sounds": [
+                    [
+                        "engine1",
+                        0.5,
+                        8
+                    ],
+                    [
+                        "engine2",
+                        8,
+                        16
+                    ],
+                    [
+                        "engine3",
+                        16,
+                        24
+                    ],
+                    [
+                        "engine4",
+                        24,
+                        32
+                    ],
+                    [
+                        "engine5",
+                        32,
+                        40
+                    ],
+                    [
+                        "engine6",
+                        40,
+                        48
+                    ],
+                    [
+                        "engine7",
+                        48,
+                        1005
+                    ]
+                ],
+                "element_mapouts": [
+                    {
+                        "connection": "ars_braking_safety",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                91,
+                                14,
+                                5,
+                                "kvt_off",
+                                10,
+                                10
+                            ],
+                            [
+                                91,
+                                14,
+                                5,
+                                "kvt_on",
+                                10,
+                                10
+                            ]
+                        ],
+                        "name": "Кнопка восприятия торможения",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "unused",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                57,
+                                16,
+                                5,
+                                "switch_small_off",
+                                3,
+                                5
+                            ],
+                            [
+                                57,
+                                16,
+                                5,
+                                "switch_small_on",
+                                3,
+                                5
+                            ]
+                        ],
+                        "name": "Фары",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "unused",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                62,
+                                16,
+                                5,
+                                "switch_small_off",
+                                3,
+                                5
+                            ],
+                            [
+                                62,
+                                16,
+                                5,
+                                "switch_small_on",
+                                3,
+                                5
+                            ]
+                        ],
+                        "name": "Режим АРС (АБ/АРС-АЛС)",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "als",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                74,
+                                40,
+                                5,
+                                "switch_small_off",
+                                3,
+                                5
+                            ],
+                            [
+                                74,
+                                40,
+                                5,
+                                "switch_small_on",
+                                3,
+                                5
+                            ]
+                        ],
+                        "name": "Выключатель АЛС",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "ars",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                79,
+                                40,
+                                5,
+                                "switch_small_off",
+                                3,
+                                5
+                            ],
+                            [
+                                79,
+                                40,
+                                5,
+                                "switch_small_on",
+                                3,
+                                5
+                            ]
+                        ],
+                        "name": "Выключатель АРС",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "braking_control",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                69,
+                                33,
+                                5,
+                                "lamp_green_off",
+                                4,
+                                4
+                            ],
+                            [
+                                69,
+                                33,
+                                5,
+                                "lamp_green_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа контроля торможения",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_traction_disable",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                74,
+                                33,
+                                5,
+                                "lamp_green_off",
+                                4,
+                                4
+                            ],
+                            [
+                                74,
+                                33,
+                                5,
+                                "lamp_green_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа выключения тяги от АРС",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_speed_equality",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                79,
+                                33,
+                                5,
+                                "lamp_green_off",
+                                4,
+                                4
+                            ],
+                            [
+                                79,
+                                33,
+                                5,
+                                "lamp_green_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа равенства скоростей",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_direction",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                84,
+                                33,
+                                5,
+                                "lamp_yellow_off",
+                                4,
+                                4
+                            ],
+                            [
+                                84,
+                                33,
+                                5,
+                                "lamp_yellow_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа направления",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "rk_spin",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                56,
+                                28,
+                                5,
+                                "lamp_yellow_off",
+                                4,
+                                4
+                            ],
+                            [
+                                56,
+                                28,
+                                5,
+                                "lamp_yellow_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Секвенция (Вращение РК)",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "rk_fail",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                97,
+                                33,
+                                5,
+                                "lamp_red_off",
+                                4,
+                                4
+                            ],
+                            [
+                                97,
+                                33,
+                                5,
+                                "lamp_red_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа несбора схемы состава",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "rp",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                92,
+                                33,
+                                5,
+                                "lamp_red_on",
+                                4,
+                                4
+                            ],
+                            [
+                                92,
+                                33,
+                                5,
+                                "lamp_red_off",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа сработки РП",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "doors_open",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                97,
+                                28,
+                                5,
+                                "lamp_white_off",
+                                4,
+                                4
+                            ],
+                            [
+                                97,
+                                28,
+                                5,
+                                "lamp_white_on",
+                                4,
+                                4
+                            ]
+                        ],
+                        "name": "Лампа сигнализации дверей (двери открыты)",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "light_on",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                58,
+                                38,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                58,
+                                38,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Включение освещения",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "light_off",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                65,
+                                38,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                65,
+                                38,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Выключение освещения",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "left_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                86,
+                                38,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                86,
+                                38,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Открытие дверей левых",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "right_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                93,
+                                38,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                93,
+                                38,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Открытие дверей правых",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "mk",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                58,
+                                47,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                58,
+                                47,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Мотор-компрессор",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "unused",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                65,
+                                47,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                65,
+                                47,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Сигнализация неисправности",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "rp_return",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                72,
+                                47,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                72,
+                                47,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Возврат РП",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "unused",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                79,
+                                47,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                79,
+                                47,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Программа I",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "close_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                86,
+                                47,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                86,
+                                47,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Выключатель управления дверьми",
+                        "state": false,
+                        "type": "switch"
+                    },
+                    {
+                        "connection": "reserve_close_doors",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                93,
+                                47,
+                                5,
+                                "switch_off",
+                                6,
+                                8
+                            ],
+                            [
+                                93,
+                                47,
+                                5,
+                                "switch_on",
+                                6,
+                                8
+                            ]
+                        ],
+                        "name": "Кнопка резервного закрытия дверей",
+                        "state": false,
+                        "type": "button"
+                    },
+                    {
+                        "connection": "ars_20",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                61,
+                                27,
+                                5,
+                                null,
+                                7,
+                                5
+                            ],
+                            [
+                                61,
+                                27,
+                                5,
+                                "ars_och",
+                                7,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа отсутствия частоты",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_0",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                69,
+                                27,
+                                5,
+                                null,
+                                3,
+                                5
+                            ],
+                            [
+                                69,
+                                27,
+                                5,
+                                "ars_0",
+                                3,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа разрешённой скорости 0 км/ч",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_40",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                73,
+                                27,
+                                5,
+                                null,
+                                7,
+                                5
+                            ],
+                            [
+                                73,
+                                27,
+                                5,
+                                "ars_40",
+                                7,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа разрешённой скорости 40 км/ч",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_60",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                81,
+                                27,
+                                5,
+                                null,
+                                7,
+                                5
+                            ],
+                            [
+                                81,
+                                27,
+                                5,
+                                "ars_60",
+                                7,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа разрешённой скорости 60 км/ч",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_80",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                89,
+                                27,
+                                5,
+                                null,
+                                7,
+                                5
+                            ],
+                            [
+                                89,
+                                27,
+                                5,
+                                "ars_80",
+                                7,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа разрешённой скорости 70 км/ч",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "connection": "ars_70",
+                        "default": false,
+                        "draw_mappings": [
+                            [
+                                89,
+                                27,
+                                5,
+                                null,
+                                7,
+                                5
+                            ],
+                            [
+                                89,
+                                27,
+                                5,
+                                "ars_70",
+                                7,
+                                5
+                            ]
+                        ],
+                        "name": "Лампа разрешённой скорости 70 км/ч",
+                        "state": false,
+                        "type": "lamp"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": -30,
+                        "draw_mappings": [
+                            [
+                                67,
+                                7,
+                                5,
+                                "speedometer_bottom",
+                                23,
+                                19
+                            ],
+                            [
+                                11.5,
+                                17.5,
+                                5,
+                                "speedometer_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                67,
+                                7,
+                                5,
+                                "speedometer_overlay",
+                                23,
+                                19
+                            ]
+                        ],
+                        "max_value": 90,
+                        "min_value": 0,
+                        "multiplier": 1.5,
+                        "name": "Скоростемер\n[%s км/ч]",
+                        "scale": "velocity",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": -90,
+                        "draw_mappings": [
+                            [
+                                120.5,
+                                -31,
+                                5,
+                                "ammeter_bottom",
+                                25,
+                                15
+                            ],
+                            [
+                                12.5,
+                                12.5,
+                                5,
+                                "ammeter_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                120.5,
+                                -31,
+                                5,
+                                "ammeter_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 600,
+                        "min_value": -600,
+                        "multiplier": 0.15,
+                        "name": "Амперметр\n[%s А]",
+                        "scale": "amps",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "draw_mappings": [
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                "manometer_bottom",
+                                31,
+                                31
+                            ],
+                            [
+                                15.5,
+                                15.5,
+                                5,
+                                "manometer_pointer",
+                                6,
+                                6
+                            ],
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                "manometer_overlay",
+                                6,
+                                6
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "Манометр тормозных цилиндров\n[%s атм]",
+                        "scale": "press",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "draw_mappings": [
+                            [
+                                117.5,
+                                -17,
+                                5,
+                                null,
+                                0,
+                                0
+                            ],
+                            [
+                                15.5,
+                                15.5,
+                                5,
+                                "manometer_pointer_red",
+                                6,
+                                6
+                            ],
+                            [
+                                0,
+                                0,
+                                null,
+                                0,
+                                0
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "Манометр напорной магистрали",
+                        "scale": "press_tank",
+                        "type": "analog_scale"
+                    }
+                ],
+                "engine_constant": 40,
+                "engine_resistance": 0.2,
+                "has_als": false,
+                "has_ars": true,
+                "km_draw_mapouts": {
+                    "-1": [
+                        19,
+                        28
+                    ],
+                    "-2": [
+                        19,
+                        31
+                    ],
+                    "-3": [
+                        19,
+                        34
+                    ],
+                    "0": [
+                        19,
+                        25
+                    ],
+                    "1": [
+                        19,
+                        22
+                    ],
+                    "2": [
+                        19,
+                        19
+                    ],
+                    "3": [
+                        19,
+                        16
+                    ],
+                    "scale": 5
+                },
+                "km_mapouts": {
+                    "-1": {
+                        "target_rk": -2,
+                        "switch_time": 24,
+                        "type": "brake"
+                    },
+                    "-2": {
+                        "target_rk": -8,
+                        "switch_time": 24,
+                        "type": "brake"
+                    },
+                    "-3": {
+                        "target_rk": -33,
+                        "switch_time": 24,
+                        "type": "brake",
+                        "vz_1": true,
+                        "vz_1_pos": [
+                            -26,
+                            -27,
+                            -28,
+                            -29,
+                            -30,
+                            -31,
+                            -32,
+                            -33
+                        ]
+                    },
+                    "0": {
+                        "type": "neutral",
+                        "voltage": 0
+                    },
+                    "1": {
+                        "target_rk": 1,
+                        "switch_time": 24,
+                        "type": "accel"
+                    },
+                    "2": {
+                        "target_rk": 18,
+                        "switch_time": 24,
+                        "type": "accel"
+                    },
+                    "3": {
+                        "target_rk": 36,
+                        "switch_time": 24,
+                        "type": "accel"
+                    }
+                },
+                "mass": 40500,
+                "max_km": 3,
+                "max_tk": 5,
+                "min_km": -3,
+                "min_tk": 1,
+                "peril_current": 420,
+                "peril_pressure": 4,
+                "pressure_tank_volume": 0.8,
+                "rk_mapouts": {
+                    "-1": {
+                        "coil_engagement": 30,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-10": {
+                        "coil_engagement": 100,
+                        "resistance": 2.48,
+                        "switch_current": 300
+                    },
+                    "-11": {
+                        "coil_engagement": 100,
+                        "resistance": 2.25,
+                        "switch_current": 300
+                    },
+                    "-12": {
+                        "coil_engagement": 100,
+                        "resistance": 2.03,
+                        "switch_current": 300
+                    },
+                    "-13": {
+                        "coil_engagement": 100,
+                        "resistance": 1.81,
+                        "switch_current": 300
+                    },
+                    "-14": {
+                        "coil_engagement": 100,
+                        "resistance": 1.62,
+                        "switch_current": 300
+                    },
+                    "-15": {
+                        "coil_engagement": 100,
+                        "resistance": 1.44,
+                        "switch_current": 300
+                    },
+                    "-16": {
+                        "coil_engagement": 100,
+                        "resistance": 1.31,
+                        "switch_current": 300
+                    },
+                    "-17": {
+                        "coil_engagement": 100,
+                        "resistance": 1.18,
+                        "switch_current": 300
+                    },
+                    "-18": {
+                        "coil_engagement": 100,
+                        "resistance": 1.18,
+                        "switch_current": 300
+                    },
+                    "-19": {
+                        "coil_engagement": 100,
+                        "resistance": 1.04,
+                        "switch_current": 300
+                    },
+                    "-2": {
+                        "coil_engagement": 35,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-20": {
+                        "coil_engagement": 100,
+                        "resistance": 0.925,
+                        "switch_current": 300
+                    },
+                    "-21": {
+                        "coil_engagement": 100,
+                        "resistance": 0.85,
+                        "switch_current": 300
+                    },
+                    "-22": {
+                        "coil_engagement": 100,
+                        "resistance": 0.755,
+                        "switch_current": 300
+                    },
+                    "-23": {
+                        "coil_engagement": 100,
+                        "resistance": 0.729,
+                        "switch_current": 300
+                    },
+                    "-24": {
+                        "coil_engagement": 100,
+                        "resistance": 0.685,
+                        "switch_current": 300
+                    },
+                    "-25": {
+                        "coil_engagement": 100,
+                        "resistance": 0.653,
+                        "switch_current": 250
+                    },
+                    "-26": {
+                        "coil_engagement": 100,
+                        "resistance": 0.607,
+                        "switch_current": 250
+                    },
+                    "-27": {
+                        "coil_engagement": 100,
+                        "resistance": 0.541,
+                        "switch_current": 250
+                    },
+                    "-28": {
+                        "coil_engagement": 100,
+                        "resistance": 0.462,
+                        "switch_current": 250
+                    },
+                    "-29": {
+                        "coil_engagement": 100,
+                        "resistance": 0.412,
+                        "switch_current": 250
+                    },
+                    "-3": {
+                        "coil_engagement": 44,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-30": {
+                        "coil_engagement": 100,
+                        "resistance": 0.363,
+                        "switch_current": 250
+                    },
+                    "-31": {
+                        "coil_engagement": 100,
+                        "resistance": 0.281,
+                        "switch_current": 250
+                    },
+                    "-32": {
+                        "coil_engagement": 100,
+                        "resistance": 0.281,
+                        "switch_current": 250
+                    },
+                    "-33": {
+                        "coil_engagement": 100,
+                        "resistance": 0.281,
+                        "switch_current": 250
+                    },
+                    "-34": {
+                        "coil_engagement": 0,
+                        "resistance": 0,
+                        "switch_current": 250
+                    },
+                    "-35": {
+                        "coil_engagement": 0,
+                        "resistance": 0,
+                        "switch_current": 250
+                    },
+                    "-36": {
+                        "coil_engagement": 0,
+                        "resistance": 0,
+                        "switch_current": 250
+                    },
+                    "-4": {
+                        "coil_engagement": 55,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-5": {
+                        "coil_engagement": 78,
+                        "resistance": 3.33,
+                        "switch_current": 300
+                    },
+                    "-6": {
+                        "coil_engagement": 100,
+                        "resistance": 3.2,
+                        "switch_current": 300
+                    },
+                    "-7": {
+                        "coil_engagement": 100,
+                        "resistance": 3.07,
+                        "switch_current": 300
+                    },
+                    "-8": {
+                        "coil_engagement": 100,
+                        "resistance": 2.89,
+                        "switch_current": 300
+                    },
+                    "-9": {
+                        "coil_engagement": 100,
+                        "resistance": 2.7,
+                        "switch_current": 300
+                    },
+                    "0": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 0.0
+                    },
+                    "1": {
+                        "coil_engagement": 35,
+                        "switch_current": 100,
+                        "voltage": 26.04
+                    },
+                    "10": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 71.43
+                    },
+                    "11": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 80.21
+                    },
+                    "12": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 90.85
+                    },
+                    "13": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 105.12
+                    },
+                    "14": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 120.58
+                    },
+                    "15": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 141.51
+                    },
+                    "16": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 161.29
+                    },
+                    "17": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 187.5
+                    },
+                    "18": {
+                        "coil_engagement": 80,
+                        "switch_current": 100,
+                        "voltage": 187.5
+                    },
+                    "19": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 93.17
+                    },
+                    "2": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 26.04
+                    },
+                    "20": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 93.17
+                    },
+                    "21": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 111.44
+                    },
+                    "22": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 129.09
+                    },
+                    "23": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 129.09
+                    },
+                    "24": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 129.09
+                    },
+                    "25": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 159.91
+                    },
+                    "26": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 210.08
+                    },
+                    "27": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 210.08
+                    },
+                    "28": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 283.02
+                    },
+                    "29": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 329.01
+                    },
+                    "3": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 31.51
+                    },
+                    "30": {
+                        "coil_engagement": 100,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "31": {
+                        "coil_engagement": 88,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "32": {
+                        "coil_engagement": 77,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "33": {
+                        "coil_engagement": 66,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "34": {
+                        "coil_engagement": 55,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "35": {
+                        "coil_engagement": 55,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "36": {
+                        "coil_engagement": 55,
+                        "switch_current": 60,
+                        "voltage": 375.0
+                    },
+                    "4": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 37.78
+                    },
+                    "5": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 44.12
+                    },
+                    "6": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 49.34
+                    },
+                    "7": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 55.76
+                    },
+                    "8": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 59.76
+                    },
+                    "9": {
+                        "coil_engagement": 100,
+                        "switch_current": 100,
+                        "voltage": 64.66
+                    }
+                },
+                "rr_draw_mapouts": {
+                    "-1": [
+                        -18,
+                        52
+                    ],
+                    "0": [
+                        -18,
+                        52
+                    ],
+                    "1": [
+                        -18,
+                        45
+                    ],
+                    "scale": 5
+                },
+                "target_pressure": 6,
+                "tk_draw_mapouts": {
+                    "1": [
+                        100,
+                        20
+                    ],
+                    "2": [
+                        102,
+                        24
+                    ],
+                    "3": [
+                        105,
+                        29
+                    ],
+                    "4": [
+                        108,
+                        34
+                    ],
+                    "5": [
+                        110,
+                        38
+                    ],
+                    "scale": 5
+                },
+                "tk_mapouts": {
+                    "1": {
+                        "speed": 0.018,
+                        "target": 0,
+                        "type": "press"
+                    },
+                    "2": {
+                        "speed": 0.009,
+                        "target": 0,
+                        "type": "press"
+                    },
+                    "3": {
+                        "type": "neutral"
+                    },
+                    "4": {
+                        "speed": 0.009,
+                        "target": 3.5,
+                        "type": "press"
+                    },
+                    "5": {
+                        "speed": 0.018,
+                        "target": 3.5,
+                        "type": "press"
+                    }
+                },
+                "transmissional_number": 3.94,
+                "underlay_draw_params": [
+                    0,
+                    -41,
+                    5
+                ],
+                "valve_params": {
+                    "stopkran": [
+                        3.5,
+                        0.2
+                    ],
+                    "vz_1": [
+                        1.3,
+                        0.0054
+                    ],
+                    "vz_2": [
+                        2,
+                        0.021
+                    ]
+                },
+                "wheel_mass": 1400,
+                "wheel_radius": 0.95
+            }
+        }
+    ],
+    "trains": [
+        {
+            "designed_for": "type_ezh",
+            "name": "Сине-голубой окрас",
+            "render_sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "sprite": "type_ezh_bc.png",
+            "system_name": "type_ezh_bc"
+        }
+    ]
+}

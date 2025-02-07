@@ -2,12 +2,93 @@ import math
 import time
 import threading
 import random
+import copy
 
 trains = {}
+signal_states = {}
 sign = lambda x: math.copysign(1, x)
 
+class SignalSystem():
+    def __init__(self,signals):
+        global signal_states
+        self.train_grid = []
+        self.signals = signals
+
+        for signal_id in self.signals:
+            signal_states[signal_id] = {"occupied":False,"aspect":"green","max_speed":0}
+
+        self.is_working = True
+        self.thread = threading.Thread(target=self.cycle,daemon=True)
+        self.thread.start()
+
+    def cycle(self):
+        global trains, signal_states
+        block_size = (256,1024)
+
+        aspects_ab_full = {
+            "red":"red_protector",
+            "red_protector":"red_yellow",
+            "red_yellow":"yellow",
+            "yellow":"yellow_green",
+            "yellow_green":"green",
+            "green":"green"
+        }
+        
+        aspects_ab_velocity = {
+            "red":0,
+            "red_protector":1,
+            "red_yellow":2,
+            "yellow":3,
+            "yellow_green":4,
+            "green":5
+        }
+
+        print("Signal thread started.")
+
+        while self.is_working:
+            self.train_grid = []
+
+            for train_id in trains:
+                train_block_pos = (
+                    trains[train_id].pos[0]//block_size[0],
+                    trains[train_id].pos[1]//block_size[1],
+                )
+                self.train_grid.append(train_block_pos)
+
+            for signal_id in self.signals:
+                checked_tiles = self.signals[signal_id]["tiles"]
+                block_occupied = False
+                for tile in checked_tiles:
+                    if tile in self.train_grid:
+                        signal_states[signal_id]["occupied"] = True
+                        #signal_states[signal_id]["aspect"] = "red"
+                        block_occupied = True
+                        break
+                if not block_occupied: 
+                    signal_states[signal_id]["occupied"] = False
+
+                if "next" in self.signals[signal_id] and self.signals[signal_id]["next"] not in [None,"",'']:
+                    next_id = self.signals[signal_id]["next"]
+                    if not signal_states[next_id]["occupied"] or signal_states[next_id]["aspect"] == "red":
+                        next_aspect = signal_states[next_id]["aspect"]
+                        signal_states[signal_id]["aspect"] = aspects_ab_full[next_aspect]
+                    else:
+                        signal_states[signal_id]["aspect"] = "red"
+                elif "next" not in self.signals[signal_id] or "next" in self.signals[signal_id] and self.signals[signal_id]["next"] in [None,"",'']:
+                    signal_states[signal_id]["aspect"] = "green"
+                
+                if self.signals[signal_id]["speed"] != "":
+                    velocity_states = self.signals[signal_id]["speed"].split("-")
+                    signal_states[signal_id]["max_speed"] = int(velocity_states[min(aspects_ab_velocity[signal_states[signal_id]["aspect"]],len(velocity_states))])
+                else:
+                    signal_states[signal_id]["max_speed"] = 20
+            
+            time.sleep(1/30) #просчёт 30 раз в секунду
+
+        print("Signal thread stopped.")
+
 class Train():
-    def __init__(self,pos,type, reversed,size,consist,world):
+    def __init__(self,pos,type, reversed,size,consist,world,reversed_signals):
         self.pos = pos
         self.type = type
         self.velocity = 0
@@ -15,13 +96,17 @@ class Train():
         self.reversed = reversed
         self.size = size
         self.consist = consist
+        self.signal_state = None
+        self.signal_velocity_state = 0
+        self.switches = {}
 
         self.exists = True
-        self.thread = threading.Thread(target=self.cycle,args=[world],daemon=True)
+        self.thread = threading.Thread(target=self.cycle,args=[world,reversed_signals],daemon=True)
         self.thread.start()
         self.switches = []
 
-    def cycle(self,world):
+    def cycle(self,world,reversed_signals):
+        global signal_states
         block_size = (256,1024)
 
 
@@ -30,6 +115,15 @@ class Train():
             local_pos = (self.pos[0]%block_size[0],self.pos[1]%block_size[1])
 
             if block_pos in world:
+                if block_pos in reversed_signals and "next" in reversed_signals[block_pos] and reversed_signals[block_pos]["next"] not in [None,"",'']:
+                    self.signal_state = signal_states[reversed_signals[block_pos]["next"]]
+                else:
+                    self.signal_state = None
+
+                if block_pos in reversed_signals:
+                    self.signal_velocity_state = signal_states[reversed_signals[block_pos]["cur"]]["max_speed"]
+                else:
+                    self.signal_velocity_state = 20
 
                 curblock = world[block_pos][0] if type(world[block_pos]) == list else world[block_pos]
                 if curblock[-4:] == "tstr":
@@ -67,14 +161,10 @@ class Train():
                     self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
                 
                 elif curblock[-4:] == "tsa1":
-                    if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
-                        #if local_pos[1] > 4*(256-39):
-                        #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                        #elif local_pos[1] > 4*64:
-                        #    self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
-                        if local_pos[1] > 4*64:
+                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
+                        if 4*192 < local_pos[1] < 4*254:
                             self.angle = 180-14 if 270 >= self.angle >= 90 else 14
-                        else:
+                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
@@ -86,14 +176,10 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsa2":
-                    if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
-                        #if local_pos[1] < 4*(39):
-                        #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 8.25
-                        #elif local_pos[1] < 4*(64*3):
-                        #    self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
-                        if local_pos[1] < 4*64*3:
+                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
+                        if 4*2 < local_pos[1] < 4*64:
                             self.angle = 180-14 if 270 >= self.angle >= 90 else 14
-                        else:
+                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
@@ -105,14 +191,10 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb1":
-                    if int(self.angle) not in [0,180] or ((local_pos[1] > 4*(256-2) or local_pos[1] < 4*64) and block_pos in self.switches and self.switches[block_pos]):
-                        #if local_pos[1] > 4*(256-39):
-                        #    self.angle = 180-8.25 if 270 >= self.angle >= 90 else 0+8.25
-                        #elif local_pos[1] > 4*64:
-                        #    self.angle = 163.5 if 270 >= self.angle >= 90 else 16.5
-                        if local_pos[1] > 4*64:
+                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
+                        if 4*192 < local_pos[1] < 4*254:
                             self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                        else:
+                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
@@ -124,15 +206,47 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb2":
-                    if self.angle not in [0,180] or ((local_pos[1] < 4*(2) or local_pos[1] > 4*(64*3)) and block_pos in self.switches and self.switches[block_pos]):
-                        #if local_pos[1] < 4*(39):
-                        #    self.angle = 180+8.25 if 270 >= self.angle >= 90 else 360-8.25
-                        #elif local_pos[1] < 4*(64*3):
-                        #    self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
-
-                        if local_pos[1] < 4*(64*3):
+                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
+                        if 4*2 < local_pos[1] < 4*64:
                             self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                        else:
+                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
+                            self.angle = 180 if 270 >= self.angle >= 90 else 0
+                    else:
+                        self.angle = 180 if 270 >= self.angle >= 90 else 0
+                        if local_pos[0] < 127.95:
+                            self.pos[0] += 0.05
+                        elif local_pos[0] > 128.05:
+                            self.pos[0] -= 0.05
+                        
+                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
+                            self.pos[0] += 128-local_pos[0]
+                
+                
+                elif curblock[-4:] == "tsx1":
+                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
+                        if 4*192 < local_pos[1] < 4*254:
+                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+                        elif 4*2 < local_pos[1] < 4*64:
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
+                            self.angle = 180 if 270 >= self.angle >= 90 else 0
+                    else:
+                        self.angle = 180 if 270 >= self.angle >= 90 else 0
+                        if local_pos[0] < 127.95:
+                            self.pos[0] += 0.05
+                        elif local_pos[0] > 128.05:
+                            self.pos[0] -= 0.05
+                        
+                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
+                            self.pos[0] += 128-local_pos[0]
+                    
+                elif curblock[-4:] == "tsx2":
+                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
+                        if 4*192 < local_pos[1] < 4*254:
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+                        elif 4*2 < local_pos[1] < 4*64:
+                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
                             self.angle = 180 if 270 >= self.angle >= 90 else 0
                     else:
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
@@ -149,10 +263,13 @@ class Train():
             time.sleep(1/120)
 
 class Consist():
-    def __init__(self,train_type,train_sprite,params,consist_info,self_id,world,spawn_pos):
+    def __init__(self,train_type,train_sprite,params,consist_info,self_id,world,reversed_signals,spawn_pos):
         global trains
 
         self.linked_to = []
+        self.first_car = -1
+        self.last_car = -1
+
         self.pressure = 0
         self.tank_pressure = 0
         self.vz_pressure = 0
@@ -170,44 +287,51 @@ class Consist():
         self.control_wires ={
             "main_power":False, #Главный разъединитель и главный автомат
             "reserve_controls":False, #Резервное управление
-            "batteries":False, #2 Питание батарей
-            "mk":False, #3 Питание мотор-компрессора
-            "reserve_mk":False, #4 Питание резервного мотор-компрессора
-            "reversor_forwards":False, #5 Реверс вперёд
-            "reversor_backwards":False, #6 Реверс назад
-            "rp":True, #7 Реле перегрузки (False = требует восстановки)
-            "rp_return":False, #8 Возврат реле перегрузки
-            "vz_1":False, #9 Вентиль замещения №1
-            "vz_2":False, #10 Вентиль замещения №2
+            "batteries":False, # Питание батарей
+            "mk":False, # Питание мотор-компрессора
+            "reserve_mk":False, # Питание резервного мотор-компрессора
+            "reversor_forwards":False, # Реверс вперёд
+            "reversor_backwards":False, # Реверс назад
+            "rp":True, # Реле перегрузки (False = требует восстановки)
+            "rp_return":False, # Возврат реле перегрузки
+            "vz_1":False, # Вентиль замещения №1
+            "vz_2":False, # Вентиль замещения №2
             "vz_1_km":False, # Вентиль замещения №1 от ходового режима
             "vz_2_km":False, # Вентиль замещения №2 от ходового режима
-            "traction":False, #11 Сбор схемы на ход
-            "electro_brake":False, #12 Сбор схемы на торможение
-            "maximal_traction":False, #13 Сбор схемы на максимальный ход
-            "rk_fail":False, #33 Несбор схемы (N=0 при U!=0)
-            "rk_spin":False, #14 Вращение реостатного контроллера
-            "rk_maxed":False, #15 Схема собрана (РК на максимальной допустимой позиции)
-            "left_doors":False, #16 Открытие левых дверей
-            "right_doors":False, #17 Открытие правых дверей
-            "close_doors":False, #18 Закрытие дверей
-            "reserve_close_doors":False, #19 Резервное закрытие дверей
-            "doors_open":False, #20 Двери открыты
-            "doors_open_duplicate":False, #21 Двери открыты
-            "light_on":False, #22 Включение освещения
-            "light_off":False, #23 Выключение освещения
-            "slow_accel":False, #33 Понижение ускорения (Регулировка РУТ)
-            "ars":False, #24 Включение АРС
-            "als":False, #25 Включение АЛС
-            "ars_0":False, #26 АРС - 0
-            "ars_20":False, #27 АРС - НЧ [20]
-            "ars_40":False, #28 АРС - 40
-            "ars_60":False, #29 АРС - 60
-            "ars_70":False, #30 АРС - 70
-            "ars_80":False, #31 АРС - 80
-            "unused":False, #32 пока не используется
+            "traction":False, # Сбор схемы на ход
+            "electro_brake":False, # Сбор схемы на торможение
+            "maximal_traction":False, # Сбор схемы на максимальный ход
+            "rk_fail":False, # Несбор схемы (N=0 при U!=0)
+            "rk_spin":False, # Вращение реостатного контроллера
+            "rk_spin_direction":0, # Направление поворота реостатного контроллера (-1 - в минус, 0 - не трогать, 1 - в плюс)
+            "rk_maxed":False, # Схема собрана (РК на максимальной допустимой позиции)
+            "left_doors":False, # Открытие левых дверей
+            "right_doors":False, # Открытие правых дверей
+            "close_doors":False, # Закрытие дверей
+            "reserve_close_doors":False, # Резервное закрытие дверей
+            "doors_open":False, # Двери открыты
+            "doors_open_duplicate":False, # Двери открыты
+            "light_on":False, # Включение освещения
+            "light_off":False, # Выключение освещения
+            "slow_accel":False, # Понижение ускорения (Регулировка реле управления током)
+            "ars":False, # Включение АРС
+            "ars_fuse":False, # Предохранитель АРС (False - запрет на движение, требует восстановки)
+            "als":False, # Включение АЛС
+            "ars_0":False, # АРС - 0 км/ч
+            "ars_20":False, # АРС - ОЧ [20 км/ч]
+            "ars_40":False, # АРС - 40 км/ч
+            "ars_60":False, # АРС - 60 км/ч
+            "ars_70":False, # АРС - 70 км/ч
+            "ars_80":False, # АРС - 80 км/ч
+            "ars_braking_safety":False, # АРС - Кнопка восприятия торможения
+            "ars_traction_disable":False, # АРС - Отключение ходового режима
+            "ars_speed_equality":False, # АРС - Равенство скоростей
+            "ars_direction":False, # АРС - Соответствие направления
+            "braking_control":False, # Контроль торможения - давление в ТЦ > 0
+            "unused":False, # Специальный нейтральный провод для "пустых" выключателей и ламп
 
         }
-        self.consist_info = consist_info
+        self.consist_info = copy.deepcopy(consist_info)
         self.doors = {
             "l":"closed",
             "r":"closed",
@@ -222,6 +346,7 @@ class Consist():
         self.rk = 0
         self.rk_timer = 0
         self.timer = 0
+        self.ars_speed = 0
 
         self.energy = 0
         self.engine_power = 0
@@ -247,12 +372,17 @@ class Consist():
         self.traction_direction = 0
         self.velocity_direction = 0
 
+        self.control_wires["ars_fuse"] = not(self.consist_info["has_ars"])
+
         pos = spawn_pos
         self.train_amount = 3
         for i in range(self.train_amount):
-            train_id = random.randint(0,99999)
-            trains[train_id] = Train([pos[0],pos[1]+320*i],train_sprite, i+1==self.train_amount,params["size"],self_id,world)
+            while True:
+                train_id = random.randint(0,99999)
+                if train_id not in trains: break
+            trains[train_id] = Train([pos[0],pos[1]+320*i],train_sprite, i+1==self.train_amount,params["size"],self_id,world,reversed_signals)
             self.linked_to.append(train_id)
+        self.first_car, self.last_car = self.linked_to[0], self.linked_to[-1]
 
         self.exists = True
         self.thread = threading.Thread(target=self.cycle,daemon=True) #,args=[world]
@@ -271,6 +401,7 @@ class Consist():
             self.cycle_pneumo()   
             self.cycle_physics()
             self.cycle_control_wires()
+            self.update_ars()
             self.update_railcars()
 
             # декоративно-графическое
@@ -285,7 +416,7 @@ class Consist():
         # блок логики обсчёта электротяговых систем - НСУ, РКСУ, РКСУ+, ТИСУ и т. д.
         pi = 3.1415
         self.engine_power = 0
-        
+        idle_rotate_ticks = 12
         
         #вентиль замещения 1
         if "vz_1" in self.consist_info["km_mapouts"][str(self.km)] and self.consist_info["km_mapouts"][str(self.km)]["vz_1"]:
@@ -304,7 +435,7 @@ class Consist():
         if self.consist_info["control_system_type"] == "direct":
             self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["km_mapouts"][str(self.km)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["km_mapouts"][str(self.km)] else 1)
             # логика обсчёта НСУ (непосредственной системы управления)
-            if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0 and self.control_wires["rp"]:
+            if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel" and self.controlling_direction != 0 and self.control_wires["rp"] and self.control_wires["ars_fuse"]:
                 self.engine_voltage = self.consist_info["km_mapouts"][str(self.km)]["voltage"]
                 self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
                 if self.velocity_direction == 0: 
@@ -318,65 +449,80 @@ class Consist():
                 self.engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
 
         elif self.consist_info["control_system_type"] == "reostat":
-            #логика обсчёта РКСУ
+            #логика обсчёта РКСУ (без отката на предыдущие позиции)
             self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["rk_mapouts"][str(self.rk)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["rk_mapouts"][str(self.rk)] else 1)
+
             if self.consist_info["km_mapouts"][str(self.km)]["type"] == "accel":
 
-                #режим разгона
+                #сбор схемы на ход
 
-                if self.controlling_direction != 0 and self.control_wires["rp"]:
-                    if str(self.rk) != "0":
-                        self.engine_voltage = self.consist_info["rk_mapouts"][str(self.rk)]["voltage"]
+                if self.controlling_direction != 0 and self.control_wires["rp"] and self.control_wires["ars_fuse"]:
+                    if str(self.rk) != "0": # если РК != 0, то подать напряжение
+                        self.engine_voltage = self.consist_info["rk_mapouts"][str(self.rk)]["voltage"] 
                     
-                    if (self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] > self.rk and 
-                        self.consist_info["rk_mapouts"][str(self.rk)]["switch_current"] > self.engine_current and self.rk_timer <= 0):
-                        if self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]:
-                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][0]
-                        elif self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] > self.rk:
-                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][self.consist_info["km_mapouts"][str(self.km)]["rk_positions"].index(self.rk)+1]
-                        self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"]
-                        self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["rk_mapouts"][str(self.rk)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["rk_mapouts"][str(self.rk)] else 1)
-                        self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
-                        if self.engine_current <= 0: self.rk_timer = 12
-                else:
+                    if self.consist_info["km_mapouts"][str(self.km)]["target_rk"] > self.rk: # если РК < целевого, то...
+
+                        self.control_wires["rk_spin"] = True # провод вращения РК +
+
+                        switch_current = self.consist_info["rk_mapouts"][str(self.rk)]["switch_current"]/(int(self.control_wires["slow_accel"])+1)
+
+                        if (switch_current > self.engine_current 
+                            and self.rk_timer <= 0): 
+                                # если ток ниже границы и вышел таймер РК, то обновить таймер и провернуть РК на одну позицию вперёд
+                                self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"]
+                                self.rk += 1
+                    else:
+                        self.control_wires["rk_spin"] = False # провод вращения РК -
+                else: # иначе если реверс не + или -, то сборсить таймер РК и напряжение на двигателях
                     self.rk_timer = 0
                     self.engine_voltage = 0
-                self.traction_direction = self.controlling_direction*sign(self.engine_voltage)
+
+                self.traction_direction = self.controlling_direction*sign(self.engine_voltage) #направление тяги
+
                 if self.velocity_direction == 0: 
                     self.velocity_direction = self.traction_direction
-                self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/self.engine_resistance
-                if self.engine_current <= 0: self.engine_current = 0
-                if self.engine_current >= self.consist_info["peril_current"]:
+
+                self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*self.traction_direction*self.velocity_direction))/self.engine_resistance 
+
+                if self.engine_current <= 0: # если ток упал ниже нуля, приравнять нулю...
+                    self.engine_current = 0
+                    if self.rk_timer > idle_rotate_ticks: self.rk_timer = idle_rotate_ticks # ...и урезать таймер, если надо.
+
+                if self.engine_current >= self.consist_info["peril_current"]: # это для РП
                     self.control_wires["rp"] = False
                     self.engine_current = 0
                     self.engine_voltage = 0
+
                 self.engine_power = abs(self.engine_voltage)*self.engine_current*(self.velocity_direction*self.traction_direction) if self.engine_current > 0 and self.control_wires["rp"] else 0
             elif self.consist_info["km_mapouts"][str(self.km)]["type"] == "brake":
-                #режим торможения
+                # режим торможения
 
-                #электродинамическое торможение
+                # электродинамическое торможение
+                
                 if self.controlling_direction != 0 and self.control_wires["rp"]:
-                    if str(self.rk) != "0":
+                    if str(self.rk) != "0": # если РК != 0, то создать балластное сопротивление
                         self.ballast_resistance = self.consist_info["rk_mapouts"][str(self.rk)]["resistance"]
+                    
+                    if self.consist_info["km_mapouts"][str(self.km)]["target_rk"] < self.rk: # если РК > целевого, то...
 
-                    if (self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] < self.rk and 
-                        (
-                            (self.consist_info["rk_mapouts"][str(self.rk)]["switch_current"] > self.engine_current 
-                             and self.rk_timer <= 0) or
-                             self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]
-                        )): #переключиться, если вышел таймер и нужное напряжение и не макспозиция ИЛИ позиция не в словаре
-                        if self.rk not in self.consist_info["km_mapouts"][str(self.km)]["rk_positions"]:
-                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][0] #первая, если старой нету
-                        elif self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][-1] < self.rk:
-                            rk_index = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"].index(self.rk)+1
-                            self.rk = self.consist_info["km_mapouts"][str(self.km)]["rk_positions"][rk_index] #переход на следующую, если есть
-                        self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"] #восстановка таймера
-                    self.electromotive_force = self.engine_constant*self.angular_velocity/2/pi*self.transmissional_number*(self.consist_info["rk_mapouts"][str(self.rk)]["coil_engagement"]/100 if "coil_engagement" in self.consist_info["rk_mapouts"][str(self.rk)] else 1)
-                    self.engine_current = ((self.electromotive_force*(1 if self.traction_direction == self.velocity_direction else -1)))/(self.engine_resistance+self.ballast_resistance)
-                    if self.engine_current <= 0: self.rk_timer = 12 #если нету напряжения, то урезать таймер
-                else:
+                        self.control_wires["rk_spin"] = True # провод вращения РК +
+
+                        if (self.consist_info["rk_mapouts"][str(self.rk)]["switch_current"] > self.engine_current 
+                            and self.rk_timer <= 0): 
+                                # если ток ниже границы и вышел таймер РК, то обновить таймер и провернуть РК на одну позицию назад
+                                self.rk_timer = self.consist_info["km_mapouts"][str(self.km)]["switch_time"]
+                                self.rk -= 1
+                    else:
+                        self.control_wires["rk_spin"] = False # провод вращения РК -
+                else: # иначе если реверс не + или -, то сборсить таймер РК и напряжение на двигателях
                     self.rk_timer = 0
                     self.engine_voltage = 0
+                
+                self.engine_current = (abs(self.engine_voltage)-(self.electromotive_force*self.traction_direction*self.velocity_direction))/self.engine_resistance 
+
+                if self.engine_current <= 0: # если ток упал ниже нуля, приравнять нулю...
+                    self.engine_current = 0
+                    if self.rk_timer > idle_rotate_ticks: self.rk_timer = idle_rotate_ticks # ...и урезать таймер, если надо.
 
                 if self.engine_current > 0 and self.control_wires["rp"] and self.ballast_resistance != 0:
                     self.engine_power = -self.electromotive_force**2*(self.velocity_direction*self.traction_direction)/self.ballast_resistance
@@ -404,6 +550,8 @@ class Consist():
         self.vz_2 = (self.vz_2 + (2*(self.control_wires["vz_2"] or self.control_wires["vz_2_km"])-1)*self.consist_info["valve_params"]["vz_2"][1]) 
         self.vz_2 = (self.vz_2 if self.vz_2 >= 0 else 0)
         self.vz_2 = (self.vz_2 if self.vz_2 <= self.consist_info["valve_params"]["vz_2"][0] else self.consist_info["valve_params"]["vz_2"][0])
+
+        self.control_wires["braking_control"] = (self.control_wires["vz_1"]+self.control_wires["vz_1_km"]+self.control_wires["vz_2"]+self.control_wires["vz_2_km"])
 
         # обсчёт тормозных цилиндров
         if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
@@ -500,6 +648,54 @@ class Consist():
                     self.doors["action_l"] = None
             if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
 
+    def update_ars(self):
+        # блок логики системы АРС
+        # так как нормальной состоятельной документации по системам АРС нет почти никакой,
+        # пользуюсь эмпирическим опытом Метростроя и собственной гениальной мыслёй, сооружаю собственное подобие АРС:
+        # мАРС 6/1 - "модифицированная [система] Автоматической Регулировки Скорости с 6 частотами и 1 одновременно подаваемой"
+        # -допустимые частоты: 0-ОЧ-40-60-70-80
+        # -срыв предохранителя происходит при превышении допустимой скорости
+        # -в случае срыва предохраниетеля АРС активируется ВЗ №2 и блокируется управление ходовым режимом от КМ
+        # -восстановление возможно только при понижении скорости до допустимой (т. е. нажатие КВТ при превышении ничего не делает)
+
+        if self.control_wires["ars"] and self.controlling_direction != 0: # если блок АРС включён и реверс в ходовой позиции:
+            # считать допустимую скорость следующего блока
+            if self.controlling_direction == 1: 
+                self.ars_speed = trains[self.first_car].signal_velocity_state
+            else:
+                self.ars_speed = trains[self.last_car].signal_velocity_state
+
+            # обновить поездные провода, отвечающие за отображение скорости
+            for speed in [0,20,40,60,70,80]:
+                if speed == self.ars_speed: self.control_wires[f"ars_{speed}"] = True
+                else: self.control_wires[f"ars_{speed}"] = False
+
+            # с помощью флага в описательном файле состава можно сделать АРС чисто визуальной.
+            if not ("ars_only_visual" in self.consist_info and self.consist_info["ars_only_visual"]):
+                # проверить скорость и, если она превышена, выбить предохранитель АРС
+                # иначе если не превышена и нажата КВТ, то восстановить предохранитель АРС
+                if self.velocity*3.6 > self.ars_speed: self.control_wires["ars_fuse"] = False
+                elif self.velocity*3.6 <= self.ars_speed and self.control_wires["ars_braking_safety"]: self.control_wires["ars_fuse"] = True
+
+                # если АРС сработало и КМ не в нейтральной поизиции, то включить лампу ВД
+                if self.km != 0 and not self.control_wires["ars_fuse"]: self.control_wires["ars_traction_disable"] = True
+                else: self.control_wires["ars_traction_disable"] = False
+
+                # наконец, включить ВЗ №2, если АРС выбито. надеюсь, обойдусь одним проводом...
+                # ВЗ №2 выбран на случай реализации ОВТ, которыми можно этот самый АРС будет отключить.
+                if not self.control_wires["ars_fuse"]: self.control_wires["vz_2"] = True
+                else: self.control_wires["vz_2"] = False
+            
+        else: # иначе сбросить систему АРС, не трогая предохранитель.
+            self.ars_speed = 20
+            for speed in [0,20,40,60,70,80]:
+                self.control_wires[f"ars_{speed}"] = False
+            self.control_wires["ars_traction_disable"] = False
+            self.control_wires["ars_speed_equality"] = False
+            self.control_wires["ars_direction"] = False
+            self.control_wires["vz_2"] = False
+                
+
 
     def update_graphics_states(self):
         # блок логики обновления лампочек и x-метров
@@ -527,6 +723,7 @@ class Consist():
         speed_modifier = 1
         #self.humainzed_velocity = round(self.velocity*120*0.15/4*speed_modifier,5)
         self.pixel_velocity = round(self.velocity/120/0.15*4*speed_modifier,5)
+
 
         for train_id in self.linked_to:
             trains[train_id].velocity = self.velocity

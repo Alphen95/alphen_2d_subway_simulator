@@ -1,0 +1,172 @@
+{
+    "trains": [
+        {
+            "designed_for": "type_a",
+            "name": "Корчинево-горчичный окрас",
+            "render_sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "sprite": "type_a_bm.png",
+            "system_name": "type_a_bm"
+        },
+        {
+            "designed_for": "type_a",
+            "name": "Сине-циановый окрас",
+            "render_sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "sprite": "type_a_bc.png",
+            "system_name": "type_a_bc"
+        },
+        {
+            "designed_for": "type_e",
+            "name": "Сине-голубой окрас",
+            "render_sprite_info": [
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "closed",
+                    "w": 32,
+                    "x": 0,
+                    "y": 0
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_1",
+                    "w": 32,
+                    "x": 0,
+                    "y": 96
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_2",
+                    "w": 32,
+                    "x": 0,
+                    "y": 192
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_3",
+                    "w": 32,
+                    "x": 0,
+                    "y": 288
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "inter_4",
+                    "w": 32,
+                    "x": 0,
+                    "y": 384
+                },
+                {
+                    "h": 96,
+                    "layers": 20,
+                    "type": "open",
+                    "w": 32,
+                    "x": 0,
+                    "y": 480
+                }
+            ],
+            "sprite": "type_e_bc.png",
+            "system_name": "type_e_bc"
+        }
+    ]
+}
