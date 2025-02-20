@@ -83,14 +83,14 @@ def draw_itemlist(target,rect,items,maxL,scroll,selected,font,lineheight,m_state
         if line == selected:
             text = font.render(str(line),True,base_color)
             pg.draw.rect(target,(0,0,0),(x+4,y+lineheight*i+1,w-8-(scrollbar_width+margin),lineheight-2))
-            if text.get_width() > w-4-(scrollbar_width+margin): text = text.subsurface(0,0,w-4-(scrollbar_width+margin),text.get_height())
+            if text.get_width() > w-8-(scrollbar_width+margin): text = text.subsurface(0,0,w-8-(scrollbar_width+margin),text.get_height())
             target.blit(text,(x+4,y+lineheight*(i+0.5)-text.get_height()/2))
         else:
             if m_state[2] and line != "":
                 if x+4 <= m_state[0] <= x+4+w-8-(scrollbar_width+margin) and y+lineheight*i <= m_state[1] <= y+lineheight*(i+1): 
                     action = ["select",line]
             text = font.render(str(line),True,(0,0,0))
-            if text.get_width() > w-4-(scrollbar_width+margin): text = text.subsurface(0,0,w-4-(scrollbar_width+margin),text.get_height())
+            if text.get_width() > w-8-(scrollbar_width+margin): text = text.subsurface(0,0,w-8-(scrollbar_width+margin),text.get_height())
             target.blit(text,(x+4,y+lineheight*(i+0.5)-text.get_height()/2))
 
     draw_concavity(target,(x+w-scrollbar_width,y,scrollbar_width,h))
@@ -120,9 +120,9 @@ def draw_button(target,rect,aligment,text,font,m_state):
     if (m_state[3] or m_state[2]) > 0 and x <= m_state[0] <= x+w and y <= m_state[1] <= y+h:
         if m_state[2]:
             act = "clicked"
-        draw_concavity(target,(x+2,y+2,w-4,h-4))
+        draw_concavity(target,(x,y+2,w,h-4))
     else:
-        draw_window(target,(x+2,y+2,w-4,h-4))
+        draw_window(target,(x,y+2,w,h-4))
 
     line = font.render(text,True,(0,0,0))
     if aligment == "left":
@@ -224,6 +224,35 @@ def draw_itemsel(target,rect,items,scroll,selected,lineheight,size,m_state):
         #print("aaa")
 
     return action
+
+def draw_multitext(target,rect,lines,max_lines,lineheight,font):
+    x,y,w,h = rect
+    drawable_lines = lines[-max_lines:]
+    if len(drawable_lines) < max_lines:  drawable_lines += [""]*(max_lines-len(drawable_lines))
+    h = lineheight*max_lines
+    
+    draw_concavity(target,(x,y,w,h))
+
+    for i, line in enumerate(drawable_lines):
+        text = font.render(str(line),True,(0,0,0))
+        if text.get_width() > w-8: text = text.subsurface(0,0,w-8,text.get_height())
+        target.blit(text,(x+4,y+lineheight*(i+0.5)-text.get_height()/2))
+
+def draw_slider(target,rect,state,mstate):
+    slider_width = 12
+    x,y,w,h = rect
+    slider_pos = x+(w-slider_width)*state
+
+    act = state
+
+    draw_concavity(target,(x,y+(h-8)/2,w,8))
+    draw_window(target,(slider_pos,y,slider_width,h))
+
+    if (mstate[3] or mstate[2]) and (x <= mstate[0] <= x+w) and (y <= mstate[1] <= y+h):
+        act = min((mstate[0]-x)/(w),1)
+
+    return act
+
 
 if __name__ == "__main__":
     print("Nope, you're in the wrong place. Check out the main.py file in the parent directory, or notify @alphen95 if this was shipped NOT with AISS.\n'Copyright' @alphen95 2020-IDK. Вечность пахнет нефтью!")

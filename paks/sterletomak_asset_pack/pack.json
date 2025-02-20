@@ -1,5 +1,5 @@
 {
-    "editor_tiles":[
+    "editor_tiles": [
         "concrete_tstr",
         "concrete_tca1",
         "concrete_tca2",
@@ -25,106 +25,1465 @@
         "depot_wall_f",
         "tch1_sculpt"
     ],
-    "tiles":[
-        {"name":"concrete_tstr","filename":"tracks","params":[0,0,64,256,1,0,false,false]},
-        {"name":"concrete_tca1","filename":"tracks","params":[64,0,64,256,1,0,false,false]},
-        {"name":"concrete_tca2","filename":"tracks","params":[128,0,64,256,1,0,false,false]},
-        {"name":"concrete_tcb1","filename":"tracks","params":[64,0,64,256,1,0,true,false]},
-        {"name":"concrete_tcb2","filename":"tracks","params":[128,0,64,256,1,0,true,false]},
-        {"name":"concrete_tsa1","filename":"tracks","params":[192,0,64,256,1,0,false,false]},
-        {"name":"concrete_tsa2","filename":"tracks","params":[256,0,64,256,1,0,false,false]},
-        {"name":"concrete_tsb1","filename":"tracks","params":[192,0,64,256,1,0,true,false]},
-        {"name":"concrete_tsb2","filename":"tracks","params":[256,0,64,256,1,0,true,false]},
-        {"name":"concrete_tsx1","filename":"tracks","params":[512,0,64,256,1,0,false,false]},
-        {"name":"concrete_tsx2","filename":"tracks","params":[576,0,64,256,1,0,false,false]},
-        {"name":"depot_floor","filename":"tracks","params":[320,0,64,256,1,0,false,false]},
-        {"name":"depot_floor_corner_a1","filename":"tracks","params":[384,0,64,256,1,0,false,false]},
-        {"name":"depot_floor_corner_a2","filename":"tracks","params":[448,0,64,256,1,0,false,false]},
-        {"name":"depot_floor_corner_b1","filename":"tracks","params":[384,0,64,256,1,0,true,false]},
-        {"name":"depot_floor_corner_b2","filename":"tracks","params":[448,0,64,256,1,0,true,false]},
-        {"name":"depot_floor_side","filename":"tracks","params":[640,0,64,256,1,0,false,false]},
-        {"name":"depot_floor_side_f","filename":"tracks","params":[640,0,64,256,1,0,true,false]},
-        {"name":"depot_floor_end","filename":"tracks","params":[704,0,64,256,1,0,false,false]},
-        {"name":"depot_floor_edge","filename":"tracks","params":[768,0,64,256,1,0,false,false]},
-        {"name":"depot_floor_edge_f","filename":"tracks","params":[768,0,64,256,1,0,true,false]},
-
-        {"name":"depot_wall","filename":"tracks","params":[0,256,64,256,19,0,false,false]},
-        {"name":"depot_wall_f","filename":"tracks","params":[0,256,64,256,19,0,true,false]},
-        {"name":"tch1_sculpt","filename":"tracks","params":[0,512,64,256,19,0,true,false]},
-
-        {"name":"stroitelnaya_walls","filename":"platform","params":[192,768,64,256,29,3,false,false]},
-        {"name":"stroitelnaya_platform","filename":"platform","params":[0,768,64,256,3,0,false,false]},
-        {"name":"stroitelnaya_track_tstr","filename":"platform","params":[0,1024,64,256,3,0,false,false]},
-        {"name":"stroitelnaya_walls_f","filename":"platform","params":[192,768,64,256,29,3,true,false]},
-        {"name":"stroitelnaya_platform_f","filename":"platform","params":[0,768,64,256,3,0,true,false]},
-        {"name":"stroitelnaya_track_f_tstr","filename":"platform","params":[0,1024,64,256,3,0,true,false]},
-    
-        {"name":"sodovaya_walls","filename":"platform","params":[192,1280,64,256,29,3,false,false]},
-        {"name":"sodovaya_platform","filename":"platform","params":[0,1280,64,256,3,0,false,false]},
-        {"name":"sodovaya_walls_f","filename":"platform","params":[192,1280,64,256,29,3,true,false]},
-        {"name":"sodovaya_platform_f","filename":"platform","params":[0,1280,64,256,3,0,true,false]},
-        {"name":"sodovaya_track_tstr","filename":"platform","params":[0,1536,64,256,32,0,false,false]},
-        {"name":"sodovaya_track_f_tstr","filename":"platform","params":[0,1536,64,256,3,0,true,false]},
-    
-        {"name":"kochetova_walls","filename":"platform","params":[192,1792,64,256,29,3,false,false]},
-        {"name":"kochetova_platform","filename":"platform","params":[0,1792,64,256,3,0,false,false]},
-        {"name":"kochetova_track_tstr","filename":"platform","params":[0,2048,64,256,32,0,false,false]},
-        {"name":"kochetova_walls_f","filename":"platform","params":[192,1792,64,256,29,3,true,false]},
-        {"name":"kochetova_platform_f","filename":"platform","params":[0,1792,64,256,3,0,true,false]},
-        {"name":"kochetova_track_f_tstr","filename":"platform","params":[0,2048,64,256,3,0,true,false]},
-    
-        {"name":"park_kultury_walls","filename":"platform","params":[192,2304,64,256,29,3,false,false]},
-        {"name":"park_kultury_platform","filename":"platform","params":[0,2304,64,256,3,0,false,false]},
-        {"name":"park_kultury_track_tstr","filename":"platform","params":[0,2560,64,256,32,0,false,false]},
-        {"name":"park_kultury_walls_f","filename":"platform","params":[192,2304,64,256,29,3,true,false]},
-        {"name":"park_kultury_platform_f","filename":"platform","params":[0,2304,64,256,3,0,true,false]},
-        {"name":"park_kultury_track_f_tstr","filename":"platform","params":[0,2560,64,256,3,0,true,false]},
-        
-        {"name":"vokzalnaya_walls","filename":"platform","params":[192,2816,64,256,29,3,false,false]},
-        {"name":"vokzalnaya_platform","filename":"platform","params":[0,2816,64,256,3,0,false,false]},
-        {"name":"vokzalnaya_track_tstr","filename":"platform","params":[0,3072,64,256,32,0,false,false]},
-        {"name":"vokzalnaya_walls_f","filename":"platform","params":[192,2816,64,256,29,3,true,false]},
-        {"name":"vokzalnaya_platform_f","filename":"platform","params":[0,2816,64,256,3,0,true,false]},
-        {"name":"vokzalnaya_track_f_tstr","filename":"platform","params":[0,3072,64,256,3,0,true,false]},
-        
-        {"name":"sovetskaya_walls","filename":"platform","params":[192,3328,64,256,29,3,false,false]},
-        {"name":"sovetskaya_platform","filename":"platform","params":[0,3328,64,256,3,0,false,false]},
-        {"name":"sovetskaya_track_tstr","filename":"platform","params":[0,3584,64,256,32,0,false,false]},
-        {"name":"sovetskaya_walls_f","filename":"platform","params":[192,3328,64,256,29,3,true,false]},
-        {"name":"sovetskaya_platform_f","filename":"platform","params":[0,3328,64,256,3,0,true,false]},
-        {"name":"sovetskaya_track_f_tstr","filename":"platform","params":[0,3584,64,256,3,0,true,false]},
-        
-        {"name":"sterlitamakskaya_walls","filename":"platform","params":[192,3840,64,256,29,3,false,false]},
-        {"name":"sterlitamakskaya_platform","filename":"platform","params":[0,3840,64,256,3,0,false,false]},
-        {"name":"sterlitamakskaya_track_tstr","filename":"platform","params":[0,4096,64,256,32,0,false,false]},
-        {"name":"sterlitamakskaya_walls_f","filename":"platform","params":[192,3840,64,256,29,3,true,false]},
-        {"name":"sterlitamakskaya_platform_f","filename":"platform","params":[0,3840,64,256,3,0,true,false]},
-        {"name":"sterlitamakskaya_track_f_tstr","filename":"platform","params":[0,4096,64,256,3,0,true,false]}
+    "icons": [
+        {
+            "name": "concrete_tstr",
+            "params": [
+                0,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tca1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tca2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tcb1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tcb2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tsa1",
+            "params": [
+                0,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tsa2",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tsb1",
+            "params": [
+                0,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tsb2",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tsx1",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "concrete_tsx2",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "depot_wall",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_wall_f",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_side",
+            "params": [
+                384,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_side_f",
+            "params": [
+                384,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_end",
+            "params": [
+                320,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_edge",
+            "params": [
+                384,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_edge_f",
+            "params": [
+                384,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_corner_a1",
+            "params": [
+                192,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_corner_a2",
+            "params": [
+                256,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_corner_b1",
+            "params": [
+                192,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "depot_floor_corner_b2",
+            "params": [
+                256,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "tch1_sculpt",
+            "params": [
+                256,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        }
     ],
-    "icons":[
-        {"name":"concrete_tstr","params":[0,0,64,256,false,false]},
-        {"name":"concrete_tca1","params":[64,0,64,256,false,false]},
-        {"name":"concrete_tca2","params":[128,0,64,256,false,false]},
-        {"name":"concrete_tcb1","params":[64,0,64,256,true,false]},
-        {"name":"concrete_tcb2","params":[128,0,64,256,true,false]},
-        {"name":"concrete_tsa1","params":[0,256,64,256,false,false]},
-        {"name":"concrete_tsa2","params":[64,256,64,256,false,false]},
-        {"name":"concrete_tsb1","params":[0,256,64,256,true,false]},
-        {"name":"concrete_tsb2","params":[64,256,64,256,true,false]},
-        {"name":"concrete_tsx1","params":[320,0,64,256,false,false]},
-        {"name":"concrete_tsx2","params":[320,0,64,256,true,false]},
-        {"name":"depot_wall","params":[128,256,64,256,false,false]},
-        {"name":"depot_wall_f","params":[128,256,64,256,true,false]},
-        {"name":"depot_floor","params":[192,0,64,256,false,false]},
-        {"name":"depot_floor_side","params":[384,0,64,256,false,false]},
-        {"name":"depot_floor_side_f","params":[384,0,64,256,true,false]},
-        {"name":"depot_floor_end","params":[320,256,64,256,false,false]},
-        {"name":"depot_floor_edge","params":[384,256,64,256,false,false]},
-        {"name":"depot_floor_edge_f","params":[384,256,64,256,true,false]},
-        {"name":"depot_floor_corner_a1","params":[192,256,64,256,false,false]},
-        {"name":"depot_floor_corner_a2","params":[256,256,64,256,false,false]},
-        {"name":"depot_floor_corner_b1","params":[192,256,64,256,true,false]},
-        {"name":"depot_floor_corner_b2","params":[256,256,64,256,true,false]},
-        {"name":"tch1_sculpt","params":[256,0,64,256,false,false]}
+    "rendered": {
+        "tiles": [
+            [
+                "concrete_tstr",
+                3
+            ],
+            [
+                "concrete_tca1",
+                3
+            ],
+            [
+                "concrete_tca2",
+                3
+            ],
+            [
+                "concrete_tcb1",
+                3
+            ],
+            [
+                "concrete_tcb2",
+                3
+            ],
+            [
+                "concrete_tsa1",
+                3
+            ],
+            [
+                "concrete_tsa2",
+                3
+            ],
+            [
+                "concrete_tsb1",
+                3
+            ],
+            [
+                "concrete_tsb2",
+                3
+            ],
+            [
+                "concrete_tsx1",
+                3
+            ],
+            [
+                "concrete_tsx2",
+                3
+            ],
+            [
+                "depot_floor",
+                3
+            ],
+            [
+                "depot_floor_corner_a1",
+                3
+            ],
+            [
+                "depot_floor_corner_a2",
+                3
+            ],
+            [
+                "depot_floor_corner_b1",
+                3
+            ],
+            [
+                "depot_floor_corner_b2",
+                3
+            ],
+            [
+                "depot_floor_side",
+                3
+            ],
+            [
+                "depot_floor_side_f",
+                3
+            ],
+            [
+                "depot_floor_end",
+                3
+            ],
+            [
+                "depot_floor_edge",
+                3
+            ],
+            [
+                "depot_floor_edge_f",
+                3
+            ],
+            [
+                "depot_wall",
+                75
+            ],
+            [
+                "depot_wall_f",
+                75
+            ],
+            [
+                "tch1_sculpt",
+                75
+            ],
+            [
+                "stroitelnaya_walls",
+                127
+            ],
+            [
+                "stroitelnaya_platform",
+                11
+            ],
+            [
+                "stroitelnaya_track_tstr",
+                11
+            ],
+            [
+                "stroitelnaya_walls_f",
+                127
+            ],
+            [
+                "stroitelnaya_platform_f",
+                11
+            ],
+            [
+                "stroitelnaya_track_f_tstr",
+                11
+            ],
+            [
+                "sodovaya_walls",
+                127
+            ],
+            [
+                "sodovaya_platform",
+                11
+            ],
+            [
+                "sodovaya_walls_f",
+                127
+            ],
+            [
+                "sodovaya_platform_f",
+                11
+            ],
+            [
+                "sodovaya_track_tstr",
+                127
+            ],
+            [
+                "sodovaya_track_f_tstr",
+                11
+            ],
+            [
+                "kochetova_walls",
+                127
+            ],
+            [
+                "kochetova_platform",
+                11
+            ],
+            [
+                "kochetova_track_tstr",
+                127
+            ],
+            [
+                "kochetova_walls_f",
+                127
+            ],
+            [
+                "kochetova_platform_f",
+                11
+            ],
+            [
+                "kochetova_track_f_tstr",
+                11
+            ],
+            [
+                "park_kultury_walls",
+                127
+            ],
+            [
+                "park_kultury_platform",
+                11
+            ],
+            [
+                "park_kultury_track_tstr",
+                127
+            ],
+            [
+                "park_kultury_walls_f",
+                127
+            ],
+            [
+                "park_kultury_platform_f",
+                11
+            ],
+            [
+                "park_kultury_track_f_tstr",
+                11
+            ],
+            [
+                "vokzalnaya_walls",
+                127
+            ],
+            [
+                "vokzalnaya_platform",
+                11
+            ],
+            [
+                "vokzalnaya_track_tstr",
+                127
+            ],
+            [
+                "vokzalnaya_walls_f",
+                127
+            ],
+            [
+                "vokzalnaya_platform_f",
+                11
+            ],
+            [
+                "vokzalnaya_track_f_tstr",
+                11
+            ],
+            [
+                "sovetskaya_walls",
+                127
+            ],
+            [
+                "sovetskaya_platform",
+                11
+            ],
+            [
+                "sovetskaya_track_tstr",
+                127
+            ],
+            [
+                "sovetskaya_walls_f",
+                127
+            ],
+            [
+                "sovetskaya_platform_f",
+                11
+            ],
+            [
+                "sovetskaya_track_f_tstr",
+                11
+            ],
+            [
+                "sterlitamakskaya_walls",
+                127
+            ],
+            [
+                "sterlitamakskaya_platform",
+                11
+            ],
+            [
+                "sterlitamakskaya_track_tstr",
+                127
+            ],
+            [
+                "sterlitamakskaya_walls_f",
+                127
+            ],
+            [
+                "sterlitamakskaya_platform_f",
+                11
+            ],
+            [
+                "sterlitamakskaya_track_f_tstr",
+                11
+            ]
+        ],
+        "trains": []
+    },
+    "tiles": [
+        {
+            "filename": "tracks",
+            "name": "concrete_tstr",
+            "params": [
+                0,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tca1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tca2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tcb1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tcb2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tsa1",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tsa2",
+            "params": [
+                256,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tsb1",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tsb2",
+            "params": [
+                256,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tsx1",
+            "params": [
+                512,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "concrete_tsx2",
+            "params": [
+                576,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_corner_a1",
+            "params": [
+                384,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_corner_a2",
+            "params": [
+                448,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_corner_b1",
+            "params": [
+                384,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_corner_b2",
+            "params": [
+                448,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_side",
+            "params": [
+                640,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_side_f",
+            "params": [
+                640,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_end",
+            "params": [
+                704,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_edge",
+            "params": [
+                768,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_floor_edge_f",
+            "params": [
+                768,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_wall",
+            "params": [
+                0,
+                256,
+                64,
+                256,
+                19,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "depot_wall_f",
+            "params": [
+                0,
+                256,
+                64,
+                256,
+                19,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tch1_sculpt",
+            "params": [
+                0,
+                512,
+                64,
+                256,
+                19,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "stroitelnaya_walls",
+            "params": [
+                192,
+                768,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "stroitelnaya_platform",
+            "params": [
+                0,
+                768,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "stroitelnaya_track_tstr",
+            "params": [
+                0,
+                1024,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "stroitelnaya_walls_f",
+            "params": [
+                192,
+                768,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "stroitelnaya_platform_f",
+            "params": [
+                0,
+                768,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "stroitelnaya_track_f_tstr",
+            "params": [
+                0,
+                1024,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sodovaya_walls",
+            "params": [
+                192,
+                1280,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sodovaya_platform",
+            "params": [
+                0,
+                1280,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sodovaya_walls_f",
+            "params": [
+                192,
+                1280,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sodovaya_platform_f",
+            "params": [
+                0,
+                1280,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sodovaya_track_tstr",
+            "params": [
+                0,
+                1536,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sodovaya_track_f_tstr",
+            "params": [
+                0,
+                1536,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "kochetova_walls",
+            "params": [
+                192,
+                1792,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "kochetova_platform",
+            "params": [
+                0,
+                1792,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "kochetova_track_tstr",
+            "params": [
+                0,
+                2048,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "kochetova_walls_f",
+            "params": [
+                192,
+                1792,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "kochetova_platform_f",
+            "params": [
+                0,
+                1792,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "kochetova_track_f_tstr",
+            "params": [
+                0,
+                2048,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "park_kultury_walls",
+            "params": [
+                192,
+                2304,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "park_kultury_platform",
+            "params": [
+                0,
+                2304,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "park_kultury_track_tstr",
+            "params": [
+                0,
+                2560,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "park_kultury_walls_f",
+            "params": [
+                192,
+                2304,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "park_kultury_platform_f",
+            "params": [
+                0,
+                2304,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "park_kultury_track_f_tstr",
+            "params": [
+                0,
+                2560,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vokzalnaya_walls",
+            "params": [
+                192,
+                2816,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vokzalnaya_platform",
+            "params": [
+                0,
+                2816,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vokzalnaya_track_tstr",
+            "params": [
+                0,
+                3072,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vokzalnaya_walls_f",
+            "params": [
+                192,
+                2816,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vokzalnaya_platform_f",
+            "params": [
+                0,
+                2816,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vokzalnaya_track_f_tstr",
+            "params": [
+                0,
+                3072,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sovetskaya_walls",
+            "params": [
+                192,
+                3328,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sovetskaya_platform",
+            "params": [
+                0,
+                3328,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sovetskaya_track_tstr",
+            "params": [
+                0,
+                3584,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sovetskaya_walls_f",
+            "params": [
+                192,
+                3328,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sovetskaya_platform_f",
+            "params": [
+                0,
+                3328,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sovetskaya_track_f_tstr",
+            "params": [
+                0,
+                3584,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sterlitamakskaya_walls",
+            "params": [
+                192,
+                3840,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sterlitamakskaya_platform",
+            "params": [
+                0,
+                3840,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sterlitamakskaya_track_tstr",
+            "params": [
+                0,
+                4096,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sterlitamakskaya_walls_f",
+            "params": [
+                192,
+                3840,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sterlitamakskaya_platform_f",
+            "params": [
+                0,
+                3840,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sterlitamakskaya_track_f_tstr",
+            "params": [
+                0,
+                4096,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        }
     ]
 }

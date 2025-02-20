@@ -1,0 +1,110 @@
+{
+    "en":{
+        "type_z":{
+            "emu_name":"Type Z (69-420) metrotrain",
+            "headlight": "Headlights",
+            "ars_mode": "ARS mode (AB/ARS-ALS)",
+            "light_on": "Interior light ON",
+            "light_off": "Interior light OFF",
+            
+            "lsd_con": "Railcar door signal lamp",
+            "lsd_car": "Consist door signal lamp",
+            "lsd": "Door signal lamp",
+            "lkt": "Brake control lamp",
+            "lvd": "Traction shutdown from ARS",
+            "lrs": "Speed equality lamp",
+            "ln": "Direction lamp",
+            "lhrk": "Sequence (RC spin)",
+            "lsn": "Circuit assembly failure lamp",
+            "lrp": "Overload relay trip lamp",
+            "lhr": "Traction ciruit assembled",
+            "ltr": "Brake ciruit assembled",
+
+            "als": "ALS power",
+            "ars": "ARS power",
+            "rrut": "Current control relay regulation \n(reduced acceleration)",
+            "ksn": "Malfunction signalization",
+            "ksd": "Door signalization",
+            "kdl": "Open left doors",
+            "kdp": "Open right doors",
+            "kvt": "Brake perception button",
+            "krzd": "Emergency door close button",
+            "vmk": "Motor-compressor",
+            "vrp": "Overload relay return",
+            "vud": "Door control switch",
+            "vz1": "Substitute valve №1",
+            
+            "inf_prog1": "Program I",
+            "inf_prog2": "Program II",
+            "inf_unch": "Low frequecy amplifier",
+            "inf_power": "Audioinformer power",
+
+            "ars_och": "No frequecy (20 km/h max)",
+            "ars_0": "Allowed velocity - 0 km/h",
+            "ars_40": "Allowed velocity - 40 km/h",
+            "ars_60": "Allowed velocity - 60 km/h",
+            "ars_70": "Allowed velocity - 70 km/h",
+            "ars_80": "Allowed velocity - 80 km/h",
+            
+            "speed": "Speedometer\n[%s km/h]",
+            "current": "Ammeter\n[%s A]",
+            "voltage": "Voltmeter\n[%s V]",
+            "tc_pressure": "Brake cyllinder manometer\n[%s atm]",
+            "nm_pressure": "Main line manometer\n[%s atm]"
+        }
+    },
+    "ru":{
+        "type_z":{
+            "emu_name":"Метропоезд типа Z (69-420)",
+            "headlight": "Фары",
+            "ars_mode": "Режим АРС (АБ/АРС-АЛС)",
+            "light_on": "Включение освещения",
+            "light_off": "Выключение освещения",
+            
+            "lsd_con": "Лампа сигнализации дверей состава",
+            "lsd_car": "Лампа сигнализации дверей вагона",
+            "lsd": "Лампа сигнализации дверей",
+            "lkt": "Лампа контроля торможения",
+            "lvd": "Лампа выключения тяги от АРС",
+            "lrs": "Лампа равенства скоростей",
+            "ln": "Лампа направления",
+            "lhrk": "Секвенция (Вращение РК)",
+            "lsn": "Лампа несбора схемы состава (сигнализации неисправности)",
+            "lrp": "Лампа сработки РП",
+            "lhr": "Сбор схемы на ход (лампа ходового режима)",
+            "ltr": "Сбор схемы на тормоз (лампа тормзного режима)",
+
+            "als": "Выключатель АЛС",
+            "ars": "Выключатель АРС",
+            "rrut": "Регулировка РУТ (пониженное ускорение)",
+            "ksn": "Кнопка сигнализации неисправности",
+            "ksd": "Кнопка сигнализации дверей",
+            "kdl": "Открытие дверей левых",
+            "kdp": "Открытие дверей правых",
+            "kvt": "Кнопка восприятия торможения",
+            "krzd": "Кнопка резервного закрытия дверей",
+            "vmk": "Мотор-компрессор",
+            "vrp": "Возврат РП",
+            "vud": "Выключатель управления дверьми",
+            "vz1": "Вентиль замещения №1",
+            
+            "inf_prog1": "Программа I",
+            "inf_prog2": "Программа II",
+            "inf_unch": "Усилитель низких частот",
+            "inf_power": "Питание информатора",
+
+            "ars_och": "Лампа отсутствия частоты",
+            "ars_0": "Лампа разрешённой скорости 0 км/ч",
+            "ars_40": "Лампа разрешённой скорости 40 км/ч",
+            "ars_60": "Лампа разрешённой скорости 60 км/ч",
+            "ars_70": "Лампа разрешённой скорости 70 км/ч",
+            "ars_80": "Лампа разрешённой скорости 80 км/ч",
+            
+            "speed": "Скоростемер\n[%s км/ч]",
+            "current": "Амперметр\n[%s А]",
+            "voltage": "Вольтметр\n[%s В]",
+            "tc_pressure": "Манометр тормозных цилиндров\n[%s атм]",
+            "nm_pressure": "Манометр напорной магистрали\n[%s атм]"
+        }
+    }
+}

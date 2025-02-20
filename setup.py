@@ -14,7 +14,7 @@ options = {
     'build_exe': {
         'include_msvcr': True,
         'includes': includes,
-        "include_files":["res","paks"]
+        "include_files":["res","paks","config.json"]
         #'excludes': excludes,
         #   'zip_include_packages': zip_include_packages,
         #'build_exe': 'build_windows',

@@ -1,57 +1,747 @@
 {
-    "editor_tiles":[
-        "custom_tile","tstr","tca1","tca2","tcb2","tcb1","tsa1","tsa2","tsb2","tsb1","tsx1","tsx2"
+    "editor_tiles": [
+        "custom_tile",
+        "tstr",
+        "tca1",
+        "tca2",
+        "tcb2",
+        "tcb1",
+        "tsa1",
+        "tsa2",
+        "tsb2",
+        "tsb1",
+        "tsx1",
+        "tsx2"
     ],
-    "tiles":[
-        {"name":"tstr","filename":"tracks","params":[0,0,64,256,1,0,false,false]},
-        {"name":"tca1","filename":"tracks","params":[64,0,64,256,1,0,false,false]},
-        {"name":"tca2","filename":"tracks","params":[128,0,64,256,1,0,false,false]},
-        {"name":"tcb1","filename":"tracks","params":[64,0,64,256,1,0,true,false]},
-        {"name":"tcb2","filename":"tracks","params":[128,0,64,256,1,0,true,false]},
-        {"name":"tsa1","filename":"tracks","params":[192,0,64,256,1,0,false,false]},
-        {"name":"tsa2","filename":"tracks","params":[256,0,64,256,1,0,false,false]},
-        {"name":"tsb1","filename":"tracks","params":[192,0,64,256,1,0,true,false]},
-        {"name":"tsb2","filename":"tracks","params":[256,0,64,256,1,0,true,false]},
-        {"name":"tsx1","filename":"tracks","params":[0,256,64,256,1,0,false,false]},
-        {"name":"tsx2","filename":"tracks","params":[64,256,64,256,1,0,false,false]}
+    "icons": [
+        {
+            "name": "unknown",
+            "params": [
+                256,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tstr",
+            "params": [
+                0,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tca1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tca2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tcb1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "default_tcb2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "default_tsa1",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tsa2",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tsb1",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "default_tsb2",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "default_tsx1",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tsx2",
+            "params": [
+                384,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "custom_tile",
+            "params": [
+                256,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "generic_st_track",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "generic_st_platform",
+            "params": [
+                192,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "generic_st_track_f",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "generic_st_platform_f",
+            "params": [
+                192,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "tstr",
+            "params": [
+                0,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tca1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tca2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tcb1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "tcb2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "tsa1",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tsa2",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tsb1",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "tsb2",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "name": "tsx1",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tsx2",
+            "params": [
+                384,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        }
     ],
-    "icons":[
-        {"name":"unknown","params":[256,256,64,256,false,false]},
-        {"name":"default_tstr","params":[0,0,64,256,false,false]},
-        {"name":"default_tca1","params":[64,0,64,256,false,false]},
-        {"name":"default_tca2","params":[128,0,64,256,false,false]},
-        {"name":"default_tcb1","params":[64,0,64,256,true,false]},
-        {"name":"default_tcb2","params":[128,0,64,256,true,false]},
-        {"name":"default_tsa1","params":[64,256,64,256,false,false]},
-        {"name":"default_tsa2","params":[128,256,64,256,false,false]},
-        {"name":"default_tsb1","params":[64,256,64,256,true,false]},
-        {"name":"default_tsb2","params":[128,256,64,256,true,false]},
-        {"name":"default_tsx1","params":[320,0,64,256,false,false]},
-        {"name":"default_tsx2","params":[384,0,64,256,false,false]},
-        {"name":"custom_tile","params":[256,0,64,256,false,false]},
-        {"name":"generic_st_track","params":[192,0,64,256,false,false]},
-        {"name":"generic_st_platform","params":[192,256,64,256,false,false]},
-        {"name":"generic_st_track_f","params":[192,0,64,256,true,false]},
-        {"name":"generic_st_platform_f","params":[192,256,64,256,true,false]},
-        {"name":"tstr","params":[0,0,64,256,false,false]},
-        {"name":"tca1","params":[64,0,64,256,false,false]},
-        {"name":"tca2","params":[128,0,64,256,false,false]},
-        {"name":"tcb1","params":[64,0,64,256,true,false]},
-        {"name":"tcb2","params":[128,0,64,256,true,false]},
-        {"name":"tsa1","params":[64,256,64,256,false,false]},
-        {"name":"tsa2","params":[128,256,64,256,false,false]},
-        {"name":"tsb1","params":[64,256,64,256,true,false]},
-        {"name":"tsb2","params":[128,256,64,256,true,false]},
-        {"name":"tsx1","params":[320,0,64,256,false,false]},
-        {"name":"tsx2","params":[384,0,64,256,false,false]}
+    "locale": {
+        "en": {
+            "base": {
+                "add": "Add",
+                "connect_to_game": "Connect to a game",
+                "consist_selector": "Consist selector",
+                "consist_spawn": "Create a consist",
+                "do_prerender_all": "Prerender all!",
+                "editor_close": "Close",
+                "editor_close_menu": "Close",
+                "editor_consist": "Consist",
+                "editor_consist_locator": "Graphics definer",
+                "editor_consist_mode": "Consists",
+                "editor_consist_panel": "Panel editor",
+                "editor_consist_props": "Physics editor",
+                "editor_exit": "Exit",
+                "editor_file": "File",
+                "editor_handbook": "I'll make handbook, I promise.",
+                "editor_help": "Help",
+                "editor_load_pack": "Load",
+                "editor_map_mode": "Worlds",
+                "editor_map_signalling": "Signalling editor",
+                "editor_map_tiles": "Track editor",
+                "editor_mode": "Mode",
+                "editor_name": "Name",
+                "editor_next_signal": "Next",
+                "editor_open": "Open",
+                "editor_open_long": "Open a pack...",
+                "editor_pack": "Pack",
+                "editor_render": "Render",
+                "editor_render_complete": "Prerendering complete.",
+                "editor_render_desc1": "CAUTION! This process is slow, but it",
+                "editor_render_desc2": "will significantly decrease load times.",
+                "editor_render_long": "Render this pack",
+                "editor_render_no": "Exit",
+                "editor_render_proceed": "Do you wish to proceed?",
+                "editor_render_progress": "Current progress: %z%",
+                "editor_render_warned": "I warned you.",
+                "editor_render_yes": "Render",
+                "editor_repaint_mode": "Trains",
+                "editor_save": "Save",
+                "editor_speed": "Speed",
+                "editor_tile_mode": "Tiles",
+                "editor_world": "World",
+                "emu_repaint": "Train repaints",
+                "emu_type": "Train type",
+                "graphics_definer": "Graphics locator",
+                "locale": "Language",
+                "new_game": "Start a new game",
+                "pack_chooser": "Packs",
+                "pack_disable": "Disable",
+                "pack_editor": "Pack editor",
+                "pack_enable": "Enable",
+                "pack_selector": "Packs",
+                "play": "Play",
+                "quit": "Quit",
+                "remove": "Remove",
+                "settings": "Options",
+                "signal_edit": "Signal editor",
+                "track_edit": "Track editor",
+                "volume": "Volume",
+                "world_chooser": "Choose a map",
+                "world_selector": "Map selector"
+            }
+        },
+        "ru": {
+            "base": {
+                "add": "Добавить",
+                "connect_to_game": "Подключиться к игре",
+                "consist_selector": "Выбор ЭПС",
+                "consist_spawn": "Создать состав",
+                "do_prerender_all": "Отрендерить всё!",
+                "editor_close": "Закрыть",
+                "editor_close_menu": "Закрыть",
+                "editor_consist": "Состав",
+                "editor_consist_locator": "Спрайты панели",
+                "editor_consist_mode": "Составы",
+                "editor_consist_panel": "Редактор панели",
+                "editor_consist_props": "Редактор физики",
+                "editor_exit": "Выйти",
+                "editor_file": "Файл",
+                "editor_handbook": "Сделаю я инструкцию, но потом.",
+                "editor_help": "Помощь",
+                "editor_load_pack": "Открыть",
+                "editor_map_mode": "Карты",
+                "editor_map_signalling": "Редактор сигналов",
+                "editor_map_tiles": "Редактор путей",
+                "editor_mode": "Режим",
+                "editor_name": "Имя",
+                "editor_next_signal": "След.",
+                "editor_open": "Открыть",
+                "editor_open_long": "Открыть пакет...",
+                "editor_pack": "Пакет",
+                "editor_render": "Рендер",
+                "editor_render_complete": "Пререндер завершён.",
+                "editor_render_desc1": "ВНИМАНИЕ! Этот процесс - медленный, но",
+                "editor_render_desc2": "он в разы ускорит время загрузки.",
+                "editor_render_long": "Отрендерить этот пакет",
+                "editor_render_no": "Выход",
+                "editor_render_proceed": "Продолжить?",
+                "editor_render_progress": "Прогресс: %z%",
+                "editor_render_warned": "Я предупреждал.",
+                "editor_render_yes": "Рендер",
+                "editor_repaint_mode": "Поезда",
+                "editor_save": "Сохранить",
+                "editor_speed": "Скорость",
+                "editor_tile_mode": "Тайлы",
+                "editor_world": "Карта",
+                "emu_repaint": "Перекраска",
+                "emu_type": "Тип состава",
+                "graphics_definer": "Локатор графики",
+                "locale": "Язык",
+                "new_game": "Начать игру",
+                "pack_chooser": "Пакеты",
+                "pack_disable": "Выключить",
+                "pack_editor": "Редактор пакетов",
+                "pack_enable": "Включить",
+                "pack_selector": "Пакеты",
+                "play": "Играть",
+                "quit": "Выйти",
+                "remove": "Убрать",
+                "settings": "Настройки",
+                "signal_edit": "Редактор сигналов",
+                "track_edit": "Редактор путей",
+                "volume": "Громкость",
+                "world_chooser": "Выбор карт",
+                "world_selector": "Выбор карт"
+            }
+        }
+    },
+    "misc": [
+        {
+            "filename": "icon",
+            "name": "game_icon",
+            "params": [
+                0,
+                0,
+                384,
+                128,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "loco_lights",
+            "name": "loco_light_base",
+            "params": [
+                0,
+                0,
+                14,
+                54,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "loco_lights",
+            "name": "loco_light_green",
+            "params": [
+                15,
+                1,
+                8,
+                8,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "loco_lights",
+            "name": "loco_light_yellow",
+            "params": [
+                15,
+                10,
+                8,
+                8,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "loco_lights",
+            "name": "loco_light_red_yellow",
+            "params": [
+                15,
+                19,
+                8,
+                8,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "loco_lights",
+            "name": "loco_light_red",
+            "params": [
+                15,
+                28,
+                8,
+                8,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "loco_lights",
+            "name": "loco_light_white",
+            "params": [
+                15,
+                37,
+                8,
+                8,
+                false,
+                false
+            ]
+        }
     ],
-    "misc":[
-        {"name":"game_icon","filename":"icon","params":[0,0,384,128,false,false]},
-        {"name":"loco_light_base","filename":"loco_lights","params":[0,0,14,54,false,false]},
-        {"name":"loco_light_green","filename":"loco_lights","params":[15,1,8,8,false,false]},
-        {"name":"loco_light_yellow","filename":"loco_lights","params":[15,10,8,8,false,false]},
-        {"name":"loco_light_red_yellow","filename":"loco_lights","params":[15,19,8,8,false,false]},
-        {"name":"loco_light_red","filename":"loco_lights","params":[15,28,8,8,false,false]},
-        {"name":"loco_light_white","filename":"loco_lights","params":[15,37,8,8,false,false]}
+    "rendered": {
+        "tiles": [
+            [
+                "tstr",
+                3
+            ],
+            [
+                "tca1",
+                3
+            ],
+            [
+                "tca2",
+                3
+            ],
+            [
+                "tcb1",
+                3
+            ],
+            [
+                "tcb2",
+                3
+            ],
+            [
+                "tsa1",
+                3
+            ],
+            [
+                "tsa2",
+                3
+            ],
+            [
+                "tsb1",
+                3
+            ],
+            [
+                "tsb2",
+                3
+            ],
+            [
+                "tsx1",
+                3
+            ],
+            [
+                "tsx2",
+                3
+            ]
+        ],
+        "trains": []
+    },
+    "tiles": [
+        {
+            "filename": "tracks",
+            "name": "tstr",
+            "params": [
+                0,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tca1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tca2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tcb1",
+            "params": [
+                64,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tcb2",
+            "params": [
+                128,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsa1",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsa2",
+            "params": [
+                256,
+                0,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsb1",
+            "params": [
+                192,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsb2",
+            "params": [
+                256,
+                0,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsx1",
+            "params": [
+                0,
+                256,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsx2",
+            "params": [
+                64,
+                256,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        }
     ]
 }

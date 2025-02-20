@@ -5,294 +5,13 @@
                 112,
                 312
             ],
-            "control_panel_info": {
-                "ammeter_bottom": {
-                    "h": 15,
-                    "scale": 5,
-                    "w": 25,
-                    "x": 150,
-                    "y": 104
-                },
-                "ammeter_overlay": {
-                    "h": 15,
-                    "scale": 5,
-                    "w": 25,
-                    "x": 176,
-                    "y": 104
-                },
-                "ammeter_pointer": {
-                    "h": 1,
-                    "scale": 5,
-                    "w": 21,
-                    "x": 150,
-                    "y": 120
-                },
-                "ars_0": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 3,
-                    "x": 158,
-                    "y": 68
-                },
-                "ars_40": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 7,
-                    "x": 162,
-                    "y": 68
-                },
-                "ars_60": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 7,
-                    "x": 170,
-                    "y": 68
-                },
-                "ars_70": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 7,
-                    "x": 178,
-                    "y": 68
-                },
-                "ars_80": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 7,
-                    "x": 178,
-                    "y": 68
-                },
-                "ars_och": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 7,
-                    "x": 150,
-                    "y": 68
-                },
-                "km": {
-                    "h": 8,
-                    "scale": 5,
-                    "w": 40,
-                    "x": 150,
-                    "y": 1
-                },
-                "kvt_off": {
-                    "h": 10,
-                    "scale": 5,
-                    "w": 10,
-                    "x": 150,
-                    "y": 42
-                },
-                "kvt_on": {
-                    "h": 10,
-                    "scale": 5,
-                    "w": 10,
-                    "x": 161,
-                    "y": 42
-                },
-                "lamp_green_off": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 172,
-                    "y": 47
-                },
-                "lamp_green_on": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 172,
-                    "y": 42
-                },
-                "lamp_red_off": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 182,
-                    "y": 47
-                },
-                "lamp_red_on": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 182,
-                    "y": 42
-                },
-                "lamp_white_off": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 187,
-                    "y": 47
-                },
-                "lamp_white_on": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 187,
-                    "y": 42
-                },
-                "lamp_yellow_off": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 177,
-                    "y": 47
-                },
-                "lamp_yellow_on": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 4,
-                    "x": 177,
-                    "y": 42
-                },
-                "manometer_bottom": {
-                    "h": 31,
-                    "scale": 5,
-                    "w": 31,
-                    "x": 202,
-                    "y": 104
-                },
-                "manometer_overlay": {
-                    "h": 31,
-                    "scale": 5,
-                    "w": 31,
-                    "x": 202,
-                    "y": 136
-                },
-                "manometer_pointer": {
-                    "h": 1,
-                    "scale": 5,
-                    "w": 21,
-                    "x": 150,
-                    "y": 122
-                },
-                "manometer_pointer_red": {
-                    "h": 1,
-                    "scale": 5,
-                    "w": 21,
-                    "x": 150,
-                    "y": 124
-                },
-                "overlay": {
-                    "h": 64,
-                    "scale": 5,
-                    "w": 148,
-                    "x": 1,
-                    "y": 66
-                },
-                "panel": {
-                    "h": 64,
-                    "scale": 5,
-                    "w": 148,
-                    "x": 1,
-                    "y": 1
-                },
-                "rr_-1": {
-                    "h": 10,
-                    "scale": 5,
-                    "w": 24,
-                    "x": 181,
-                    "y": 15
-                },
-                "rr_0": {
-                    "h": 4,
-                    "scale": 5,
-                    "w": 24,
-                    "x": 181,
-                    "y": 10
-                },
-                "rr_1": {
-                    "h": 10,
-                    "scale": 5,
-                    "w": 24,
-                    "x": 181,
-                    "y": 26
-                },
-                "speedometer_bottom": {
-                    "h": 19,
-                    "scale": 5,
-                    "w": 23,
-                    "x": 174,
-                    "y": 84
-                },
-                "speedometer_overlay": {
-                    "h": 19,
-                    "scale": 5,
-                    "w": 23,
-                    "x": 150,
-                    "y": 84
-                },
-                "speedometer_pointer": {
-                    "h": 1,
-                    "scale": 5,
-                    "w": 17,
-                    "x": 150,
-                    "y": 82
-                },
-                "switch_off": {
-                    "h": 8,
-                    "scale": 5,
-                    "w": 6,
-                    "x": 150,
-                    "y": 53
-                },
-                "switch_on": {
-                    "h": 8,
-                    "scale": 5,
-                    "w": 6,
-                    "x": 157,
-                    "y": 53
-                },
-                "switch_small_off": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 3,
-                    "x": 164,
-                    "y": 53
-                },
-                "switch_small_on": {
-                    "h": 5,
-                    "scale": 5,
-                    "w": 3,
-                    "x": 168,
-                    "y": 53
-                },
-                "tk": {
-                    "h": 20,
-                    "scale": 5,
-                    "w": 30,
-                    "x": 150,
-                    "y": 21
-                },
-                "underlay": {
-                    "h": 105,
-                    "scale": 5,
-                    "w": 153,
-                    "x": 1,
-                    "y": 131
-                }
-            },
-            "control_panel_sprite": "controls.png",
-            "name": "Метропоезд типа Еж (81-707)",
-            "sound_loading_info": {
-                "ars_beep": "sounds/ars_beep.wav",
-                "ambient": "sounds/ambient.wav",
-                "engine1": "sounds/engine1.wav",
-                "engine2": "sounds/engine2.wav",
-                "engine3": "sounds/engine3.wav",
-                "engine4": "sounds/engine4.wav",
-                "engine5": "sounds/engine5.wav",
-                "engine6": "sounds/engine6.wav",
-                "engine7": "sounds/engine7.wav"
-            },
-            "system_name": "type_ezh",
-            "traction_info": {
+            "consist_info": {
                 "brake_cyllinder_surface": 0.1,
                 "brake_cyllinder_volume": 0.1,
                 "compressor_mass_rate": 0.142,
                 "control_system_type": "reostat",
                 "default_km": 0,
+                "default_skin": "type_ezh_bc",
                 "default_tk": 2,
                 "door_animation_states": {
                     "closed": 0,
@@ -361,7 +80,7 @@
                                 10
                             ]
                         ],
-                        "name": "Кнопка восприятия торможения",
+                        "name": "kvt",
                         "state": false,
                         "type": "button"
                     },
@@ -386,7 +105,7 @@
                                 5
                             ]
                         ],
-                        "name": "Фары",
+                        "name": "headlight",
                         "state": false,
                         "type": "switch"
                     },
@@ -411,7 +130,7 @@
                                 5
                             ]
                         ],
-                        "name": "Режим АРС (АБ/АРС-АЛС)",
+                        "name": "ars_mode",
                         "state": false,
                         "type": "switch"
                     },
@@ -436,7 +155,7 @@
                                 5
                             ]
                         ],
-                        "name": "Выключатель АЛС",
+                        "name": "als",
                         "state": false,
                         "type": "switch"
                     },
@@ -461,7 +180,7 @@
                                 5
                             ]
                         ],
-                        "name": "Выключатель АРС",
+                        "name": "ars",
                         "state": false,
                         "type": "switch"
                     },
@@ -486,7 +205,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа контроля торможения",
+                        "name": "lkt",
                         "state": false,
                         "type": "lamp"
                     },
@@ -511,7 +230,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа выключения тяги от АРС",
+                        "name": "lvd",
                         "state": false,
                         "type": "lamp"
                     },
@@ -536,7 +255,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа равенства скоростей",
+                        "name": "lrs",
                         "state": false,
                         "type": "lamp"
                     },
@@ -561,7 +280,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа направления",
+                        "name": "ln",
                         "state": false,
                         "type": "lamp"
                     },
@@ -586,7 +305,7 @@
                                 4
                             ]
                         ],
-                        "name": "Секвенция (Вращение РК)",
+                        "name": "lhrk",
                         "state": false,
                         "type": "lamp"
                     },
@@ -611,7 +330,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа несбора схемы состава",
+                        "name": "lsn",
                         "state": false,
                         "type": "lamp"
                     },
@@ -636,7 +355,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа сработки РП",
+                        "name": "lrp",
                         "state": false,
                         "type": "lamp"
                     },
@@ -661,7 +380,7 @@
                                 4
                             ]
                         ],
-                        "name": "Лампа сигнализации дверей (двери открыты)",
+                        "name": "lsd",
                         "state": false,
                         "type": "lamp"
                     },
@@ -686,7 +405,7 @@
                                 8
                             ]
                         ],
-                        "name": "Включение освещения",
+                        "name": "light_on",
                         "state": false,
                         "type": "button"
                     },
@@ -711,7 +430,7 @@
                                 8
                             ]
                         ],
-                        "name": "Выключение освещения",
+                        "name": "light_off",
                         "state": false,
                         "type": "button"
                     },
@@ -736,7 +455,7 @@
                                 8
                             ]
                         ],
-                        "name": "Открытие дверей левых",
+                        "name": "kdl",
                         "state": false,
                         "type": "button"
                     },
@@ -761,7 +480,7 @@
                                 8
                             ]
                         ],
-                        "name": "Открытие дверей правых",
+                        "name": "kdp",
                         "state": false,
                         "type": "button"
                     },
@@ -786,7 +505,7 @@
                                 8
                             ]
                         ],
-                        "name": "Мотор-компрессор",
+                        "name": "vmk",
                         "state": false,
                         "type": "switch"
                     },
@@ -811,7 +530,7 @@
                                 8
                             ]
                         ],
-                        "name": "Сигнализация неисправности",
+                        "name": "ksn",
                         "state": false,
                         "type": "button"
                     },
@@ -836,7 +555,7 @@
                                 8
                             ]
                         ],
-                        "name": "Возврат РП",
+                        "name": "vrp",
                         "state": false,
                         "type": "button"
                     },
@@ -861,7 +580,7 @@
                                 8
                             ]
                         ],
-                        "name": "Программа I",
+                        "name": "inf_prog1",
                         "state": false,
                         "type": "button"
                     },
@@ -886,7 +605,7 @@
                                 8
                             ]
                         ],
-                        "name": "Выключатель управления дверьми",
+                        "name": "vud",
                         "state": false,
                         "type": "switch"
                     },
@@ -911,7 +630,7 @@
                                 8
                             ]
                         ],
-                        "name": "Кнопка резервного закрытия дверей",
+                        "name": "krzd",
                         "state": false,
                         "type": "button"
                     },
@@ -936,7 +655,7 @@
                                 5
                             ]
                         ],
-                        "name": "Лампа отсутствия частоты",
+                        "name": "ars_och",
                         "state": false,
                         "type": "lamp"
                     },
@@ -961,7 +680,7 @@
                                 5
                             ]
                         ],
-                        "name": "Лампа разрешённой скорости 0 км/ч",
+                        "name": "ars_0",
                         "state": false,
                         "type": "lamp"
                     },
@@ -986,7 +705,7 @@
                                 5
                             ]
                         ],
-                        "name": "Лампа разрешённой скорости 40 км/ч",
+                        "name": "ars_40",
                         "state": false,
                         "type": "lamp"
                     },
@@ -1011,7 +730,7 @@
                                 5
                             ]
                         ],
-                        "name": "Лампа разрешённой скорости 60 км/ч",
+                        "name": "ars_60",
                         "state": false,
                         "type": "lamp"
                     },
@@ -1036,7 +755,7 @@
                                 5
                             ]
                         ],
-                        "name": "Лампа разрешённой скорости 70 км/ч",
+                        "name": "ars_70",
                         "state": false,
                         "type": "lamp"
                     },
@@ -1061,7 +780,7 @@
                                 5
                             ]
                         ],
-                        "name": "Лампа разрешённой скорости 70 км/ч",
+                        "name": "ars_70",
                         "state": false,
                         "type": "lamp"
                     },
@@ -1097,7 +816,7 @@
                         "max_value": 90,
                         "min_value": 0,
                         "multiplier": 1.5,
-                        "name": "Скоростемер\n[%s км/ч]",
+                        "name": "speed",
                         "scale": "velocity",
                         "type": "analog_scale"
                     },
@@ -1133,7 +852,7 @@
                         "max_value": 600,
                         "min_value": -600,
                         "multiplier": 0.15,
-                        "name": "Амперметр\n[%s А]",
+                        "name": "current",
                         "scale": "amps",
                         "type": "analog_scale"
                     },
@@ -1169,7 +888,7 @@
                         "max_value": 6,
                         "min_value": 0,
                         "multiplier": 45,
-                        "name": "Манометр тормозных цилиндров\n[%s атм]",
+                        "name": "tc_pressure",
                         "scale": "press",
                         "type": "analog_scale"
                     },
@@ -1204,7 +923,7 @@
                         "max_value": 6,
                         "min_value": 0,
                         "multiplier": 45,
-                        "name": "Манометр напорной магистрали",
+                        "name": "nm_pressure",
                         "scale": "press_tank",
                         "type": "analog_scale"
                     }
@@ -1246,18 +965,18 @@
                 },
                 "km_mapouts": {
                     "-1": {
-                        "target_rk": -2,
                         "switch_time": 24,
+                        "target_rk": -2,
                         "type": "brake"
                     },
                     "-2": {
-                        "target_rk": -8,
                         "switch_time": 24,
+                        "target_rk": -8,
                         "type": "brake"
                     },
                     "-3": {
-                        "target_rk": -33,
                         "switch_time": 24,
+                        "target_rk": -33,
                         "type": "brake",
                         "vz_1": true,
                         "vz_1_pos": [
@@ -1276,18 +995,18 @@
                         "voltage": 0
                     },
                     "1": {
-                        "target_rk": 1,
                         "switch_time": 24,
+                        "target_rk": 1,
                         "type": "accel"
                     },
                     "2": {
-                        "target_rk": 18,
                         "switch_time": 24,
+                        "target_rk": 18,
                         "type": "accel"
                     },
                     "3": {
-                        "target_rk": 36,
                         "switch_time": 24,
+                        "target_rk": 36,
                         "type": "accel"
                     }
                 },
@@ -1752,9 +1471,435 @@
                 },
                 "wheel_mass": 1400,
                 "wheel_radius": 0.95
-            }
+            },
+            "control_panel_info": {
+                "ammeter_bottom": {
+                    "h": 15,
+                    "scale": 5,
+                    "w": 25,
+                    "x": 150,
+                    "y": 104
+                },
+                "ammeter_overlay": {
+                    "h": 15,
+                    "scale": 5,
+                    "w": 25,
+                    "x": 176,
+                    "y": 104
+                },
+                "ammeter_pointer": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 21,
+                    "x": 150,
+                    "y": 120
+                },
+                "ars_0": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 3,
+                    "x": 158,
+                    "y": 68
+                },
+                "ars_40": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 162,
+                    "y": 68
+                },
+                "ars_60": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 170,
+                    "y": 68
+                },
+                "ars_70": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 178,
+                    "y": 68
+                },
+                "ars_80": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 178,
+                    "y": 68
+                },
+                "ars_och": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 7,
+                    "x": 150,
+                    "y": 68
+                },
+                "km": {
+                    "h": 8,
+                    "scale": 5,
+                    "w": 40,
+                    "x": 150,
+                    "y": 1
+                },
+                "kvt_off": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 10,
+                    "x": 150,
+                    "y": 42
+                },
+                "kvt_on": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 10,
+                    "x": 161,
+                    "y": 42
+                },
+                "lamp_green_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 172,
+                    "y": 47
+                },
+                "lamp_green_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 172,
+                    "y": 42
+                },
+                "lamp_red_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 182,
+                    "y": 47
+                },
+                "lamp_red_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 182,
+                    "y": 42
+                },
+                "lamp_white_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 187,
+                    "y": 47
+                },
+                "lamp_white_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 187,
+                    "y": 42
+                },
+                "lamp_yellow_off": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 177,
+                    "y": 47
+                },
+                "lamp_yellow_on": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 4,
+                    "x": 177,
+                    "y": 42
+                },
+                "manometer_bottom": {
+                    "h": 31,
+                    "scale": 5,
+                    "w": 31,
+                    "x": 202,
+                    "y": 104
+                },
+                "manometer_overlay": {
+                    "h": 31,
+                    "scale": 5,
+                    "w": 31,
+                    "x": 202,
+                    "y": 136
+                },
+                "manometer_pointer": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 21,
+                    "x": 150,
+                    "y": 122
+                },
+                "manometer_pointer_red": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 21,
+                    "x": 150,
+                    "y": 124
+                },
+                "overlay": {
+                    "h": 64,
+                    "scale": 5,
+                    "w": 148,
+                    "x": 1,
+                    "y": 66
+                },
+                "panel": {
+                    "h": 64,
+                    "scale": 5,
+                    "w": 148,
+                    "x": 1,
+                    "y": 1
+                },
+                "rr_-1": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 24,
+                    "x": 181,
+                    "y": 15
+                },
+                "rr_0": {
+                    "h": 4,
+                    "scale": 5,
+                    "w": 24,
+                    "x": 181,
+                    "y": 10
+                },
+                "rr_1": {
+                    "h": 10,
+                    "scale": 5,
+                    "w": 24,
+                    "x": 181,
+                    "y": 26
+                },
+                "speedometer_bottom": {
+                    "h": 19,
+                    "scale": 5,
+                    "w": 23,
+                    "x": 174,
+                    "y": 84
+                },
+                "speedometer_overlay": {
+                    "h": 19,
+                    "scale": 5,
+                    "w": 23,
+                    "x": 150,
+                    "y": 84
+                },
+                "speedometer_pointer": {
+                    "h": 1,
+                    "scale": 5,
+                    "w": 17,
+                    "x": 150,
+                    "y": 82
+                },
+                "switch_off": {
+                    "h": 8,
+                    "scale": 5,
+                    "w": 6,
+                    "x": 157,
+                    "y": 53
+                },
+                "switch_on": {
+                    "h": 8,
+                    "scale": 5,
+                    "w": 6,
+                    "x": 150,
+                    "y": 53
+                },
+                "switch_small_off": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 3,
+                    "x": 164,
+                    "y": 53
+                },
+                "switch_small_on": {
+                    "h": 5,
+                    "scale": 5,
+                    "w": 3,
+                    "x": 168,
+                    "y": 53
+                },
+                "tk": {
+                    "h": 20,
+                    "scale": 5,
+                    "w": 30,
+                    "x": 150,
+                    "y": 21
+                },
+                "underlay": {
+                    "h": 105,
+                    "scale": 5,
+                    "w": 153,
+                    "x": 1,
+                    "y": 131
+                }
+            },
+            "control_panel_sprite": "controls.png",
+            "sound_loading_info": {
+                "ambient": "sounds/ambient.wav",
+                "ars_beep": "sounds/ars_beep.wav",
+                "engine1": "sounds/engine1.wav",
+                "engine2": "sounds/engine2.wav",
+                "engine3": "sounds/engine3.wav",
+                "engine4": "sounds/engine4.wav",
+                "engine5": "sounds/engine5.wav",
+                "engine6": "sounds/engine6.wav",
+                "engine7": "sounds/engine7.wav"
+            },
+            "system_name": "type_ezh"
         }
     ],
+    "locale": {
+        "en": {
+            "type_ezh": {
+                "als": "ALS power",
+                "ars": "ARS power",
+                "ars_0": "Allowed velocity - 0 km/h",
+                "ars_40": "Allowed velocity - 40 km/h",
+                "ars_60": "Allowed velocity - 60 km/h",
+                "ars_70": "Allowed velocity - 70 km/h",
+                "ars_80": "Allowed velocity - 80 km/h",
+                "ars_mode": "ARS mode (AB/ARS-ALS)",
+                "ars_och": "No frequecy (20 km/h max)",
+                "current": "Ammeter\n[%s A]",
+                "emu_name": "Type Ezh (81-707) metrotrain",
+                "headlight": "Headlights",
+                "inf_power": "Audioinformer power",
+                "inf_prog1": "Program I",
+                "inf_prog2": "Program II",
+                "inf_unch": "Low frequecy amplifier",
+                "kdl": "Open left doors",
+                "kdp": "Open right doors",
+                "krzd": "Emergency door close button",
+                "ksd": "Door signalization",
+                "ksn": "Malfunction signalization",
+                "kvt": "Brake perception button",
+                "lhr": "Traction ciruit assembled",
+                "lhrk": "Sequence (RC spin)",
+                "light_off": "Interior light OFF",
+                "light_on": "Interior light ON",
+                "lkt": "Brake control lamp",
+                "ln": "Direction lamp",
+                "lrp": "Overload relay trip lamp",
+                "lrs": "Speed equality lamp",
+                "lsd": "Door signal lamp",
+                "lsd_car": "Consist door signal lamp",
+                "lsd_con": "Railcar door signal lamp",
+                "lsn": "Circuit assembly failure lamp",
+                "ltr": "Brake ciruit assembled",
+                "lvd": "Traction shutdown from ARS",
+                "nm_pressure": "Main line manometer\n[%s atm]",
+                "rrut": "Current control relay regulation \n(reduced acceleration)",
+                "speed": "Speedometer\n[%s km/h]",
+                "tc_pressure": "Brake cyllinder manometer\n[%s atm]",
+                "vmk": "Motor-compressor",
+                "voltage": "Voltmeter\n[%s V]",
+                "vrp": "Overload relay return",
+                "vud": "Door control switch"
+            }
+        },
+        "ru": {
+            "type_ezh": {
+                "als": "Выключатель АЛС",
+                "ars": "Выключатель АРС",
+                "ars_0": "Лампа разрешённой скорости 0 км/ч",
+                "ars_40": "Лампа разрешённой скорости 40 км/ч",
+                "ars_60": "Лампа разрешённой скорости 60 км/ч",
+                "ars_70": "Лампа разрешённой скорости 70 км/ч",
+                "ars_80": "Лампа разрешённой скорости 80 км/ч",
+                "ars_mode": "Режим АРС (АБ/АРС-АЛС)",
+                "ars_och": "Лампа отсутствия частоты",
+                "current": "Амперметр\n[%s А]",
+                "emu_name": "Метропоезд типа Еж (81-707)",
+                "headlight": "Фары",
+                "inf_power": "Питание информатора",
+                "inf_prog1": "Программа I",
+                "inf_prog2": "Программа II",
+                "inf_unch": "Усилитель низких частот",
+                "kdl": "Открытие дверей левых",
+                "kdp": "Открытие дверей правых",
+                "krzd": "Кнопка резервного закрытия дверей",
+                "ksd": "Кнопка сигнализации дверей",
+                "ksn": "Кнопка сигнализации неисправности",
+                "kvt": "Кнопка восприятия торможения",
+                "lhr": "Сбор схемы на ход",
+                "lhrk": "Секвенция (Вращение РК)",
+                "light_off": "Выключение освещения",
+                "light_on": "Включение освещения",
+                "lkt": "Лампа контроля торможения",
+                "ln": "Лампа направления",
+                "lrp": "Лампа сработки РП",
+                "lrs": "Лампа равенства скоростей",
+                "lsd": "Лампа сигнализации дверей",
+                "lsd_car": "Лампа сигнализации дверей вагона",
+                "lsd_con": "Лампа сигнализации дверей состава",
+                "lsn": "Лампа несбора схемы состава",
+                "ltr": "Сбор схемы на тормоз",
+                "lvd": "Лампа выключения тяги от АРС",
+                "nm_pressure": "Манометр напорной магистрали\n[%s атм]",
+                "rrut": "Регулировка РУТ (пониженное ускорение)",
+                "speed": "Скоростемер\n[%s км/ч]",
+                "tc_pressure": "Манометр тормозных цилиндров\n[%s атм]",
+                "vmk": "Мотор-компрессор",
+                "voltage": "Вольтметр\n[%s В]",
+                "vrp": "Возврат РП",
+                "vud": "Выключатель управления дверьми"
+            }
+        }
+    },
+    "rendered": {
+        "tiles": [],
+        "trains": [
+            [
+                "type_ezh_bc",
+                "closed",
+                79,
+                "type_ezh",
+                "Сине-голубой окрас"
+            ],
+            [
+                "type_ezh_bc",
+                "inter_1",
+                79,
+                "type_ezh",
+                "Сине-голубой окрас"
+            ],
+            [
+                "type_ezh_bc",
+                "inter_2",
+                79,
+                "type_ezh",
+                "Сине-голубой окрас"
+            ],
+            [
+                "type_ezh_bc",
+                "inter_3",
+                79,
+                "type_ezh",
+                "Сине-голубой окрас"
+            ],
+            [
+                "type_ezh_bc",
+                "inter_4",
+                79,
+                "type_ezh",
+                "Сине-голубой окрас"
+            ],
+            [
+                "type_ezh_bc",
+                "open",
+                79,
+                "type_ezh",
+                "Сине-голубой окрас"
+            ]
+        ]
+    },
     "trains": [
         {
             "designed_for": "type_ezh",
