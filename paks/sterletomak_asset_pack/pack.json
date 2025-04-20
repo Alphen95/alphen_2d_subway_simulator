@@ -414,147 +414,199 @@
                 11
             ],
             [
-                "sodovaya_walls",
+                "sod_walls",
                 127
             ],
             [
-                "sodovaya_platform",
+                "sod_platform",
                 11
             ],
             [
-                "sodovaya_walls_f",
+                "sod_walls_f",
                 127
             ],
             [
-                "sodovaya_platform_f",
+                "sod_platform_f",
                 11
             ],
             [
-                "sodovaya_track_tstr",
+                "sod_track_tstr",
                 127
             ],
             [
-                "sodovaya_track_f_tstr",
+                "sod_track_f_tstr",
                 11
             ],
             [
-                "kochetova_walls",
+                "kct_walls",
                 127
             ],
             [
-                "kochetova_platform",
+                "kct_platform",
                 11
             ],
             [
-                "kochetova_track_tstr",
+                "kct_track_tstr",
                 127
             ],
             [
-                "kochetova_walls_f",
+                "kct_walls_f",
                 127
             ],
             [
-                "kochetova_platform_f",
+                "kct_platform_f",
                 11
             ],
             [
-                "kochetova_track_f_tstr",
+                "kct_track_f_tstr",
                 11
             ],
             [
-                "park_kultury_walls",
+                "kul_walls",
                 127
             ],
             [
-                "park_kultury_platform",
+                "kul_platform",
                 11
             ],
             [
-                "park_kultury_track_tstr",
+                "kul_track_tstr",
                 127
             ],
             [
-                "park_kultury_walls_f",
+                "kul_walls_f",
                 127
             ],
             [
-                "park_kultury_platform_f",
+                "kul_platform_f",
                 11
             ],
             [
-                "park_kultury_track_f_tstr",
+                "kul_track_f_tstr",
                 11
             ],
             [
-                "vokzalnaya_walls",
+                "vkz_walls",
                 127
             ],
             [
-                "vokzalnaya_platform",
+                "vkz_platform",
                 11
             ],
             [
-                "vokzalnaya_track_tstr",
-                127
-            ],
-            [
-                "vokzalnaya_walls_f",
-                127
-            ],
-            [
-                "vokzalnaya_platform_f",
+                "vkz_low_track_tstr",
                 11
             ],
             [
-                "vokzalnaya_track_f_tstr",
-                11
-            ],
-            [
-                "sovetskaya_walls",
+                "vkz_track_tstr",
                 127
             ],
             [
-                "sovetskaya_platform",
-                11
-            ],
-            [
-                "sovetskaya_track_tstr",
+                "vkz_walls_f",
                 127
             ],
             [
-                "sovetskaya_walls_f",
-                127
-            ],
-            [
-                "sovetskaya_platform_f",
+                "vkz_platform_f",
                 11
             ],
             [
-                "sovetskaya_track_f_tstr",
+                "vkz_track_f_tstr",
                 11
             ],
             [
-                "sterlitamakskaya_walls",
+                "vkz2_walls",
                 127
             ],
             [
-                "sterlitamakskaya_platform",
+                "vkz2_platform",
                 11
             ],
             [
-                "sterlitamakskaya_track_tstr",
+                "vkz2_track_tstr",
                 127
             ],
             [
-                "sterlitamakskaya_walls_f",
+                "vkz2_walls_f",
                 127
             ],
             [
-                "sterlitamakskaya_platform_f",
+                "vkz2_platform_f",
                 11
             ],
             [
-                "sterlitamakskaya_track_f_tstr",
+                "vkz2_track_f_tstr",
+                11
+            ],
+            [
+                "sov_walls",
+                127
+            ],
+            [
+                "sov_platform",
+                11
+            ],
+            [
+                "sov_track_tstr",
+                127
+            ],
+            [
+                "sov_walls_f",
+                127
+            ],
+            [
+                "sov_platform_f",
+                11
+            ],
+            [
+                "sov_track_f_tstr",
+                11
+            ],
+            [
+                "stl_walls",
+                127
+            ],
+            [
+                "stl_platform",
+                11
+            ],
+            [
+                "stl_track_tstr",
+                127
+            ],
+            [
+                "stl_walls_f",
+                127
+            ],
+            [
+                "stl_platform_f",
+                11
+            ],
+            [
+                "stl_track_f_tstr",
+                11
+            ],
+            [
+                "nhm_track_tstr",
+                127
+            ],
+            [
+                "nhm_walls",
+                127
+            ],
+            [
+                "nhm_platform",
+                11
+            ],
+            [
+                "nhm_track_f_tstr",
+                11
+            ],
+            [
+                "nhm_walls_f",
+                127
+            ],
+            [
+                "nhm_platform_f",
                 11
             ]
         ],
@@ -983,7 +1035,7 @@
         },
         {
             "filename": "platform",
-            "name": "sodovaya_walls",
+            "name": "sod_walls",
             "params": [
                 192,
                 1280,
@@ -997,7 +1049,7 @@
         },
         {
             "filename": "platform",
-            "name": "sodovaya_platform",
+            "name": "sod_platform",
             "params": [
                 0,
                 1280,
@@ -1011,7 +1063,7 @@
         },
         {
             "filename": "platform",
-            "name": "sodovaya_walls_f",
+            "name": "sod_walls_f",
             "params": [
                 192,
                 1280,
@@ -1025,7 +1077,7 @@
         },
         {
             "filename": "platform",
-            "name": "sodovaya_platform_f",
+            "name": "sod_platform_f",
             "params": [
                 0,
                 1280,
@@ -1039,7 +1091,7 @@
         },
         {
             "filename": "platform",
-            "name": "sodovaya_track_tstr",
+            "name": "sod_track_tstr",
             "params": [
                 0,
                 1536,
@@ -1053,7 +1105,7 @@
         },
         {
             "filename": "platform",
-            "name": "sodovaya_track_f_tstr",
+            "name": "sod_track_f_tstr",
             "params": [
                 0,
                 1536,
@@ -1067,7 +1119,7 @@
         },
         {
             "filename": "platform",
-            "name": "kochetova_walls",
+            "name": "kct_walls",
             "params": [
                 192,
                 1792,
@@ -1081,7 +1133,7 @@
         },
         {
             "filename": "platform",
-            "name": "kochetova_platform",
+            "name": "kct_platform",
             "params": [
                 0,
                 1792,
@@ -1095,7 +1147,7 @@
         },
         {
             "filename": "platform",
-            "name": "kochetova_track_tstr",
+            "name": "kct_track_tstr",
             "params": [
                 0,
                 2048,
@@ -1109,7 +1161,7 @@
         },
         {
             "filename": "platform",
-            "name": "kochetova_walls_f",
+            "name": "kct_walls_f",
             "params": [
                 192,
                 1792,
@@ -1123,7 +1175,7 @@
         },
         {
             "filename": "platform",
-            "name": "kochetova_platform_f",
+            "name": "kct_platform_f",
             "params": [
                 0,
                 1792,
@@ -1137,7 +1189,7 @@
         },
         {
             "filename": "platform",
-            "name": "kochetova_track_f_tstr",
+            "name": "kct_track_f_tstr",
             "params": [
                 0,
                 2048,
@@ -1151,7 +1203,7 @@
         },
         {
             "filename": "platform",
-            "name": "park_kultury_walls",
+            "name": "kul_walls",
             "params": [
                 192,
                 2304,
@@ -1165,7 +1217,7 @@
         },
         {
             "filename": "platform",
-            "name": "park_kultury_platform",
+            "name": "kul_platform",
             "params": [
                 0,
                 2304,
@@ -1179,7 +1231,7 @@
         },
         {
             "filename": "platform",
-            "name": "park_kultury_track_tstr",
+            "name": "kul_track_tstr",
             "params": [
                 0,
                 2560,
@@ -1193,7 +1245,7 @@
         },
         {
             "filename": "platform",
-            "name": "park_kultury_walls_f",
+            "name": "kul_walls_f",
             "params": [
                 192,
                 2304,
@@ -1207,7 +1259,7 @@
         },
         {
             "filename": "platform",
-            "name": "park_kultury_platform_f",
+            "name": "kul_platform_f",
             "params": [
                 0,
                 2304,
@@ -1221,7 +1273,7 @@
         },
         {
             "filename": "platform",
-            "name": "park_kultury_track_f_tstr",
+            "name": "kul_track_f_tstr",
             "params": [
                 0,
                 2560,
@@ -1235,7 +1287,7 @@
         },
         {
             "filename": "platform",
-            "name": "vokzalnaya_walls",
+            "name": "vkz_walls",
             "params": [
                 192,
                 2816,
@@ -1249,7 +1301,7 @@
         },
         {
             "filename": "platform",
-            "name": "vokzalnaya_platform",
+            "name": "vkz_platform",
             "params": [
                 0,
                 2816,
@@ -1263,7 +1315,21 @@
         },
         {
             "filename": "platform",
-            "name": "vokzalnaya_track_tstr",
+            "name": "vkz_low_track_tstr",
+            "params": [
+                0,
+                3072,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vkz_track_tstr",
             "params": [
                 0,
                 3072,
@@ -1277,7 +1343,7 @@
         },
         {
             "filename": "platform",
-            "name": "vokzalnaya_walls_f",
+            "name": "vkz_walls_f",
             "params": [
                 192,
                 2816,
@@ -1291,7 +1357,7 @@
         },
         {
             "filename": "platform",
-            "name": "vokzalnaya_platform_f",
+            "name": "vkz_platform_f",
             "params": [
                 0,
                 2816,
@@ -1305,7 +1371,7 @@
         },
         {
             "filename": "platform",
-            "name": "vokzalnaya_track_f_tstr",
+            "name": "vkz_track_f_tstr",
             "params": [
                 0,
                 3072,
@@ -1319,7 +1385,91 @@
         },
         {
             "filename": "platform",
-            "name": "sovetskaya_walls",
+            "name": "vkz2_walls",
+            "params": [
+                192,
+                4864,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vkz2_platform",
+            "params": [
+                0,
+                4864,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vkz2_track_tstr",
+            "params": [
+                0,
+                5120,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vkz2_walls_f",
+            "params": [
+                192,
+                4864,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vkz2_platform_f",
+            "params": [
+                0,
+                4864,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "vkz2_track_f_tstr",
+            "params": [
+                0,
+                5120,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "sov_walls",
             "params": [
                 192,
                 3328,
@@ -1333,7 +1483,7 @@
         },
         {
             "filename": "platform",
-            "name": "sovetskaya_platform",
+            "name": "sov_platform",
             "params": [
                 0,
                 3328,
@@ -1347,7 +1497,7 @@
         },
         {
             "filename": "platform",
-            "name": "sovetskaya_track_tstr",
+            "name": "sov_track_tstr",
             "params": [
                 0,
                 3584,
@@ -1361,7 +1511,7 @@
         },
         {
             "filename": "platform",
-            "name": "sovetskaya_walls_f",
+            "name": "sov_walls_f",
             "params": [
                 192,
                 3328,
@@ -1375,7 +1525,7 @@
         },
         {
             "filename": "platform",
-            "name": "sovetskaya_platform_f",
+            "name": "sov_platform_f",
             "params": [
                 0,
                 3328,
@@ -1389,7 +1539,7 @@
         },
         {
             "filename": "platform",
-            "name": "sovetskaya_track_f_tstr",
+            "name": "sov_track_f_tstr",
             "params": [
                 0,
                 3584,
@@ -1403,7 +1553,7 @@
         },
         {
             "filename": "platform",
-            "name": "sterlitamakskaya_walls",
+            "name": "stl_walls",
             "params": [
                 192,
                 3840,
@@ -1417,7 +1567,7 @@
         },
         {
             "filename": "platform",
-            "name": "sterlitamakskaya_platform",
+            "name": "stl_platform",
             "params": [
                 0,
                 3840,
@@ -1431,7 +1581,7 @@
         },
         {
             "filename": "platform",
-            "name": "sterlitamakskaya_track_tstr",
+            "name": "stl_track_tstr",
             "params": [
                 0,
                 4096,
@@ -1445,7 +1595,7 @@
         },
         {
             "filename": "platform",
-            "name": "sterlitamakskaya_walls_f",
+            "name": "stl_walls_f",
             "params": [
                 192,
                 3840,
@@ -1459,7 +1609,7 @@
         },
         {
             "filename": "platform",
-            "name": "sterlitamakskaya_platform_f",
+            "name": "stl_platform_f",
             "params": [
                 0,
                 3840,
@@ -1473,10 +1623,94 @@
         },
         {
             "filename": "platform",
-            "name": "sterlitamakskaya_track_f_tstr",
+            "name": "stl_track_f_tstr",
             "params": [
                 0,
                 4096,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "nhm_track_tstr",
+            "params": [
+                0,
+                4608,
+                64,
+                256,
+                32,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "nhm_walls",
+            "params": [
+                192,
+                4352,
+                64,
+                256,
+                29,
+                3,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "nhm_platform",
+            "params": [
+                0,
+                4352,
+                64,
+                256,
+                3,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "nhm_track_f_tstr",
+            "params": [
+                0,
+                4608,
+                64,
+                256,
+                3,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "nhm_walls_f",
+            "params": [
+                192,
+                4352,
+                64,
+                256,
+                29,
+                3,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "platform",
+            "name": "nhm_platform_f",
+            "params": [
+                0,
+                4352,
                 64,
                 256,
                 3,

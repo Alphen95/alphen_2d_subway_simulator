@@ -6,7 +6,11 @@ import copy
 
 trains = {}
 signal_states = {}
-sign = lambda x: math.copysign(1, x)
+
+def sign(x):
+    if x > 0: return 1
+    elif x < 0: return -1
+    else: return 0
 
 class SignalSystem():
     def __init__(self,signals):
@@ -79,7 +83,7 @@ class SignalSystem():
                 
                 if self.signals[signal_id]["speed"] != "":
                     velocity_states = self.signals[signal_id]["speed"].split("-")
-                    signal_states[signal_id]["max_speed"] = int(velocity_states[min(aspects_ab_velocity[signal_states[signal_id]["aspect"]],len(velocity_states))])
+                    signal_states[signal_id]["max_speed"] = int(velocity_states[min(aspects_ab_velocity[signal_states[signal_id]["aspect"]],len(velocity_states)-1)])
                 else:
                     signal_states[signal_id]["max_speed"] = 20
             
@@ -88,10 +92,12 @@ class SignalSystem():
         print("Signal thread stopped.")
 
 class Train():
-    def __init__(self,pos,type, reversed,size,consist,world,reversed_signals):
+    def __init__(self,pos,type, reversed,size,consist,world,autodrive_map,reversed_signals):
         self.pos = pos
+        self.local_pos = (0,0)
         self.type = type
         self.velocity = 0
+        self.signed_velocity = 0
         self.angle = 180
         self.reversed = reversed
         self.size = size
@@ -99,6 +105,8 @@ class Train():
         self.signal_state = None
         self.signal_velocity_state = 0
         self.switches = {}
+        self.autodrive_marker = ""
+        self.autodrive_map = autodrive_map
 
         self.exists = True
         self.thread = threading.Thread(target=self.cycle,args=[world,reversed_signals],daemon=True)
@@ -113,6 +121,7 @@ class Train():
         while self.exists:
             block_pos = (int((self.pos[0]-(block_size[0] if self.pos[0] < 0 else 0))/block_size[0]),int((self.pos[1]-(block_size[1] if self.pos[1] < 0 else 0))/block_size[1]))
             local_pos = (self.pos[0]%block_size[0],self.pos[1]%block_size[1])
+            self.local_pos = local_pos
 
             if block_pos in world:
                 if block_pos in reversed_signals and "next" in reversed_signals[block_pos] and reversed_signals[block_pos]["next"] not in [None,"",'']:
@@ -125,7 +134,17 @@ class Train():
                 else:
                     self.signal_velocity_state = 20
 
+                if block_pos in self.autodrive_map:
+                    self.autodrive_marker = self.autodrive_map[block_pos]
+                else:
+                    self.autodrive_marker = ""
+
                 curblock = world[block_pos][0] if type(world[block_pos]) == list else world[block_pos]
+
+                velocity_vector_direction = (2*(90 <= self.angle <= 270)-1)*sign(self.signed_velocity)
+
+                vvd_read = {1:"up",0:"neutral",-1:"down"}
+
                 if curblock[-4:] == "tstr":
                     self.angle = 180 if 270 >= self.angle >= 90 else 0
                     if local_pos[0] < 127.95:
@@ -159,14 +178,25 @@ class Train():
                     #else:
                     #    self.angle = 180+16.5  if 270 >= self.angle >= 90 else 360-16.5
                     self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                
+
+                elif curblock[-4:] == "tcx2":
+                    if local_pos[1] < 4*64:
+                        self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+                    elif local_pos[1] > 4*192:
+                        self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+
+                elif curblock[-4:] == "tcx1":
+                    if local_pos[1] < 4*64:
+                        self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+                    elif local_pos[1] > 4*192:
+                        self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+
                 elif curblock[-4:] == "tsa1":
-                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
-                        if 4*192 < local_pos[1] < 4*254:
-                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
-                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
+                    if (4*192 < local_pos[1] < 4*254 and velocity_vector_direction == 1 and
+                        block_pos in self.switches and self.switches[block_pos]):
+                        self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+                    
+                    if not(2*4 <= local_pos[1] <= 254*4):
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
                             self.pos[0] += 0.05
@@ -176,12 +206,11 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsa2":
-                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
-                        if 4*2 < local_pos[1] < 4*64:
-                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
-                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
+                    if (4*2 < local_pos[1] < 4*64  and velocity_vector_direction == -1 and
+                        block_pos in self.switches and self.switches[block_pos]):
+                        self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+
+                    if not(2*4 <= local_pos[1] <= 254*4):
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
                             self.pos[0] += 0.05
@@ -191,12 +220,11 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
                 elif curblock[-4:] == "tsb1":
-                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
-                        if 4*192 < local_pos[1] < 4*254:
-                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
+                    if (4*192 < local_pos[1] < 4*254 and velocity_vector_direction == 1 and
+                        block_pos in self.switches and self.switches[block_pos]):
+                        self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+                        
+                    if not(2*4 <= local_pos[1] <= 254*4):
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
                             self.pos[0] += 0.05
@@ -205,13 +233,13 @@ class Train():
                         
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
+
                 elif curblock[-4:] == "tsb2":
-                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
-                        if 4*2 < local_pos[1] < 4*64:
-                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
+                    if (4*2 < local_pos[1] < 4*64 and velocity_vector_direction == -1 and
+                        block_pos in self.switches and self.switches[block_pos]):
+                        self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+                        
+                    if not(2*4 <= local_pos[1] <= 254*4):
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
                             self.pos[0] += 0.05
@@ -220,17 +248,15 @@ class Train():
                         
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
-                
                 
                 elif curblock[-4:] == "tsx1":
-                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
-                        if 4*192 < local_pos[1] < 4*254:
+                    if block_pos in self.switches and self.switches[block_pos]:
+                        if 4*192 < local_pos[1] < 4*254 and velocity_vector_direction == 1:
                             self.angle = 180-14 if 270 >= self.angle >= 90 else 14
-                        elif 4*2 < local_pos[1] < 4*64:
+                        if 4*2 < local_pos[1] < 4*64 and velocity_vector_direction == -1:
                             self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
+                        
+                    if not(2*4 <= local_pos[1] <= 254*4):
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
                             self.pos[0] += 0.05
@@ -241,14 +267,13 @@ class Train():
                             self.pos[0] += 128-local_pos[0]
                     
                 elif curblock[-4:] == "tsx2":
-                    if int(self.angle) not in [0,180] or (block_pos in self.switches and self.switches[block_pos]):
-                        if 4*192 < local_pos[1] < 4*254:
-                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
-                        elif 4*2 < local_pos[1] < 4*64:
+                    if block_pos in self.switches and self.switches[block_pos]:
+                        if 4*2 < local_pos[1] < 4*64  and velocity_vector_direction == -1:
                             self.angle = 180-14 if 270 >= self.angle >= 90 else 14
-                        elif 4*2 >= local_pos[1] or local_pos[1] >= 4*254:
-                            self.angle = 180 if 270 >= self.angle >= 90 else 0
-                    else:
+                        if 4*192 < local_pos[1] < 4*254 and velocity_vector_direction == 1:
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+                        
+                    if not(2*4 <= local_pos[1] <= 254*4):
                         self.angle = 180 if 270 >= self.angle >= 90 else 0
                         if local_pos[0] < 127.95:
                             self.pos[0] += 0.05
@@ -258,12 +283,49 @@ class Train():
                         if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
                             self.pos[0] += 128-local_pos[0]
 
+                elif curblock[-4:] == "tsy1":
+                    if (4*192 < local_pos[1] < 4*254 and velocity_vector_direction == 1 and
+                        block_pos in self.switches):
+                        if self.switches[block_pos]:
+                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+                        else:
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+
+                    
+                    if not(2*4 <= local_pos[1] <= 254*4):
+                        self.angle = 180 if 270 >= self.angle >= 90 else 0
+                        if local_pos[0] < 127.95:
+                            self.pos[0] += 0.05
+                        elif local_pos[0] > 128.05:
+                            self.pos[0] -= 0.05
+                        
+                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
+                            self.pos[0] += 128-local_pos[0]
+
+                elif curblock[-4:] == "tsy2":
+                    if (4*2 < local_pos[1] < 4*64  and velocity_vector_direction == -1 and
+                        block_pos in self.switches):
+                        if self.switches[block_pos]:
+                            self.angle = 180-14 if 270 >= self.angle >= 90 else 14
+                        else:
+                            self.angle = 180+14 if 270 >= self.angle >= 90 else 360-14
+
+                    
+                    if not(2*4 <= local_pos[1] <= 254*4):
+                        self.angle = 180 if 270 >= self.angle >= 90 else 0
+                        if local_pos[0] < 127.95:
+                            self.pos[0] += 0.05
+                        elif local_pos[0] > 128.05:
+                            self.pos[0] -= 0.05
+                        
+                        if 127.95 <= local_pos[0] <= 128.05 and local_pos[0] != 128:
+                            self.pos[0] += 128-local_pos[0]
             
             
             time.sleep(1/120)
 
 class Consist():
-    def __init__(self,train_type,train_sprite,params,consist_info,self_id,world,reversed_signals,spawn_pos):
+    def __init__(self,train_type,train_sprite,params,consist_info,self_id,world,autodrive_map,reversed_signals,spawn_pos):
         global trains
 
         self.linked_to = []
@@ -296,6 +358,7 @@ class Consist():
             "rp_return":False, # Возврат реле перегрузки
             "vz_1":False, # Вентиль замещения №1
             "vz_2":False, # Вентиль замещения №2
+            "vz_ad":False, # Вентиль автоведения
             "vz_1_km":False, # Вентиль замещения №1 от ходового режима
             "vz_2_km":False, # Вентиль замещения №2 от ходового режима
             "traction":False, # Сбор схемы на ход
@@ -324,10 +387,15 @@ class Consist():
             "ars_70":False, # АРС - 70 км/ч
             "ars_80":False, # АРС - 80 км/ч
             "ars_braking_safety":False, # АРС - Кнопка восприятия торможения
+            "ars_braking_safety_auto":False, # АРС - Кнопка восприятия торможения от АВ
             "ars_traction_disable":False, # АРС - Отключение ходового режима
             "ars_speed_equality":False, # АРС - Равенство скоростей
             "ars_direction":False, # АРС - Соответствие направления
             "braking_control":False, # Контроль торможения - давление в ТЦ > 0
+            "autodrive":False, # Включение автоведения
+            "autodrive_door_delay":False, # Задержка дверей от автоведения
+            "autodrive_train_delay":False, # Задержка поезда от автоведения
+            "ring":False, # Звонок
             "unused":False, # Специальный нейтральный провод для "пустых" выключателей и ламп
 
         }
@@ -339,6 +407,8 @@ class Consist():
             "timer_r":0,
             "action_l":None,
             "action_r":None,
+            "sound_l":"",
+            "sound_r":"",
         }
 
         self.km = consist_info["default_km"]
@@ -356,6 +426,7 @@ class Consist():
         self.electromotive_force = 0
         self.vz_1 = 0
         self.vz_2 = 0
+        self.vz_ad = 0
         self.engine_constant = consist_info["engine_constant"]
         self.engine_resistance = consist_info["engine_resistance"]
         self.transmissional_number = consist_info["transmissional_number"]
@@ -373,6 +444,7 @@ class Consist():
         self.velocity_direction = 0
 
         self.control_wires["ars_fuse"] = not(self.consist_info["has_ars"])
+        self.autodrive_state = {"timer": 0, "state":None}
 
         pos = spawn_pos
         self.train_amount = 3
@@ -380,7 +452,7 @@ class Consist():
             while True:
                 train_id = random.randint(0,99999)
                 if train_id not in trains: break
-            trains[train_id] = Train([pos[0],pos[1]+320*i],train_sprite, i+1==self.train_amount,params["size"],self_id,world,reversed_signals)
+            trains[train_id] = Train([pos[0],pos[1]+320*i],train_sprite, i+1==self.train_amount,params["size"],self_id,world,autodrive_map,reversed_signals)
             self.linked_to.append(train_id)
         self.first_car, self.last_car = self.linked_to[0], self.linked_to[-1]
 
@@ -397,12 +469,13 @@ class Consist():
 
         while self.exists:
             # необходимые просчёты физики, пневматики, электрики, проводов   
-            self.cycle_electro()
-            self.cycle_pneumo()   
-            self.cycle_physics()
-            self.cycle_control_wires()
-            self.update_ars()
-            self.update_railcars()
+            self.cycle_electro() # электрооборудование
+            self.cycle_pneumo() # пневмооборудование
+            self.cycle_physics() # физика
+            self.cycle_control_wires() # поездные провода
+            self.update_ars() # АРС-АЛС
+            self.cycle_autodrive() # автоведение
+            self.update_railcars() # работа с вагонами
 
             # декоративно-графическое
             self.update_door_states()
@@ -542,16 +615,24 @@ class Consist():
             self.tank_pressure+=self.compressor_mass_rate*8.31*293/self.pressure_tank_volume/0.029/120/10000
 
         # обсчёт вентиля замещения №1
-        self.vz_1 = (self.vz_1 + (2*(self.control_wires["vz_1"] or self.control_wires["vz_1_km"])-1)*self.consist_info["valve_params"]["vz_1"][1]) 
+        vz_1_cond = 2*(self.control_wires["vz_1"] or self.control_wires["vz_1_km"])-1
+        self.vz_1 = (self.vz_1 + vz_1_cond*self.consist_info["valve_params"]["vz_1"][1]) 
         self.vz_1 = (self.vz_1 if self.vz_1 >= 0 else 0)
         self.vz_1 = (self.vz_1 if self.vz_1 <= self.consist_info["valve_params"]["vz_1"][0] else self.consist_info["valve_params"]["vz_1"][0])
 
         # обсчёт вентиля замещения №2
-        self.vz_2 = (self.vz_2 + (2*(self.control_wires["vz_2"] or self.control_wires["vz_2_km"])-1)*self.consist_info["valve_params"]["vz_2"][1]) 
+        vz_2_cond = 2*(self.control_wires["vz_2"] or self.control_wires["vz_2_km"])-1
+        self.vz_2 = (self.vz_2 + vz_2_cond*self.consist_info["valve_params"]["vz_2"][1]) 
         self.vz_2 = (self.vz_2 if self.vz_2 >= 0 else 0)
         self.vz_2 = (self.vz_2 if self.vz_2 <= self.consist_info["valve_params"]["vz_2"][0] else self.consist_info["valve_params"]["vz_2"][0])
 
-        self.control_wires["braking_control"] = (self.control_wires["vz_1"]+self.control_wires["vz_1_km"]+self.control_wires["vz_2"]+self.control_wires["vz_2_km"])
+        # обсчёт вентиля автоведения
+        if "ad" in self.consist_info["valve_params"]:
+            vz_ad_cond = 2*(self.control_wires["vz_ad"])-1
+            self.vz_ad = (self.vz_ad + vz_ad_cond*self.consist_info["valve_params"]["ad"][1]) 
+            self.vz_ad = (self.vz_ad if self.vz_ad >= 0 else 0)
+            self.vz_ad = (self.vz_ad if self.vz_ad <= self.consist_info["valve_params"]["ad"][0] else self.consist_info["valve_params"]["ad"][0])
+            self.control_wires["braking_control"] = bool(self.control_wires["vz_1"]+self.control_wires["vz_1_km"]+self.control_wires["vz_2"]+self.control_wires["vz_2_km"]+self.control_wires["vz_ad"])
 
         # обсчёт тормозных цилиндров
         if self.consist_info["tk_mapouts"][str(self.tk)]["type"] == "press":
@@ -576,7 +657,7 @@ class Consist():
         kinetic_energy = self.mass*(self.velocity**2)/2*self.train_amount
         revolutional_energy = self.wheel_mass*self.wheel_radius**2*self.angular_velocity**2/4*wheels
         friction_energy = 0.05*self.wheel_mass*9.81*self.angular_velocity
-        brake_friction_energy = wheels*1*self.velocity*(max(self.pressure,self.vz_1,self.vz_2)*100000*self.brake_cyllinder_surface)
+        brake_friction_energy = wheels*1*self.velocity*(max(self.pressure,self.vz_1,self.vz_2,self.vz_ad)*100000*self.brake_cyllinder_surface)
 
         self.energy = round(kinetic_energy+revolutional_energy+self.engine_power*self.transmissional_number/120-friction_energy/120-brake_friction_energy/120,5)
         self.velocity = ((2*self.energy*self.wheel_radius**2)/(self.train_amount*self.mass*self.wheel_radius**2+wheels*self.wheel_mass*self.wheel_radius**2/2))**0.5
@@ -610,42 +691,222 @@ class Consist():
             self.doors["action_l"] = "close" if self.doors["l"] != "closed" else None
         self.control_wires["doors_open"] = self.doors["r"] != "closed" or self.doors["l"] != "closed"
 
+    def cycle_autodrive(self):
+
+        # система АВ (Автоведения)
+        # чистейший самопал. попытки базироваться на ПУАВ или КСАУП бессмылсенны, т. к. о них ничего не известно.
+        # я попробую сделать специальный подвид АВ, издалека напоминающий ПУАВ-СБПП, но только в девятке, если в девятке.
+
+        if self.control_wires["autodrive"] and self.controlling_direction != 0: #если мы подрубили автоведение...
+            
+            # попытаемся найти маркер на блоке
+            current_block = trains[self.first_car if self.controlling_direction == 1 else self.last_car].autodrive_marker
+            current_localized_pos = trains[self.first_car if self.controlling_direction == 1 else self.last_car].local_pos[1]
+
+            # если маркер есть и он реагирует на движение вниз...
+            if "down" in current_block and self.controlling_direction == -1:
+                
+                # если блок тормозной...
+                if "brake" in current_block:
+
+                    # разбить блок на смысловые элементы
+                    block_params = current_block.split("_")
+
+                    # если состояние отстутствует (вагон только заехал), задать состояние торможения
+                    if self.autodrive_state["state"] == None: self.autodrive_state["state"] = "braking"
+
+                    # если состяние НЕ разгонное, КМ -> 0
+                    # иначе КМ -> +max
+                    if self.autodrive_state["state"] != "accel": self.km = 0
+                    elif self.autodrive_state["state"] == "accel": self.km = self.consist_info["max_km"]
+
+                    # обсчёт максимальной скорости с учётом тормозной точки
+                    maxspeed = 35
+                    maxspeed = self.ars_speed if current_localized_pos > 384 and self.autodrive_state["state"] != "braking" else maxspeed
+                    maxspeed = 20 if current_localized_pos > 384 and self.autodrive_state["state"] == "braking" else maxspeed
+                    maxspeed = 0 if current_localized_pos > 768 and self.autodrive_state["state"] == "braking" else maxspeed
+
+                    # если превышаем Vmax, запитать провод торможения от АВ (todo: сделать для АВ собственный цилиндр)
+                    if self.velocity*3.6 > maxspeed: self.control_wires["vz_ad"] = True
+                    else: self.control_wires["vz_ad"] = False
+
+                    # если мы проехали тормозную точку и затормозили, разрешить открыть двери
+                    if current_localized_pos >= 512 and self.velocity <= 0 and self.autodrive_state["state"] == "braking":
+                        self.autodrive_state["state"] = "open"
+                        if block_params[2] == "doorL":
+                            self.doors["action_r"] = "open"
+                        if block_params[2] == "doorR":
+                            self.doors["action_l"] = "open"
+                        self.autodrive_state["timer"] = 10*120
+
+                    # если двери закрылись, то установить разгонное состояние
+                    if self.autodrive_state["state"] == "closing" and self.doors["r"] == "closed" and self.doors["l"] == "closed":
+                        self.autodrive_state["state"] = "accel"
+                    
+                    # если истёк таймер, закрыть двери
+                    if self.autodrive_state["timer"] == 0 and self.autodrive_state["state"] == "open" and not self.control_wires["autodrive_door_delay"]:
+                        self.autodrive_state["state"] = "closing"
+                        self.doors["action_l"] = "close"
+                        self.doors["action_r"] = "close"
+
+                    #вычесть таймер
+                    if self.autodrive_state["timer"] > 0: self.autodrive_state["timer"] -= 1
+                elif "reverse" in current_block:
+                    # если состояние отстутствует (вагон только заехал), задать состояние торможения
+                    if self.autodrive_state["state"] == None: self.autodrive_state["state"] = "braking"
+
+                    # если состяние НЕ разгонное, КМ -> 0
+                    # иначе КМ -> +max
+                    if self.autodrive_state["state"] != "accel": self.km = 0
+                    elif self.autodrive_state["state"] == "accel": self.km = self.consist_info["max_km"]
+
+                    # обсчёт максимальной скорости с учётом тормозной точки
+                    maxspeed = 35
+                    maxspeed = self.ars_speed if self.autodrive_state["state"] != "braking" else maxspeed
+                    maxspeed = 20 if current_localized_pos > 384 and self.autodrive_state["state"] == "braking" else maxspeed
+                    maxspeed = 0 if current_localized_pos > 768 and self.autodrive_state["state"] == "braking" else maxspeed
+
+                    # если превышаем Vmax, запитать провод торможения от АВ (todo: сделать для АВ собственный цилиндр)
+                    if self.velocity*3.6 > maxspeed: self.control_wires["vz_ad"] = True
+                    else: self.control_wires["vz_ad"] = False
+
+                    # если мы проехали тормозную точку и затормозили, обернуться
+                    if current_localized_pos >= 512 and self.velocity <= 0 and self.autodrive_state["state"] == "braking":
+                        self.controlling_direction = 1
+                        self.autodrive_state["state"] = "accel"
+
+            elif "up" in current_block and self.controlling_direction == 1:
+                
+                # если блок тормозной...
+                if "brake" in current_block:
+
+                    # разбить блок на смысловые элементы
+                    block_params = current_block.split("_")
+
+                    # если состояние отстутствует (вагон только заехал), задать состояние торможения
+                    if self.autodrive_state["state"] == None: self.autodrive_state["state"] = "braking"
+
+                    # если состяние НЕ разгонное, КМ -> 0
+                    # иначе КМ -> +max
+                    if self.autodrive_state["state"] != "accel": self.km = 0
+                    elif self.autodrive_state["state"] == "accel": self.km = self.consist_info["max_km"]
+
+                    # обсчёт максимальной скорости с учётом тормозной точки
+                    maxspeed = 35
+                    maxspeed = self.ars_speed if current_localized_pos < 640 and self.autodrive_state["state"] != "braking" else maxspeed
+                    maxspeed = 20 if current_localized_pos < 640 and self.autodrive_state["state"] == "braking" else maxspeed
+                    maxspeed = 0 if current_localized_pos < 256 and self.autodrive_state["state"] == "braking" else maxspeed
+
+                    # если превышаем Vmax, запитать провод торможения от АВ (todo: сделать для АВ собственный цилиндр)
+                    if self.velocity*3.6 > maxspeed: self.control_wires["vz_ad"] = True
+                    else: self.control_wires["vz_ad"] = False
+
+                    # если мы проехали тормозную точку и затормозили, разрешить открыть двери
+                    if current_localized_pos <= 512 and self.velocity <= 0 and self.autodrive_state["state"] == "braking":
+                        self.autodrive_state["state"] = "open"
+                        if block_params[2] == "doorR":
+                            self.doors["action_r"] = "open"
+                        if block_params[2] == "doorL":
+                            self.doors["action_l"] = "open"
+                        self.autodrive_state["timer"] = 10*120
+
+                    # если двери закрылись, то установить разгонное состояние
+                    if self.autodrive_state["state"] == "closing" and self.doors["r"] == "closed" and self.doors["l"] == "closed":
+                        self.autodrive_state["state"] = "accel"
+                    
+                    # если истёк таймер, закрыть двери
+                    if self.autodrive_state["timer"] == 0 and self.autodrive_state["state"] == "open" and not self.control_wires["autodrive_door_delay"]:
+                        self.autodrive_state["state"] = "closing"
+                        self.doors["action_l"] = "close"
+                        self.doors["action_r"] = "close"
+
+                    #вычесть таймер
+                    if self.autodrive_state["timer"] > 0: self.autodrive_state["timer"] -= 1
+                elif "reverse" in current_block:
+                    # если состояние отстутствует (вагон только заехал), задать состояние торможения
+                    if self.autodrive_state["state"] == None: self.autodrive_state["state"] = "braking"
+
+                    # если состяние НЕ разгонное, КМ -> 0
+                    # иначе КМ -> +max
+                    if self.autodrive_state["state"] != "accel": self.km = 0
+                    elif self.autodrive_state["state"] == "accel": self.km = self.consist_info["max_km"]
+
+                    # обсчёт максимальной скорости с учётом тормозной точки
+                    maxspeed = 35
+                    maxspeed = self.ars_speed if current_localized_pos < 640 and self.autodrive_state["state"] != "braking" else maxspeed
+                    maxspeed = 20 if current_localized_pos < 640 and self.autodrive_state["state"] == "braking" else maxspeed
+                    maxspeed = 0 if current_localized_pos < 256 and self.autodrive_state["state"] == "braking" else maxspeed
+
+                    # если превышаем Vmax, запитать провод торможения от АВ (todo: сделать для АВ собственный цилиндр)
+                    if self.velocity*3.6 > maxspeed: self.control_wires["vz_ad"] = True
+                    else: self.control_wires["vz_ad"] = False
+
+                    # если мы проехали тормозную точку и затормозили, обернуться
+                    if current_localized_pos <= 512 and self.velocity <= 0 and self.autodrive_state["state"] == "braking":
+                        self.controlling_direction = -1
+                        self.autodrive_state["state"] = "accel"
+            else:
+                self.autodrive_state["state"] = None
+                self.control_wires["vz_ad"] = False
+
+                if self.velocity*3.6 >= self.ars_speed or not(self.control_wires["rp"]):
+                    self.km = 0
+
+                else:
+                    if self.velocity*3.6+5 < self.ars_speed:
+                        self.km = self.consist_info["max_km"]
+                    else:
+                        self.km = 0
+            
+            if not self.control_wires["ars_fuse"]: self.control_wires["ars_braking_safety_auto"] = True
+            else: self.control_wires["ars_braking_safety_auto"] = False
 
     def update_door_states(self):
         # блок логики открытия-закрытия дверей
+
+        for side in ["l","r"]:
+            if "open" in self.doors[f"sound_{side}"]:
+                v, t = self.doors[f"sound_{side}"].split("_")
+                if t == "0": self.doors[f"sound_{side}"] = ""
+                else: self.doors[f"sound_{side}"] = f"{v}_{int(t)-1}"
+
         z = list(self.consist_info["door_animation_states"].keys())
-        if self.doors["action_r"] == "open":
+        if self.doors["action_r"] == "open" and self.doors["r"] != "open":
             if self.doors["timer_r"] == 0:
                 self.doors["r"] = z[z.index(self.doors["r"])+1]
                 if self.doors["r"] != "open":
                     self.doors["timer_r"] = self.consist_info["door_animation_states"][self.doors["r"]]
                 else:
                     self.doors["action_r"] = None
+                    self.doors["sound_r"] = "open_10"
             if self.doors["timer_r"] > 0: self.doors["timer_r"] -= 1
-        elif self.doors["action_r"] == "close":
+        elif self.doors["action_r"] == "close" and self.doors["r"] != "closed":
             if self.doors["timer_r"] == 0:
                 self.doors["r"] = z[z.index(self.doors["r"])-1]
                 if self.doors["r"] != "closed":
                     self.doors["timer_r"] = self.consist_info["door_animation_states"][self.doors["r"]]
                 else:
                     self.doors["action_r"] = None
+                    self.doors["sound_r"] = "close_10"
             if self.doors["timer_r"] > 0: self.doors["timer_r"] -= 1
 
-        if self.doors["action_l"] == "open":
+        if self.doors["action_l"] == "open" and self.doors["l"] != "open":
             if self.doors["timer_l"] == 0:
                 self.doors["l"] = z[z.index(self.doors["l"])+1]
                 if self.doors["l"] != "open":
                     self.doors["timer_l"] = self.consist_info["door_animation_states"][self.doors["l"]]
                 else:
                     self.doors["action_l"] = None
+                    self.doors["sound_l"] = "open_10"
             if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
-        elif self.doors["action_l"] == "close":
+        elif self.doors["action_l"] == "close" and self.doors["l"] != "closed":
             if self.doors["timer_l"] == 0:
                 self.doors["l"] = z[z.index(self.doors["l"])-1]
                 if self.doors["l"] != "closed":
                     self.doors["timer_l"] = self.consist_info["door_animation_states"][self.doors["l"]]
                 else:
                     self.doors["action_l"] = None
+                    self.doors["sound_l"] = "close_10"
             if self.doors["timer_l"] > 0: self.doors["timer_l"] -= 1
 
     def update_ars(self):
@@ -675,7 +936,7 @@ class Consist():
                 # проверить скорость и, если она превышена, выбить предохранитель АРС
                 # иначе если не превышена и нажата КВТ, то восстановить предохранитель АРС
                 if self.velocity*3.6 > self.ars_speed: self.control_wires["ars_fuse"] = False
-                elif self.velocity*3.6 <= self.ars_speed and self.control_wires["ars_braking_safety"]: self.control_wires["ars_fuse"] = True
+                elif self.velocity*3.6 <= self.ars_speed and (self.control_wires["ars_braking_safety"] or self.control_wires["ars_braking_safety_auto"]): self.control_wires["ars_fuse"] = True
 
                 # если АРС сработало и КМ не в нейтральной поизиции, то включить лампу ВД
                 if self.km != 0 and not self.control_wires["ars_fuse"]: self.control_wires["ars_traction_disable"] = True
@@ -704,12 +965,12 @@ class Consist():
                 self.consist_info["element_mapouts"][elem_id]["state"] = self.control_wires[element["connection"]]
             elif element["type"] == "analog_scale":
                 value = 0
-                if element["scale"] == "velocity": value = round(complex(self.velocity*3.6).real,2)
-                elif element["scale"] == "amps": value = round(
+                if element["connection"] == "velocity": value = round(complex(self.velocity*3.6).real,2)
+                elif element["connection"] == "amps": value = round(
                     self.engine_current*self.traction_direction*self.velocity_direction*self.control_wires["rp"],2)
-                elif element["scale"] == "volts": value = round(self.engine_voltage*self.control_wires["rp"],2)
-                elif element["scale"] == "press": value = round(max(self.vz_1,self.vz_2,self.pressure),2)
-                elif element["scale"] == "press_tank": value = round(self.tank_pressure,2)
+                elif element["connection"] == "volts": value = round(self.engine_voltage*self.control_wires["rp"],2)
+                elif element["connection"] == "press": value = round(max(self.vz_1,self.vz_2,self.pressure,self.vz_ad),2)
+                elif element["connection"] == "press_tank": value = round(self.tank_pressure,2)
 
                 if value != element["angle"]:
                     self.consist_info["element_mapouts"][elem_id]["angle"] += (element["max_value"]-element["min_value"])/100*sign(value-element["angle"])
@@ -727,5 +988,6 @@ class Consist():
 
         for train_id in self.linked_to:
             trains[train_id].velocity = self.velocity
+            trains[train_id].signed_velocity = self.velocity*self.velocity_direction
             trains[train_id].pos[0]+=round(math.sin(math.radians(trains[train_id].angle))*self.pixel_velocity*self.velocity_direction,2)
             trains[train_id].pos[1]+=round(math.cos(math.radians(trains[train_id].angle))*self.pixel_velocity*self.velocity_direction,2)

@@ -6,12 +6,16 @@
         "tca2",
         "tcb2",
         "tcb1",
+        "tcx1",
+        "tcx2",
         "tsa1",
         "tsa2",
         "tsb2",
         "tsb1",
         "tsx1",
-        "tsx2"
+        "tsx2",
+        "tsy1",
+        "tsy2"
     ],
     "icons": [
         {
@@ -23,6 +27,50 @@
                 256,
                 false,
                 false
+            ]
+        },
+        {
+            "name": "tsy1",
+            "params": [
+                448,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tsy2",
+            "params": [
+                448,
+                0,
+                64,
+                256,
+                false,
+                true
+            ]
+        },
+        {
+            "name": "default_tsy1",
+            "params": [
+                448,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tsy2",
+            "params": [
+                448,
+                0,
+                64,
+                256,
+                false,
+                true
             ]
         },
         {
@@ -127,11 +175,11 @@
         {
             "name": "default_tsx1",
             "params": [
-                320,
+                384,
                 0,
                 64,
                 256,
-                false,
+                true,
                 false
             ]
         },
@@ -143,6 +191,28 @@
                 64,
                 256,
                 false,
+                false
+            ]
+        },
+        {
+            "name": "default_tcx1",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "default_tcx2",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                true,
                 false
             ]
         },
@@ -303,11 +373,11 @@
         {
             "name": "tsx1",
             "params": [
-                320,
+                384,
                 0,
                 64,
                 256,
-                false,
+                true,
                 false
             ]
         },
@@ -321,6 +391,28 @@
                 false,
                 false
             ]
+        },
+        {
+            "name": "tcx1",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "name": "tcx2",
+            "params": [
+                320,
+                0,
+                64,
+                256,
+                true,
+                false
+            ]
         }
     ],
     "locale": {
@@ -331,6 +423,7 @@
                 "consist_selector": "Consist selector",
                 "consist_spawn": "Create a consist",
                 "do_prerender_all": "Prerender all!",
+                "editor_autodrive": "Autodrive editor",
                 "editor_close": "Close",
                 "editor_close_menu": "Close",
                 "editor_consist": "Consist",
@@ -369,9 +462,7 @@
                 "editor_world": "World",
                 "emu_repaint": "Train repaints",
                 "emu_type": "Train type",
-                "graphics_definer": "Graphics locator",
                 "locale": "Language",
-                "new_game": "Start a new game",
                 "pack_chooser": "Packs",
                 "pack_disable": "Disable",
                 "pack_editor": "Pack editor",
@@ -386,6 +477,52 @@
                 "volume": "Volume",
                 "world_chooser": "Choose a map",
                 "world_selector": "Map selector"
+            },
+            "editor_auto": {
+                "title": "Autodrive editor"
+            },
+            "editor_autodrive": {
+                "title": "Autodrive editor"
+            },
+            "editor_common": {
+                "add": "Add",
+                "name": "Name",
+                "remove": "Remove"
+            },
+            "editor_consist_select": {
+                "title": "Consists"
+            },
+            "editor_graph_define": {
+                "title": "Graphics locator"
+            },
+            "editor_panel": {
+                "angle_base": "Base",
+                "angle_max": "Max",
+                "angle_min": "Min",
+                "angle_multiplier": "Scale",
+                "link": "Likned wire",
+                "sprite": "Display sprite",
+                "state": "Part state",
+                "title": "Control panel editor",
+                "title_selector": "Part selector",
+                "type": "Part type"
+            },
+            "editor_signals": {
+                "name": "Name",
+                "next": "Next",
+                "speed": "Speed",
+                "title": "Signal editor"
+            },
+            "editor_tracks": {
+                "title": "Track editor"
+            },
+            "title": {
+                "editor": "Pack editor",
+                "multiplayer": "Connect to a game",
+                "options": "Options",
+                "quit": "Quit",
+                "selector": "Packs",
+                "singleplayer": "Start a new game"
             }
         },
         "ru": {
@@ -450,6 +587,34 @@
                 "volume": "Громкость",
                 "world_chooser": "Выбор карт",
                 "world_selector": "Выбор карт"
+            },
+            "editor_autodrive": {
+                "title": "Редактор автоведения"
+            },
+            "editor_common": {
+                "add": "Добавить",
+                "name": "Имя",
+                "remove": "Убрать"
+            },
+            "editor_consist_select": {
+                "title": "Составы"
+            },
+            "editor_signals": {
+                "name": "Имя",
+                "next": "След.",
+                "speed": "Скор.",
+                "title": "Редактор сигналов"
+            },
+            "editor_tracks": {
+                "title": "Редактор путей"
+            },
+            "title": {
+                "editor": "Редактор пакетов",
+                "multiplayer": "Присоединиться к игре",
+                "options": "Параметры",
+                "quit": "Выйти",
+                "selector": "Пакеты",
+                "singleplayer": "Начать игру"
             }
         }
     },
@@ -464,6 +629,78 @@
                 128,
                 false,
                 false
+            ]
+        },
+        {
+            "filename": "icons",
+            "name": "up_brake_doorL",
+            "params": [
+                320,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "icons",
+            "name": "up_brake_doorR",
+            "params": [
+                320,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "icons",
+            "name": "down_brake_doorR",
+            "params": [
+                384,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "icons",
+            "name": "down_brake_doorL",
+            "params": [
+                384,
+                256,
+                64,
+                256,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "icons",
+            "name": "up_reverse",
+            "params": [
+                448,
+                256,
+                64,
+                256,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "icons",
+            "name": "down_reverse",
+            "params": [
+                448,
+                256,
+                64,
+                256,
+                true,
+                true
             ]
         },
         {
@@ -578,11 +815,27 @@
                 3
             ],
             [
+                "tcx1",
+                3
+            ],
+            [
+                "tcx2",
+                3
+            ],
+            [
                 "tsx1",
                 3
             ],
             [
                 "tsx2",
+                3
+            ],
+            [
+                "tsy1",
+                3
+            ],
+            [
+                "tsy2",
                 3
             ]
         ],
@@ -717,6 +970,34 @@
         },
         {
             "filename": "tracks",
+            "name": "tcx1",
+            "params": [
+                192,
+                256,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tcx2",
+            "params": [
+                192,
+                256,
+                64,
+                256,
+                1,
+                0,
+                true,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
             "name": "tsx1",
             "params": [
                 0,
@@ -741,6 +1022,34 @@
                 0,
                 false,
                 false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsy1",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                1,
+                0,
+                false,
+                false
+            ]
+        },
+        {
+            "filename": "tracks",
+            "name": "tsy2",
+            "params": [
+                128,
+                256,
+                64,
+                256,
+                1,
+                0,
+                false,
+                true
             ]
         }
     ]

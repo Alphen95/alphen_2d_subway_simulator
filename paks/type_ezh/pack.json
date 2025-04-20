@@ -692,7 +692,7 @@
                                 73,
                                 27,
                                 5,
-                                null,
+                                "None",
                                 7,
                                 5
                             ],
@@ -755,7 +755,7 @@
                                 5
                             ]
                         ],
-                        "name": "ars_70",
+                        "name": "ars_80",
                         "state": false,
                         "type": "lamp"
                     },
@@ -787,6 +787,7 @@
                     {
                         "angle": 0,
                         "base_angle": -30,
+                        "connection": "velocity",
                         "draw_mappings": [
                             [
                                 67,
@@ -817,12 +818,12 @@
                         "min_value": 0,
                         "multiplier": 1.5,
                         "name": "speed",
-                        "scale": "velocity",
                         "type": "analog_scale"
                     },
                     {
                         "angle": 0,
                         "base_angle": -90,
+                        "connection": "amps",
                         "draw_mappings": [
                             [
                                 120.5,
@@ -853,12 +854,12 @@
                         "min_value": -600,
                         "multiplier": 0.15,
                         "name": "current",
-                        "scale": "amps",
                         "type": "analog_scale"
                     },
                     {
                         "angle": 0,
                         "base_angle": 45,
+                        "connection": "press",
                         "draw_mappings": [
                             [
                                 117.5,
@@ -889,12 +890,12 @@
                         "min_value": 0,
                         "multiplier": 45,
                         "name": "tc_pressure",
-                        "scale": "press",
                         "type": "analog_scale"
                     },
                     {
                         "angle": 0,
                         "base_angle": 45,
+                        "connection": "press_tank",
                         "draw_mappings": [
                             [
                                 117.5,
@@ -915,7 +916,7 @@
                             [
                                 0,
                                 0,
-                                null,
+                                null,  
                                 0,
                                 0
                             ]
@@ -924,11 +925,10 @@
                         "min_value": 0,
                         "multiplier": 45,
                         "name": "nm_pressure",
-                        "scale": "press_tank",
                         "type": "analog_scale"
                     }
                 ],
-                "engine_constant": 40,
+                "engine_constant": 32.5,
                 "engine_resistance": 0.2,
                 "has_als": false,
                 "has_ars": true,
@@ -1010,7 +1010,7 @@
                         "type": "accel"
                     }
                 },
-                "mass": 40500,
+                "mass": 39000,
                 "max_km": 3,
                 "max_tk": 5,
                 "min_km": -3,
@@ -1240,17 +1240,17 @@
                         "voltage": 141.51
                     },
                     "16": {
-                        "coil_engagement": 100,
+                        "coil_engagement": 85,
                         "switch_current": 100,
                         "voltage": 161.29
                     },
                     "17": {
-                        "coil_engagement": 100,
+                        "coil_engagement": 70,
                         "switch_current": 100,
                         "voltage": 187.5
                     },
                     "18": {
-                        "coil_engagement": 80,
+                        "coil_engagement": 55,
                         "switch_current": 100,
                         "voltage": 187.5
                     },

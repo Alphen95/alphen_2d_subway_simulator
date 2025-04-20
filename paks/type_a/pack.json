@@ -64,8 +64,8 @@
                         "default": false,
                         "draw_mappings": [
                             [
-                                55,
-                                28,
+                                62,
+                                69,
                                 5,
                                 "vu_22_off",
                                 11,
@@ -73,8 +73,8 @@
                                 "switch_off"
                             ],
                             [
-                                55,
-                                28,
+                                62,
+                                69,
                                 5,
                                 "vu_22_on",
                                 11,
@@ -91,8 +91,8 @@
                         "default": false,
                         "draw_mappings": [
                             [
-                                67,
-                                28,
+                                74,
+                                69,
                                 5,
                                 "vu_22_off",
                                 11,
@@ -100,8 +100,8 @@
                                 "switch_off"
                             ],
                             [
-                                67,
-                                28,
+                                74,
+                                69,
                                 5,
                                 "vu_22_on",
                                 11,
@@ -118,8 +118,8 @@
                         "default": false,
                         "draw_mappings": [
                             [
-                                80,
-                                28,
+                                87,
+                                69,
                                 5,
                                 "vu_22_off",
                                 11,
@@ -127,8 +127,8 @@
                                 "switch_off"
                             ],
                             [
-                                80,
-                                28,
+                                87,
+                                69,
                                 5,
                                 "vu_22_on",
                                 11,
@@ -145,8 +145,8 @@
                         "default": false,
                         "draw_mappings": [
                             [
-                                92,
-                                28,
+                                99,
+                                69,
                                 5,
                                 "vu_22_off",
                                 11,
@@ -154,8 +154,8 @@
                                 "switch_off"
                             ],
                             [
-                                92,
-                                28,
+                                99,
+                                69,
                                 5,
                                 "vu_22_on",
                                 11,
@@ -172,8 +172,8 @@
                         "default": false,
                         "draw_mappings": [
                             [
-                                80,
-                                46,
+                                87,
+                                87,
                                 5,
                                 "vu_22_off",
                                 11,
@@ -181,8 +181,8 @@
                                 "switch_off"
                             ],
                             [
-                                80,
-                                46,
+                                87,
+                                87,
                                 5,
                                 "vu_22_on",
                                 11,
@@ -199,8 +199,8 @@
                         "default": false,
                         "draw_mappings": [
                             [
-                                92,
-                                46,
+                                99,
+                                87,
                                 5,
                                 "vu_22_off",
                                 11,
@@ -208,8 +208,8 @@
                                 "switch_off"
                             ],
                             [
-                                92,
-                                46,
+                                99,
+                                87,
                                 5,
                                 "vu_22_on",
                                 11,
@@ -225,16 +225,16 @@
                         "connection": "rp",
                         "draw_mappings": [
                             [
-                                68,
-                                19,
+                                75,
+                                60,
                                 5,
                                 "red_lamp_on",
                                 6,
                                 6
                             ],
                             [
-                                68,
-                                19,
+                                75,
+                                60,
                                 5,
                                 "red_lamp_off",
                                 6,
@@ -249,16 +249,16 @@
                         "connection": "unused",
                         "draw_mappings": [
                             [
-                                76,
-                                19,
+                                83,
+                                60,
                                 5,
                                 "green_lamp_off",
                                 6,
                                 6
                             ],
                             [
-                                76,
-                                19,
+                                83,
+                                60,
                                 5,
                                 "green_lamp_on",
                                 6,
@@ -273,16 +273,16 @@
                         "connection": "doors_open",
                         "draw_mappings": [
                             [
-                                84,
-                                19,
+                                91,
+                                60,
                                 5,
                                 "blue_lamp_on",
                                 6,
                                 6
                             ],
                             [
-                                84,
-                                19,
+                                91,
+                                60,
                                 5,
                                 "blue_lamp_off",
                                 6,
@@ -296,10 +296,11 @@
                     {
                         "angle": 0,
                         "base_angle": 180,
+                        "connection": "velocity",
                         "draw_mappings": [
                             [
-                                1.5,
-                                -32,
+                                6,
+                                9,
                                 5,
                                 "speedometer_bottom",
                                 40,
@@ -310,121 +311,86 @@
                                 32.5,
                                 5,
                                 "speedometer_pointer",
-                                6,
-                                6
+                                0,
+                                0
                             ],
                             [
-                                1.5,
-                                -32,
+                                6,
+                                9,
                                 5,
                                 "speedometer_overlay",
-                                6,
-                                6
+                                0,
+                                0
                             ]
                         ],
                         "max_value": 90,
                         "min_value": 0,
                         "multiplier": -1.125,
                         "name": "speed",
-                        "scale": "velocity",
                         "type": "analog_scale"
                     },
                     {
                         "angle": 0,
                         "base_angle": -90,
+                        "connection": "amps",
                         "draw_mappings": [
                             [
-                                120.5,
-                                -31,
+                                125.5,
+                                10,
                                 5,
                                 "ammeter_bottom",
-                                25,
-                                15
+                                23,
+                                17
                             ],
                             [
-                                12.5,
-                                12.5,
+                                11.5,
+                                14.5,
                                 5,
                                 "ammeter_pointer",
-                                6,
-                                6
+                                0,
+                                0
                             ],
                             [
-                                120.5,
-                                -31,
+                                125.5,
+                                10,
                                 5,
                                 "ammeter_overlay",
-                                6,
-                                6
+                                0,
+                                0
                             ]
                         ],
                         "max_value": 600,
                         "min_value": -600,
                         "multiplier": 0.15,
                         "name": "current",
-                        "scale": "amps",
                         "type": "analog_scale"
                     },
                     {
                         "angle": 0,
                         "base_angle": 45,
+                        "connection": "press_tank",
                         "draw_mappings": [
                             [
-                                117.5,
-                                -17,
+                                113,
+                                28,
                                 5,
                                 "manometer_bottom",
-                                31,
-                                31
+                                23,
+                                26
                             ],
                             [
-                                15.5,
-                                15.5,
+                                11.5,
+                                14.5,
                                 5,
                                 "manometer_pointer",
-                                6,
-                                6
-                            ],
-                            [
-                                117.5,
-                                -17,
-                                5,
-                                "manometer_overlay",
-                                6,
-                                6
-                            ]
-                        ],
-                        "max_value": 6,
-                        "min_value": 0,
-                        "multiplier": 45,
-                        "name": "tc_pressure",
-                        "scale": "press",
-                        "type": "analog_scale"
-                    },
-                    {
-                        "angle": 0,
-                        "base_angle": 45,
-                        "draw_mappings": [
-                            [
-                                0,
-                                0,
-                                5,
-                                null,
                                 0,
                                 0
                             ],
                             [
-                                15.5,
-                                15.5,
+                                113,
+                                28,
                                 5,
-                                "manometer_pointer_red",
-                                6,
-                                6
-                            ],
-                            [
-                                0,
-                                0,
-                                null,
+                                "manometer_overlay",
                                 0,
                                 0
                             ]
@@ -433,7 +399,42 @@
                         "min_value": 0,
                         "multiplier": 45,
                         "name": "nm_pressure",
-                        "scale": "press_tank",
+                        "type": "analog_scale"
+                    },
+                    {
+                        "angle": 0,
+                        "base_angle": 45,
+                        "connection": "press",
+                        "draw_mappings": [
+                            [
+                                138,
+                                28,
+                                5,
+                                "manometer_bottom",
+                                23,
+                                26
+                            ],
+                            [
+                                11.5,
+                                14.5,
+                                5,
+                                "manometer_pointer_red",
+                                0,
+                                0
+                            ],
+                            [
+                                138,
+                                28,
+                                5,
+                                "manometer_overlay",
+                                0,
+                                0
+                            ]
+                        ],
+                        "max_value": 6,
+                        "min_value": 0,
+                        "multiplier": 45,
+                        "name": "tc_pressure",
                         "type": "analog_scale"
                     }
                 ],
@@ -443,36 +444,36 @@
                 "has_ars": false,
                 "km_draw_mapouts": {
                     "-1": [
-                        19,
-                        32
+                        26,
+                        73
                     ],
                     "-2": [
-                        19,
-                        35
+                        26,
+                        76
                     ],
                     "0": [
-                        19,
-                        29
+                        26,
+                        70
                     ],
                     "1": [
-                        19,
-                        26
+                        26,
+                        67
                     ],
                     "2": [
-                        19,
-                        23
+                        26,
+                        64
                     ],
                     "3": [
-                        19,
-                        20
+                        26,
+                        61
                     ],
                     "4": [
-                        19,
-                        17
+                        26,
+                        58
                     ],
                     "5": [
-                        19,
-                        14
+                        26,
+                        55
                     ],
                     "scale": 5
                 },
@@ -527,40 +528,40 @@
                 "pressure_tank_volume": 0.8,
                 "rr_draw_mapouts": {
                     "-1": [
-                        -18,
-                        52
+                        -11,
+                        93
                     ],
                     "0": [
-                        -18,
-                        52
+                        -11,
+                        93
                     ],
                     "1": [
-                        -18,
-                        45
+                        -11,
+                        86
                     ],
                     "scale": 5
                 },
                 "target_pressure": 6,
                 "tk_draw_mapouts": {
                     "1": [
-                        100,
-                        20
+                        107,
+                        61
                     ],
                     "2": [
-                        102,
-                        24
+                        109,
+                        65
                     ],
                     "3": [
-                        105,
-                        29
+                        112,
+                        70
                     ],
                     "4": [
-                        108,
-                        34
+                        115,
+                        75
                     ],
                     "5": [
-                        110,
-                        38
+                        117,
+                        79
                     ],
                     "scale": 5
                 },
@@ -614,185 +615,178 @@
             },
             "control_panel_info": {
                 "ammeter_bottom": {
-                    "h": 15,
+                    "h": 17,
                     "scale": 5,
-                    "w": 25,
-                    "x": 150,
-                    "y": 104
+                    "w": 23,
+                    "x": 202,
+                    "y": 131
                 },
                 "ammeter_overlay": {
-                    "h": 15,
+                    "h": 17,
                     "scale": 5,
-                    "w": 25,
-                    "x": 176,
-                    "y": 104
+                    "w": 23,
+                    "x": 226,
+                    "y": 131
                 },
                 "ammeter_pointer": {
                     "h": 1,
                     "scale": 5,
-                    "w": 21,
-                    "x": 150,
-                    "y": 120
+                    "w": 19,
+                    "x": 174,
+                    "y": 104
                 },
                 "blue_lamp_off": {
                     "h": 6,
                     "scale": 5,
                     "w": 6,
-                    "x": 157,
+                    "x": 181,
                     "y": 56
                 },
                 "blue_lamp_on": {
                     "h": 6,
                     "scale": 5,
                     "w": 6,
-                    "x": 150,
+                    "x": 174,
                     "y": 56
                 },
                 "green_lamp_off": {
                     "h": 6,
                     "scale": 5,
                     "w": 6,
-                    "x": 157,
+                    "x": 181,
                     "y": 49
                 },
                 "green_lamp_on": {
                     "h": 6,
                     "scale": 5,
                     "w": 6,
-                    "x": 150,
+                    "x": 174,
                     "y": 49
                 },
                 "km": {
                     "h": 8,
                     "scale": 5,
                     "w": 40,
-                    "x": 150,
+                    "x": 174,
                     "y": 1
                 },
                 "manometer_bottom": {
-                    "h": 31,
+                    "h": 26,
                     "scale": 5,
-                    "w": 31,
+                    "w": 23,
                     "x": 202,
                     "y": 104
                 },
                 "manometer_overlay": {
-                    "h": 15,
+                    "h": 26,
                     "scale": 5,
-                    "w": 25,
-                    "x": 202,
-                    "y": 136
+                    "w": 23,
+                    "x": 226,
+                    "y": 104
                 },
                 "manometer_pointer": {
                     "h": 1,
                     "scale": 5,
-                    "w": 21,
-                    "x": 150,
-                    "y": 122
+                    "w": 17,
+                    "x": 174,
+                    "y": 106
                 },
                 "manometer_pointer_red": {
                     "h": 1,
                     "scale": 5,
-                    "w": 21,
-                    "x": 150,
-                    "y": 124
+                    "w": 17,
+                    "x": 174,
+                    "y": 108
                 },
                 "overlay": {
-                    "h": 64,
+                    "h": 105,
                     "scale": 5,
-                    "w": 148,
-                    "x": 1,
-                    "y": 66
+                    "w": 162,
+                    "x": 0,
+                    "y": 106
                 },
                 "panel": {
-                    "h": 64,
+                    "h": 105,
                     "scale": 5,
-                    "w": 148,
-                    "x": 1,
-                    "y": 1
+                    "w": 162,
+                    "x": 0,
+                    "y": 0
                 },
                 "red_lamp_off": {
                     "h": 6,
                     "scale": 5,
                     "w": 6,
-                    "x": 157,
+                    "x": 181,
                     "y": 42
                 },
                 "red_lamp_on": {
                     "h": 6,
                     "scale": 5,
                     "w": 6,
-                    "x": 150,
+                    "x": 174,
                     "y": 42
                 },
                 "rr_-1": {
                     "h": 10,
                     "scale": 5,
                     "w": 24,
-                    "x": 181,
+                    "x": 205,
                     "y": 15
                 },
                 "rr_0": {
                     "h": 4,
                     "scale": 5,
                     "w": 24,
-                    "x": 181,
+                    "x": 205,
                     "y": 10
                 },
                 "rr_1": {
                     "h": 10,
                     "scale": 5,
                     "w": 24,
-                    "x": 181,
+                    "x": 205,
                     "y": 26
                 },
                 "speedometer_bottom": {
                     "h": 40,
                     "scale": 5,
                     "w": 40,
-                    "x": 191,
+                    "x": 215,
                     "y": 63
                 },
                 "speedometer_overlay": {
                     "h": 40,
                     "scale": 5,
                     "w": 40,
-                    "x": 150,
+                    "x": 174,
                     "y": 63
                 },
                 "speedometer_pointer": {
                     "h": 1,
                     "scale": 5,
                     "w": 45,
-                    "x": 164,
+                    "x": 188,
                     "y": 61
                 },
                 "tk": {
                     "h": 20,
                     "scale": 5,
                     "w": 30,
-                    "x": 150,
+                    "x": 174,
                     "y": 21
-                },
-                "underlay": {
-                    "h": 105,
-                    "scale": 5,
-                    "w": 153,
-                    "x": 1,
-                    "y": 131
                 },
                 "vu_22_off": {
                     "h": 17,
                     "scale": 5,
                     "w": 11,
-                    "x": 176,
+                    "x": 200,
                     "y": 42
                 },
                 "vu_22_on": {
                     "h": 17,
                     "scale": 5,
                     "w": 11,
-                    "x": 164,
+                    "x": 188,
                     "y": 42
                 }
             },

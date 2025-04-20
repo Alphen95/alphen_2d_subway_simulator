@@ -16,8 +16,9 @@ import pathlib
 import pprint
 from res.train import *
 from res import leitmotif
+from res import leitmotifplus
 
-version = "0.7.1 - локализация"
+version = "0.8.0 - Autodrive update"
 version_id = version.split(" ")[0]
 scale = 1
 current_dir = ""
@@ -48,6 +49,7 @@ render_progress = 0
 render_log = []
 logger = logging.getLogger("aiss")
 logging.basicConfig(filename='latest.log', encoding='utf-8', level=logging.DEBUG)
+selected_locale = "en"
 
 main_font_height = 20
 title_font_height = 30
@@ -63,7 +65,7 @@ char_width = temp_text.get_width()/26
 
 screen_size = screen.get_size()
 #screen = pg.display.set_mode(screen_size, pg.SRCALPHA)
-pg.display.set_caption(f"Alphen's Isometric Subway Simulator v{version_id}")
+pg.display.set_caption(f"Alphen's Isometric Metro Simulator v{version_id}")
 
 sprite_loading_info = []
 ground_sprites = {}
@@ -77,6 +79,8 @@ consists_info = {}
 consists = {}
 
 frame_cnt = 0
+
+object_lists = {}
 
 screen_state = "load_start"
 transition_timer = 100
@@ -108,13 +112,14 @@ options_params = {
     "locale_scroll":0,
 }
 
+acceptable_control_types = ["lamp","button","switch","display","analog_scale"]
+
 base_sdk_params = {
     "selected_menu":-1,
     "mode":"main",
     "editor_mode":None,
     "current_pack":None,
     "folder_pointer":None,
-    "folder_scroll":0,
     "worlds_pointer":None,
     "worlds_name":"",
     "worlds_scroll":0,
@@ -127,9 +132,7 @@ base_sdk_params = {
     "consist_pointer":None,
     "consist_id": -1,
     "consist_scroll":0,
-    "element_pointer":None,
-    "element_name":"",
-    "element_scroll":0,
+    "part_selection":0,
     "scale":4,
     "editing":False
 }
@@ -142,11 +145,13 @@ sdk_mode_timers = {
 
 sdk_editor_mode_timers = {
     "graph_define":0,
+    "graph":0,
     "tracks":0,
-    "signals":0
+    "signals":0,
+    "autodrive":0
 }
 
-sdk_loaded_pack = {"graphics":{},"info":{}}
+sdk_loaded_pack = {"graphics":{},"info":{},"name":None}
 
 progress = 0
 load_timer = 0
@@ -155,16 +160,6 @@ current_toolbar = 0
 custom_tool_parameters = ["","",0]
 spawn_menu = [False, 0, None, None]
 toolbar = []
-
-signal_editor_params = {
-    "current":None,
-    "editor_name":"",
-    "linked_blocks":[],
-    "next":"",
-    "speed":"",
-    "scroll":0,
-    "active":None
-}
 
 pg.mixer.init(44100, -16, 2, 1024)
 pg.mixer.set_num_channels(128) #128 каналов. 10 резервированы под спецзвуки. возможно, верну клацанье КМ и добавлю ТК.
@@ -179,14 +174,21 @@ def text_splitter(base_string, char_width,max_width):
     max_char_per_line = int(max_width/char_width)
     return [base_string[i:i+max_char_per_line] for i in range(0, len(base_string), max_char_per_line)]
 
+def isnumeric(s):
+    try:
+        s = float(s)
+        return True
+    except:
+        return False
+
 def fetch_line(subset, line_definition):
     global selected_locale, text_bank
     line = ""
 
-    if selected_locale in text_bank:
-        if subset in text_bank[selected_locale]:
-            if line_definition in text_bank[selected_locale][subset]:
-                line = text_bank[selected_locale][subset][line_definition]
+    if selected_locale in text_bank and subset in text_bank[selected_locale] and line_definition in text_bank[selected_locale][subset]:
+        line = text_bank[selected_locale][subset][line_definition]
+    elif subset in text_bank["en"] and line_definition in text_bank["en"][subset]:
+        line = text_bank["en"][subset][line_definition]
 
     return line
 
@@ -197,6 +199,7 @@ def render():
     world_angle = 45
     train_angles = [world_angle,world_angle+180]+[14+world_angle,-14+world_angle,180-14+world_angle,180+14+world_angle]
     total = 0
+    render_log = []
 
     if not os.path.isdir(f"paks/{pack_name}/render"):
         os.makedirs(os.path.join("paks",pack_name,"render"))
@@ -626,7 +629,7 @@ def sprite_load_routine():
         progress+=1
 
     transition_timer = 100-transition_timer
-    transition_act = "disappear:title"
+    transition_act = "disappear:postload"
     logger.info(f"total: {total_frame_cnt} frames (roughly {total_frame_cnt/60} seconds)")
     
 total_frame_cnt = 0
@@ -645,6 +648,7 @@ mouse_block_pos = (None,None)
 mouse_clicked = False
 mouse_released = False
 line_pos = 0
+m_pos = [0,0]
 
 while working:
     keydowns = []
@@ -678,6 +682,13 @@ while working:
             mouse_clicked = True
         elif evt.type == pg.MOUSEBUTTONUP:
             mouse_released = True
+
+    old_m_pos = (m_pos[0],m_pos[1])
+    pressed = pg.key.get_pressed()
+    m_pos = pg.mouse.get_pos()
+    m_btn = pg.mouse.get_pressed()
+    mouse_state = (m_pos[0],m_pos[1],mouse_clicked,(m_btn[0] or m_btn[1] or m_btn[2]), (m_btn[0], m_btn[1], m_btn[2]))
+
     if screen_state == "loading":
         screen.fill(tunnel_nothingness)
         opacity = (100-transition_timer if transition_act in ["appear",""] else transition_timer)
@@ -708,11 +719,8 @@ while working:
         
         text_color = (200,200,200)
         screen.fill(tunnel_nothingness)
-        #text = font.render(f"Alphen's Isometric Subway Simulator v{version_id}", True, text_color)
-        #screen.blit(text,(screen_size[0]/2-text.get_width()/2, screen_size[1]/2-2*text.get_height()))
         
         icon_ht_modif = -misc_sprites["game_icon"].get_height()*1.5*(100-animation)/100
-        #print(animation,icon_ht_modif)
         screen.blit(
             pg.transform.scale(
                 misc_sprites["game_icon"],(
@@ -919,7 +927,6 @@ while working:
     elif screen_state == "sdk":
         animation = (100*((transition_timer/100)**2) if transition_act in ["appear",""] else 100-100*((transition_timer/100)**2))
         screen.fill(tunnel_nothingness)
-        old_m_pos = m_pos
         screen.fill(tunnel_nothingness)
         div = 4
         
@@ -937,35 +944,7 @@ while working:
         iconbar_size = (64,128)
         textbox_length = 280
 
-        if sdk_params["editor_mode"] == "graph_define":
-            if "panel" in sdk_loaded_pack["graphics"]:
-                screen.blit(pg.transform.scale(sdk_loaded_pack["graphics"]["panel"],
-                        (sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"],sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"])),
-                    (screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0],
-                    screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1])
-                    )
-                if sdk_params["element_pointer"] != -1:
-                    param = sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]
-                    tmp_surf = pg.Surface((param["w"]*sdk_params["scale"],param["h"]*sdk_params["scale"]))
-                    pg.draw.rect(tmp_surf,(240,240,240),(
-                        0,
-                        0,
-                        param["w"]*sdk_params["scale"],
-                        param["h"]*sdk_params["scale"]
-                    ))
-                    tmp_surf.convert()
-                    tmp_surf.set_alpha(64)
-                    screen.blit(tmp_surf,(
-                        screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0]+param["x"]*sdk_params["scale"],
-                        screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1]+param["y"]*sdk_params["scale"]))
-                    pg.draw.rect(screen,(240,240,240),(
-                        screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0]+param["x"]*sdk_params["scale"],
-                        screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1]+param["y"]*sdk_params["scale"],
-                        param["w"]*sdk_params["scale"],
-                        param["h"]*sdk_params["scale"]
-                    ),2)
-
-        elif sdk_params["mode"] == "world" and sdk_params["worlds_pointer"] != None:
+        if sdk_params["mode"] == "world" and sdk_params["worlds_pointer"] != None:
             block_pos = [int((player_pos[0]-(editor_block_size[0] if player_pos[0] < 0 else 0))/editor_block_size[0]),
                         int((player_pos[1]-(editor_block_size[1] if player_pos[1] < 0 else 0))/editor_block_size[1])]
             
@@ -1016,6 +995,8 @@ while working:
                             elif watp[-4:] == "tsb2": icon = "default_tsb2"
                             elif watp[-4:] == "tsx1": icon = "default_tsx1"
                             elif watp[-4:] == "tsx2": icon = "default_tsx2"
+                            elif watp[-4:] == "tsy1": icon = "default_tsy1"
+                            elif watp[-4:] == "tsy2": icon = "default_tsy2"
                             if icon:
                                 screen.blit(pg.transform.scale(icons[icon],editor_block_size
                                     ),(
@@ -1031,15 +1012,35 @@ while working:
                                     screen_size[1]/2+(block_y+0.5)*editor_block_size[1]-player_pos[1]%editor_block_size[1]-text.get_height()/2)
                                 )
 
-                    if sdk_params["editor_mode"] == "signals" and signal_editor_params["current"] != None:
-                        if [block_pos[0]+block_x,block_pos[1]+block_y] in signals[signal_editor_params["current"]]["tiles"]:
+                    if sdk_params["editor_mode"] == "signals" and signal_placer_window.get_state("list_signals") != "":
+                        if [block_pos[0]+block_x,block_pos[1]+block_y] in signals[signal_placer_window.get_state("list_signals")]["tiles"]:
                             pg.draw.rect(screen,(255,0,0),
                                 (screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
                                 screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1],
                                 editor_block_size[0],
                                 editor_block_size[1]
                             ),4)
-
+                    
+                    if sdk_params["editor_mode"] == "autodrive":
+                        if tile_world_position in autodrive_map and autodrive_map[tile_world_position] in misc_sprites:
+                            screen.blit(pg.transform.scale(misc_sprites[autodrive_map[tile_world_position]],editor_block_size
+                                    ),(
+                                    screen_size[0]/2+block_x*editor_block_size[0]-player_pos[0]%editor_block_size[0],
+                                    screen_size[1]/2+block_y*editor_block_size[1]-player_pos[1]%editor_block_size[1])
+                                )
+        if ("panel" in sdk_loaded_pack["graphics"] and sdk_params["editor_mode"] == "graph_define") or sdk_editor_mode_timers["graph_define"] > 0:
+            selected_sprite = graphics_definer_params_window.get_state("list_sprites")
+            if "panel" in sdk_loaded_pack["graphics"]:
+                graphics_definer_image_window.objects["image_box"]["img"] = sdk_loaded_pack["graphics"]["panel"]
+                graphics_definer_image_window.objects["image_box"]["scale"] = sdk_params["scale"]
+                graphics_definer_image_window.objects["image_box"]["offset"] = sdk_loaded_pack["pos"]
+                if selected_sprite != "" and selected_sprite in sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"]:
+                    param = sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][selected_sprite]
+                    graphics_definer_image_window.objects["image_box"]["selection"] = [param["x"],param["y"],param["w"],param["h"]]
+                else:
+                    graphics_definer_image_window.objects["image_box"]["selection"] = [0,0,0,0]
+            
+            graphics_definer_image_window.update(screen, mouse_state, unicode)
 
         #менюшка наверху экрана
         chars = 0
@@ -1050,6 +1051,7 @@ while working:
         menu_bar_vert_offset_top = 4
         menu_bar_vert_offset_bottom = 6
         clicked_on_menu_entry = False
+
         disabled = [
             False,
             sdk_loaded_pack["info"] == {},
@@ -1081,10 +1083,9 @@ while working:
                 (fetch_line("base","editor_map_mode"),"editor_world")
             ], [ #меню редакторов мира
                 (fetch_line("base","editor_map_tiles"),"editor_track"),
-                (fetch_line("base","editor_map_signalling"),"editor_signal")
+                (fetch_line("base","editor_map_signalling"),"editor_signal"),
+                (fetch_line("base","editor_autodrive"),"editor_autodrive")
             ], [ #меню редакторов состава
-                (fetch_line("base","editor_consist_props"),"editor_phys"),
-                (fetch_line("base","editor_consist_panel"),"editor_graph"),
                 (fetch_line("base","editor_consist_locator"),"editor_graph_define")
             ], [ #меню помощи
                 (fetch_line("base","editor_handbook"),None)
@@ -1141,302 +1142,188 @@ while working:
 
         if m_btn[0] and not clicked_on_menu_entry: sdk_params["selected_menu"] = -1
 
-        if sdk_params["editor_mode"] == "graph_define" and not clicked_on_menu_entry:
-            if pg.K_EQUALS in keydowns and not sdk_params["editing"]:
-                sdk_params["scale"]+=1
-            elif pg.K_MINUS in keydowns and not sdk_params["editing"] and sdk_params["scale"] > 1:
-                sdk_params["scale"]-=1
-
-            if m_btn[1]:
-                sdk_loaded_pack["pos"][0] += m_pos [0] - old_m_pos[0]
-                sdk_loaded_pack["pos"][1] += m_pos [1] - old_m_pos[1]
-
-            if (m_btn[0] or m_btn[2]) and m_pos[0] < screen_size[0]/4*3-20 and mouse_clicked:
-                if "panel" in sdk_loaded_pack["graphics"] and sdk_params["element_pointer"] != -1:
-                    param = sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]
-                    x1,y1,x2,y2 = param["x"],param["y"],param["x"]+param["w"],param["y"]+param["h"]
-                    click_x = int((m_pos[0]-(screen_size[0]/2-sdk_loaded_pack["graphics"]["panel"].get_width()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][0]))/sdk_params["scale"])
-                    click_y = int((m_pos[1]-(screen_size[1]/2-sdk_loaded_pack["graphics"]["panel"].get_height()*sdk_params["scale"]/2+sdk_loaded_pack["pos"][1]))/sdk_params["scale"])
-                    if m_btn[0]:
-                        if click_x < x2: x1 = click_x
-                        elif click_x > x2:
-                            x1 = x2
-                            x2 = click_x
-                        if click_y < y2: y1 = click_y
-                        elif click_y > y2:
-                            y1 = y2
-                            y2  = click_y
-                    elif m_btn[2]:
-                        if click_x > x1: x2 = click_x
-                        elif click_x < x1:
-                            x2 = x1
-                            x1 = click_x
-                        if click_y > y1: y2 = click_y
-                        elif click_y < y1:
-                            y2 = y1
-                            y1 = click_y
-                    sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]["x"] = x1
-                    sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]["y"] = y1
-                    sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]["w"] = x2-x1
-                    sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]["h"] = y2-y1
-
         #дешифратор действия
         if action == "open": #диалог открытия пака
             sdk_params["mode"] = "open"
             sdk_params["editor_mode"] = None
-            sdk_params["folder_scroll_pointer"] = 0
+            opener_window.recalculate()
             
-        if action == "render": # диалог пререндера
+        elif action == "render": # диалог пререндера
             sdk_params["mode"] = "render"
 
-        elif action == "save" and sdk_params["folder_pointer"] != None and sdk_params["mode"] != "open" and sdk_loaded_pack["info"] != {}:
+        elif action == "save" and sdk_loaded_pack["name"] not in ("", None) and sdk_params["mode"] != "open" and sdk_loaded_pack["info"] != {}:
             pack_parameters= sdk_loaded_pack["info"]
 
-            with open(os.path.join(current_dir,"paks",sdk_params["folder_pointer"],"pack.json"),"w",encoding="utf-8") as file:
+            with open(os.path.join(current_dir,"paks",sdk_loaded_pack["name"],"pack.json"),"w",encoding="utf-8") as file:
                 json.dump(pack_parameters, file, ensure_ascii=False, sort_keys=True,indent=4)
 
         elif action == "close": #закрыть пак
             for param in base_sdk_params: sdk_params[param] =  base_sdk_params[param]
-            sdk_loaded_pack = {"graphics":{},"info":{}}
+            sdk_loaded_pack = {"graphics":{},"info":{},"name":None}
             sdk_params["mode"] = "main"
             sdk_params["editor_mode"] = None
 
         elif action == "exit" and "disappear" not in transition_act: #выйти из редактора
-            transition_act = "disappear:title"
+            transition_act = "disappear:load_start"
             transition_timer = 100-transition_timer
             for param in base_sdk_params: sdk_params[param] =  base_sdk_params[param]
             sdk_params["mode"] = "main"
             sdk_params["editor_mode"] = None
-            sdk_loaded_pack = {"graphics":{},"info":{}}
+            sdk_loaded_pack = {"graphics":{},"info":{},"name":None}
 
         elif action == "editor_consists" and "consists" in sdk_loaded_pack["info"]: #категория редакторов консистов
             sdk_params["mode"] = "consist"
+            consist_select_window.recalculate()
         
         elif action == "editor_world" and "worlds" in sdk_loaded_pack["info"]: #категория редакторов карт
             sdk_params["mode"] = "world"
+            world_select_window.recalculate()
 
         elif action == "editor_tiles" and "tiles" in sdk_loaded_pack["info"]: #категория редакторов карт
             sdk_params["mode"] = "tiles"
+            tile_select_window.recalculate()
 
         elif action == "editor_graph_define": #селектор графики для панели управления
             sdk_params["editor_mode"] = "graph_define"
+            graphics_definer_image_window.recalculate()
+            graphics_definer_params_window.recalculate()
 
-        elif action == "editor_track": #селектор графики для панели управления
+        elif action == "editor_track": #редактор путей (окружения и станций тоже)
             sdk_params["editor_mode"] = "tracks"
+            tile_placer_window.recalculate()
             
-        elif action == "editor_signal": #селектор графики для панели управления
+        elif action == "editor_signal": #редактор сигналов
             sdk_params["editor_mode"] = "signals"
+            signal_placer_window.recalculate()
+            
+        elif action == "editor_autodrive": #редактор автоведения
+            sdk_params["editor_mode"] = "autodrive"
+            autodrive_window.recalculate()
 
         line_height = 8+main_font_height
 
         #диалоговое окно открытия пака
         if sdk_params["mode"] == "open": 
-            opener_rect = (screen_size[0]/4-2,screen_size[1]/3-2,screen_size[0]/2+4,screen_size[1]/3+4)
-            max_lines = int(opener_rect[3]//line_height)
-            height_margin = opener_rect[1]+(opener_rect[3]-line_height*max_lines)/2
-            btn_width = (opener_rect[2]-8)/3
+            opener_window.objects["file_list"]["items"] = sdk_params["folder_list"]
+            opener_window.update(screen, mouse_state, unicode)
 
-            leitmotif.draw_window(screen,opener_rect)
-
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
-
-            leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin,opener_rect[2]-16,line_height),"center",fetch_line("base","editor_open_long"),font)
-
-            act = leitmotif.draw_itemlist(screen, (opener_rect[0]+8,height_margin+line_height,opener_rect[2]-16,0),sdk_params["folder_list"],max_lines-2,sdk_params["folder_scroll"],sdk_params["folder_pointer"],font,line_height,mouse_state)
-            
-            if act != None:
-                if act[0] == "select": 
-                    sdk_params["folder_pointer"] = act[1]
-                elif act[0] == "scroll_down" and len(sdk_params["folder_list"])-sdk_params["folder_scroll"]-max_lines+2 > 0: sdk_params["folder_scroll"]+=1
-                elif act[0] == "scroll_up" and sdk_params["folder_scroll"] > 0: sdk_params["folder_scroll"]-=1
-
-            act = leitmotif.draw_button(screen,(opener_rect[0]+8,height_margin+line_height*(max_lines-1)+1,btn_width,line_height-2),"center",fetch_line("base","editor_load_pack"),font,mouse_state)
-            if act != None and sdk_params["folder_pointer"] != None:
-                with open(os.path.join(current_dir,"paks",sdk_params["folder_pointer"],"pack.json"),encoding="utf-8") as file:
+            if opener_window.get_state("button_load") and opener_window.get_state("file_list") != "":
+                with open(os.path.join(current_dir,"paks",opener_window.get_state("file_list"),"pack.json"),encoding="utf-8") as file:
                     pack_parameters = json.loads(file.read())
                     sdk_params["mode"] = "main"
                     sdk_params["consist_pointer"] = -1
                     sdk_loaded_pack["info"] = pack_parameters
-                    sdk_loaded_pack["pos"]=[0,0]
+                    sdk_loaded_pack["name"] = opener_window.get_state("file_list")
                     sdk_loaded_pack["selection"]=(-1,-1,0,0)
-                    sdk_params["folder_scroll"] = 0
+                    sdk_loaded_pack["pos"]=[0,0]
 
-            act = leitmotif.draw_button(screen,(opener_rect[0]+8+btn_width*2,height_margin+line_height*(max_lines-1)+1,btn_width,line_height-2),"center",fetch_line("base","editor_close_menu"),font,mouse_state)
-            if act != None:
+            if opener_window.get_state("button_close"):
                 sdk_params["mode"] = "main"
-                sdk_params["folder_scroll"] = 0
 
         # пре-рендерилка
         if sdk_params["mode"] == "render": 
-            opener_rect = (screen_size[0]/4-2,screen_size[1]/3-2,screen_size[0]/2+4,screen_size[1]/3+4)
-            max_lines = int(opener_rect[3]//line_height)
-            height_margin = opener_rect[1]+(opener_rect[3]-line_height*max_lines)/2
-            btn_width = (opener_rect[2]-8)/4
+            render_window.objects["text_render"]["active"] = pack_render_thread.is_alive()
+            render_window.objects["label_progress"]["active"] = pack_render_thread.is_alive()
+            render_window.objects["label_progress"]["text"] = fetch_line("base","editor_render_progress").replace("%z",str(round(render_progress,2)))
+            render_window.objects["text_render"]["items"] = render_log
+            render_window.objects["label_text1"]["active"] = not pack_render_thread.is_alive()
+            render_window.objects["label_text2"]["active"] = not pack_render_thread.is_alive()
+            render_window.objects["label_confirm"]["active"] = not pack_render_thread.is_alive()
+            render_window.objects["button_close"]["active"] = not pack_render_thread.is_alive()
+            render_window.objects["button_render"]["active"] = not pack_render_thread.is_alive()
+            if not pack_render_thread.is_alive():
 
-            leitmotif.draw_window(screen,opener_rect)
-
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
-
-            leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin,opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_long"),font)
-            if pack_render_thread.is_alive():
-                leitmotif.draw_multitext(screen,(opener_rect[0]+8,height_margin+line_height,opener_rect[2]-16,0),render_log,max_lines-2,line_height,font)
-                leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin+line_height*(max_lines-1),opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_progress").replace("%z",str(round(render_progress,2))),font)
-            else:
-                leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin+line_height*(max_lines/2-2),opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_desc1"),font)
-                leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin+line_height*(max_lines/2-1),opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_desc2"),font)
-                leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin+line_height*(max_lines/2),opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_proceed"),font)
-
-                act = leitmotif.draw_button(screen,(opener_rect[0]+8+btn_width*2.5,height_margin+line_height*(max_lines/2+1),btn_width,line_height-2),"center",fetch_line("base","editor_render_yes"),font,mouse_state)
-                if act != None:
-                    pack_name = sdk_params["folder_pointer"]
+                if render_window.get_state("button_render"):
+                    pack_name = sdk_loaded_pack["name"]
                     render_progress = 0
                     pack_render_thread = threading.Thread(target=render)
                     pack_render_thread.start()
 
-                act = leitmotif.draw_button(screen,(opener_rect[0]+8+btn_width*0.5,height_margin+line_height*(max_lines/2+1),btn_width,line_height-2),"center",fetch_line("base","editor_render_no"),font,mouse_state)
-                if act != None:
+                if render_window.get_state("button_close"):
                     sdk_params["mode"] = "main"
+
+            render_window.update(screen,mouse_state, unicode)
 
         # пре-рендерилка
         if sdk_params["mode"] == "render_complete": 
-            opener_rect = (screen_size[0]/4-2,screen_size[1]/3-2,screen_size[0]/2+4,screen_size[1]/3+4)
-            max_lines = int(opener_rect[3]//line_height)
-            height_margin = opener_rect[1]+(opener_rect[3]-line_height*max_lines)/2
-            btn_width = (opener_rect[2]-8)/4
+            postrender_window.update(screen,mouse_state, unicode)
+            if postrender_window.get_state("button_close"):sdk_params["mode"] = "main"
 
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
-            leitmotif.draw_window(screen,opener_rect)
-            leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin,opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_long"),font)
-            leitmotif.draw_label(screen,(opener_rect[0]+8,height_margin+line_height*(max_lines/2-1),opener_rect[2]-16,line_height),"center",fetch_line("base","editor_render_complete"),font)
-            act = leitmotif.draw_button(screen,(opener_rect[0]+8+btn_width*1.5,height_margin+line_height*(max_lines/2),btn_width,line_height-2),"center",fetch_line("base","editor_render_no"),font,mouse_state)
-            if act != None:
-                sdk_params["mode"] = "main"
-
-        #боковая панель для выбора состава
+        #боковая панель для выбора тайла
         if sdk_params["mode"] == "tiles" or sdk_mode_timers["tiles"] > 0:
-            menu_height = main_font_height+menu_bar_vert_offset_bottom+menu_bar_vert_offset_top
-            consist_rect = (screen_size[0]/4*(3+(1-sdk_mode_timers["tiles"])**2),
-                menu_height,screen_size[0]/4-10,screen_size[1]/2-menu_height-10)
-            max_lines = int(consist_rect[3]/line_height)
-            consist_items = [q["name"] for q in sdk_loaded_pack["info"]["tiles"]] if sdk_loaded_pack["info"] != {} else []
-            height_margin = (consist_rect[3]-max_lines*line_height)/2
+            tile_select_window.rect[0] = screen_size[0]/4*(3+(1-sdk_mode_timers["tiles"])**2)
+            items = [q["name"] for q in sdk_loaded_pack["info"]["tiles"]] if sdk_loaded_pack["info"] != {} else []
+            tile_select_window.objects["list_tiles"]["items"] = items
+            tile_select_window.update(screen, mouse_state, unicode)
 
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
-
-            leitmotif.draw_window(screen,consist_rect)
-
-            leitmotif.draw_label(screen,(consist_rect[0]+8,consist_rect[1]+height_margin,consist_rect[2]-16,line_height),"center",fetch_line("base","editor_tile_mode"),font)
-
-            act = leitmotif.draw_itemlist(screen, (consist_rect[0]+8,consist_rect[1]+height_margin+line_height,consist_rect[2]-16,0),consist_items,max_lines-1,sdk_params["tiles_scroll"],sdk_params["tiles_pointer"],font,line_height,mouse_state)
-
-            if act != None:
-                if act[0] == "select": 
-                    sdk_params["tiles_pointer"] = act[1]
-                    sdk_params["tiles_id"] = consist_items.index(act[1])
-                elif act[0] == "scroll_down" and len(consist_items)-sdk_params["tiles_scroll"]-max_lines+2 > 0: sdk_params["tiles_scroll"]+=1
-                elif act[0] == "scroll_up" and sdk_params["tiles_scroll"] > 0: sdk_params["tiles_scroll"]-=1
+            if tile_select_window.get_state("list_tiles") != "":
+                sdk_params["tiles_pointer"] = tile_select_window.get_state("list_tiles")
+                sdk_params["tiles_id"] = items.index(tile_select_window.get_state("list_tiles"))
 
         #боковая панель для выбора состава
         if sdk_params["mode"] == "consist" or sdk_mode_timers["consist"] > 0:
-            menu_height = main_font_height+menu_bar_vert_offset_bottom+menu_bar_vert_offset_top
-            consist_rect = (screen_size[0]/4*(3+(1-sdk_mode_timers["consist"])**2),
-                menu_height,screen_size[0]/4-10,screen_size[1]/2-menu_height-10)
-            max_lines = int(consist_rect[3]/line_height)
-            consist_items = [q["system_name"] for q in sdk_loaded_pack["info"]["consists"]] if sdk_loaded_pack["info"] != {} else []
-            height_margin = (consist_rect[3]-max_lines*line_height)/2
+            consist_select_window.rect[0] = screen_size[0]/4*(3+(1-sdk_mode_timers["consist"])**2)
+            items = [q["system_name"] for q in sdk_loaded_pack["info"]["consists"]] if sdk_loaded_pack["info"] != {} else []
+            current_consist = consist_select_window.get_state("list_consists")
+            consist_select_window.objects["list_consists"]["items"] = items
 
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
+            consist_select_window.update(screen, mouse_state, unicode)
 
-            leitmotif.draw_window(screen,consist_rect)
-
-            leitmotif.draw_label(screen,(consist_rect[0]+8,consist_rect[1]+height_margin,consist_rect[2]-16,line_height),"center",fetch_line("base","editor_consist_mode"),font)
-
-            act = leitmotif.draw_itemlist(screen, (consist_rect[0]+8,consist_rect[1]+height_margin+line_height,consist_rect[2]-16,0),consist_items,max_lines-1,sdk_params["consist_scroll"],sdk_params["consist_pointer"],font,line_height,mouse_state)
-
-            if act != None:
-                if act[0] == "select": 
-                    sdk_params["consist_pointer"] = act[1]
-                    sdk_params["consist_id"] = consist_items.index(act[1])
-                    sdk_params["element_pointer"] = -1
+            new_consist = consist_select_window.get_state("list_consists")
+            if current_consist != new_consist:
+                consist_select_window.states["textbox_name"] = new_consist 
+                if new_consist not in (None, ""): 
+                    sdk_params["consist_id"] = items.index(new_consist)
                     sdk_loaded_pack["graphics"]["panel"] = pg.image.load(
-                    os.path.join(*([current_dir,"paks",sdk_params["folder_pointer"],sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_sprite"]]))).convert_alpha()
-                elif act[0] == "scroll_down" and len(consist_items)-sdk_params["consist_scroll"]-max_lines+2 > 0: sdk_params["consist_scroll"]+=1
-                elif act[0] == "scroll_up" and sdk_params["consist_scroll"] > 0: sdk_params["consist_scroll"]-=1
+                    os.path.join(*([current_dir,"paks",sdk_loaded_pack["name"],sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_sprite"]]))).convert_alpha() 
 
         #боковая панель для выбора мира
         if sdk_params["mode"] == "world" or sdk_mode_timers["world"] > 0:
-            menu_height = main_font_height+menu_bar_vert_offset_bottom+menu_bar_vert_offset_top
-            world_rect = (screen_size[0]/4*(3+(1-sdk_mode_timers["world"])**2),
-                menu_height,screen_size[0]/4-10,screen_size[1]/2-menu_height-10)
-            max_lines = int(world_rect[3]/line_height)
-            world_items = [q for q in sdk_loaded_pack["info"]["worlds"]] if sdk_loaded_pack["info"] != {} else []
-            height_margin = (world_rect[3]-max_lines*line_height)/2
-            button_width = (world_rect[2]-16-10)/2
+            world_select_window.rect[0] = screen_size[0]/4*(3+(1-sdk_mode_timers["world"])**2)
+            items = [q for q in sdk_loaded_pack["info"]["worlds"]] if sdk_loaded_pack["info"] != {} else []
+            world_select_window.objects["list_maps"]["items"] = items
 
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
+            if world_select_window.get_state("list_maps") != "" and world_select_window.get_state("list_maps") != sdk_params["worlds_pointer"] and sdk_params["mode"] == "world":
+                sdk_params["worlds_pointer"] = world_select_window.get_state("list_maps")
+                world_select_window.states["textbox_name"] = world_select_window.get_state("list_maps")
+                world = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["world"]
+                switches = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["switches"]
+                signals = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["signals"]
+                autodrive_map = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["autodrive"]
 
-            leitmotif.draw_window(screen,world_rect)
-
-            leitmotif.draw_label(screen,(world_rect[0]+8,world_rect[1]+height_margin,world_rect[2]-16,line_height),"center",fetch_line("base","editor_map_mode"),font)
-
-            act = leitmotif.draw_itemlist(screen, (world_rect[0]+8,world_rect[1]+height_margin+line_height,world_rect[2]-16,0),world_items,max_lines-3,sdk_params["worlds_scroll"],sdk_params["worlds_pointer"],font,line_height,mouse_state)
-
-            if act != None:
-                if act[0] == "select": 
-                    sdk_params["worlds_pointer"] = act[1]
-                    sdk_params["worlds_name"] = act[1]
-                    world = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["world"]
-                    switches = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["switches"]
-                    signals = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["signals"]
-
-                    #sdk_params["consist_id"] = world_items.index(act[1])
-                elif act[0] == "scroll_down" and len(world_items)-sdk_params["worlds_scroll"]-max_lines+2 > 0: sdk_params["worlds_scroll"]+=1
-                elif act[0] == "scroll_up" and sdk_params["worlds_scroll"] > 0: sdk_params["worlds_scroll"]-=1
-
-            act = leitmotif.draw_button(screen,(world_rect[0]+8,world_rect[1]+height_margin+line_height*(max_lines-2),button_width,line_height),"center",fetch_line("base","add"),font,mouse_state)
-
-            if act != None:
+            if world_select_window.get_state("button_add"):
                 w_id = 0
                 while f"world_{w_id}" in sdk_loaded_pack["info"]["worlds"]:
                     w_id+=1
 
-                sdk_loaded_pack["info"]["worlds"][f"world_{w_id}"] = {"world":{},"signals":{},"switches":{}}
                 sdk_params["worlds_pointer"] = f"world_{w_id}"
-                sdk_params["worlds_name"] = f"world_{w_id}"
+                
+                world_select_window.states["list_maps"][0] = sdk_params["worlds_pointer"] 
+                sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]] = {"world":{},"signals":{},"switches":{},"autodrive":{}}
+                world_select_window.states["textbox_name"] = sdk_params["worlds_pointer"]
                 world = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["world"]
                 switches = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["switches"]
                 signals = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["signals"]
+                autodrive_map = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]["autodrive"]
 
-            act = leitmotif.draw_button(screen,(world_rect[0]+18+button_width,world_rect[1]+height_margin+line_height*(max_lines-2),button_width,line_height),"center",fetch_line("base","remove"),font,mouse_state)
-
-            if act != None and sdk_params["worlds_pointer"] != None:
+            if world_select_window.get_state("button_remove") and sdk_params["worlds_pointer"] != "":
                 sdk_loaded_pack["info"]["worlds"].pop(sdk_params["worlds_pointer"])
                 world = {}
                 switches = {}
                 signals = {}
                 sdk_params["worlds_pointer"] = None
-                sdk_params["worlds_name"] = ""
+                world_select_window.states["list_maps"][0] = ""
                 sdk_params["editor_mode"] = None
-
-            leitmotif.draw_label(screen,(world_rect[0]+8,world_rect[1]+height_margin+line_height*(max_lines-1),world_rect[2]/4,line_height),"left",fetch_line("base","editor_name"),font)
-
-            act = leitmotif.draw_textbox(screen,(world_rect[0]+8+world_rect[2]/4+8,world_rect[1]+height_margin+line_height*(max_lines-1),world_rect[2]/4*3-8-16,line_height),sdk_params["worlds_name"],font,mouse_state,sdk_params["editing"]=="world_name")
-
-            if act != None:
-                sdk_params["editing"] = "world_name"
-
-            if sdk_params["editing"] == "world_name":
-                sdk_params["worlds_name"] += unicode["chars"]
-
-                if unicode["backspace"]: sdk_params["worlds_name"] = sdk_params["worlds_name"][:-1]
-                if unicode["escape"]:
-                    sdk_params["editing"] = None
-                if unicode["return"]:
-                    sdk_params["editing"] = None
-                    temp = sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]]
-                    sdk_loaded_pack["info"]["worlds"].pop(sdk_params["worlds_pointer"])
-                    sdk_params["worlds_pointer"] = sdk_params["worlds_name"]
-                    sdk_loaded_pack["info"]["worlds"][sdk_params["worlds_pointer"]] = temp
+            
+            if unicode["return"] and world_select_window.active_textbox == "textbox_name":
+                temp = sdk_loaded_pack["info"]["worlds"][world_select_window.get_state("list_maps")]
+                sdk_loaded_pack["info"]["worlds"].pop(world_select_window.get_state("list_maps"))
+                world_select_window.states["list_maps"][0] = world_select_window.get_state("textbox_name")
+                sdk_params["worlds_pointer"] = world_select_window.get_state("list_maps")
+                sdk_loaded_pack["info"]["worlds"][world_select_window.get_state("list_maps")] = temp
+            
+            world_select_window.update(screen, mouse_state, unicode)
+            
 
             speed = 8 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 2
             if (pressed[pg.K_LALT] or pressed[pg.K_RALT]): speed = 32
@@ -1451,242 +1338,178 @@ while working:
 
         #редактор клеточек/путей
         if sdk_params["editor_mode"] == "tracks" or sdk_editor_mode_timers["tracks"] > 0:
-            base_top_offset = 10
-            toolbar_width = screen_size[0]/4-10
-            toolbar_top_pos = screen_size[1]/2
-            toolbar_left_pos = screen_size[0]/4*(3+(1-sdk_editor_mode_timers["tracks"])**2)
-            toolbar_height = screen_size[1]-base_top_offset*2-toolbar_top_pos
-            line_height = main_font_height+8
-            max_lines = int((toolbar_height-8)/line_height)
-            height_margin = (toolbar_height-max_lines*line_height)/2+base_top_offset+toolbar_top_pos
-
+            tile_placer_window.rect[0] = screen_size[0]/4*(3+(1-sdk_editor_mode_timers["tracks"])**2)
             itm = [icons[q] for q in toolbar]
+            tile_placer_window.objects["list_tiles"]["items"] = itm
 
-            leitmotif.draw_window(screen,(toolbar_left_pos,toolbar_top_pos+base_top_offset,toolbar_width,toolbar_height))
+            tile_placer_window.update(screen, mouse_state, unicode)
 
-            leitmotif.draw_label(screen,(toolbar_left_pos+8,height_margin,(toolbar_width-16),line_height),"center",fetch_line("base","editor_map_tiles"),font)
+            sdk_params["tile_placer_pointer"] = tile_placer_window.get_state("list_tiles")
+            sdk_params["tile_placer_custom"][0] = tile_placer_window.get_state("textbox_custom1")
+            sdk_params["tile_placer_custom"][1] = tile_placer_window.get_state("textbox_custom2")
 
-            act = leitmotif.draw_itemsel(screen,
-                (toolbar_left_pos+14,height_margin+line_height,(toolbar_width-28),(max_lines-3)*line_height),
-                itm,sdk_params["tile_placer_scroll"],sdk_params["tile_placer_pointer"],line_height,line_height*2-2,mouse_state
-                
-            )
-
-            if act != None:
-                if act[0] == "select":
-                    sdk_params["tile_placer_pointer"] = act[1]
-                elif act[0] == "scroll_down" and len(itm)-sdk_params["tile_placer_scroll"]-act[1]*act[2] > 0: sdk_params["tile_placer_scroll"]+=(act[1])
-                elif act[0] == "scroll_up" and sdk_params["tile_placer_scroll"] > 0: sdk_params["tile_placer_scroll"]-=(act[1])
-
-            act = leitmotif.draw_textbox(screen,(toolbar_left_pos+8,height_margin+line_height*(max_lines-2), toolbar_width-16,line_height),sdk_params["tile_placer_custom"][0],font,mouse_state, sdk_params["editing"] == "tile_placer_custom_0")
-
-            if act != None:
-                sdk_params["editing"] = "tile_placer_custom_0"
-            if sdk_params["editing"] == "tile_placer_custom_0":
-                sdk_params["tile_placer_custom"][0] += unicode["chars"]
-                if unicode["backspace"]: sdk_params["tile_placer_custom"][0] = sdk_params["tile_placer_custom"][0][:-1]
-                if unicode["escape"] or unicode["return"]:sdk_params["editing"] = None
-                
-            act = leitmotif.draw_textbox(screen,(toolbar_left_pos+8,height_margin+line_height*(max_lines-1), toolbar_width-16,line_height),sdk_params["tile_placer_custom"][1],font,mouse_state, sdk_params["editing"] == "tile_placer_custom_1")
-
-            if act != None:
-                sdk_params["editing"] = "tile_placer_custom_1"
-            if sdk_params["editing"] == "tile_placer_custom_1":
-                sdk_params["tile_placer_custom"][1] += unicode["chars"]
-                if unicode["backspace"]: sdk_params["tile_placer_custom"][1] = sdk_params["tile_placer_custom"][1][:-1]
-                if unicode["escape"] or unicode["return"]:sdk_params["editing"] = None
-
-            if m_pos[0] < toolbar_left_pos and sdk_params["editor_mode"] == "tracks" and not clicked_on_menu_entry and mouse_clicked:
+            if m_pos[0] < tile_placer_window.rect[0] and sdk_params["editor_mode"] == "tracks" and not clicked_on_menu_entry and mouse_clicked:
                 m_world_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,
                                player_pos[1]+m_pos[1]-screen_size[1]/2)
                 m_block_pos = (int((m_world_pos[0]-(editor_block_size[0] if m_world_pos[0] < 0 else 0))/editor_block_size[0]),
                             int((m_world_pos[1]-(editor_block_size[1] if m_world_pos[1] < 0 else 0))/editor_block_size[1]))
                 m_block_pos = f"{m_block_pos[0]}:{m_block_pos[1]}"
-                if m_btn[0] and sdk_params["tile_placer_pointer"] != None and m_block_pos not in world:
+                if m_btn[0] and sdk_params["tile_placer_pointer"] not in (None,"") and m_block_pos not in world:
                     if toolbar[sdk_params["tile_placer_pointer"]] != "custom_tile":
                         world[m_block_pos] = [toolbar[sdk_params["tile_placer_pointer"]]]
-                        if toolbar[sdk_params["tile_placer_pointer"]][-4:-1] in ["tsa","tsb","tsx"]:
+                        if toolbar[sdk_params["tile_placer_pointer"]][-4:-1] in ["tsa","tsb","tsx","tsy"]:
                             switches[m_block_pos] = False
                     else:
                         world[m_block_pos] = [sdk_params["tile_placer_custom"][0],sdk_params["tile_placer_custom"][1]]
-                        if sdk_params["tile_placer_custom"][0][-4:-1] in ["tsa","tsb","tsx"]:
+                        if sdk_params["tile_placer_custom"][0][-4:-1] in ["tsa","tsb","tsx","tsy"]:
                             switches[m_block_pos] = False
                 elif m_btn[2] and m_block_pos in world:
                     world.pop(m_block_pos)
                     if m_block_pos in switches:
                         switches.pop(m_block_pos)
-        
+
         #редактор сигналов
         if sdk_params["editor_mode"] == "signals" or sdk_editor_mode_timers["signals"] > 0:
-            base_top_offset = 10
-            toolbar_width = screen_size[0]/4-10
-            toolbar_top_pos = screen_size[1]/2
-            toolbar_left_pos = screen_size[0]/4*(3+(1-sdk_editor_mode_timers["signals"])**2)
-            toolbar_height = screen_size[1]-base_top_offset*2-toolbar_top_pos
-            line_height = main_font_height+8
-            max_lines = int((toolbar_height-8)/line_height)
-            height_margin = (toolbar_height-max_lines*line_height)/2+base_top_offset+toolbar_top_pos
+            signal_placer_window.rect[0] = screen_size[0]/4*(3+(1-sdk_editor_mode_timers["signals"])**2)
+            items = list(signals.keys())
+            signal_placer_window.objects["list_signals"]["items"] = items
+            current_signal = signal_placer_window.get_state("list_signals")
+
+            if current_signal != "":
+                signals[current_signal]["next"] = signal_placer_window.get_state("textbox_next")
+                signals[current_signal]["speed"] = signal_placer_window.get_state("textbox_speed")
+                if unicode["return"] and signal_placer_window.active_textbox == "textbox_name":
+                    tmp = signals[current_signal]
+                    signals.pop(current_signal)
+                    current_signal = signal_placer_window.get_state("textbox_name")
+                    signals[current_signal] = tmp
+                    signal_placer_window.states["list_signals"][0] = current_signal
+                    signal_placer_window.states["list_signals"][1] = list(signals.keys()).index(current_signal)
+
+            signal_placer_window.update(screen, mouse_state, unicode)
+
+            if current_signal != signal_placer_window.get_state("list_signals"): 
+                current_signal = signal_placer_window.get_state("list_signals")
             
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
+                if current_signal != "":
+                    signal_placer_window.states["textbox_name"] = current_signal
+                    signal_placer_window.states["textbox_next"] = signals[current_signal]["next"]
+                    signal_placer_window.states["textbox_speed"] = signals[current_signal]["speed"]
 
-            if signal_editor_params["scroll"]+max_lines-5 > len(list(signals.keys())):
-                signal_editor_params["scroll"] = max(0, signal_editor_params["scroll"]-(max_lines-5-len(list(signals.keys()))+signal_editor_params["scroll"]))
-
-            leitmotif.draw_window(screen,(toolbar_left_pos,toolbar_top_pos+base_top_offset,toolbar_width,toolbar_height))
-
-            leitmotif.draw_label(screen,(toolbar_left_pos+8,height_margin,(toolbar_width-16),line_height),"center",fetch_line("base","editor_map_signalling"),font)
-
-            act = leitmotif.draw_itemlist(screen,
-                (toolbar_left_pos+14,height_margin+line_height,toolbar_width-28,0),
-                list(signals.keys()),max_lines-5,signal_editor_params["scroll"],signal_editor_params["current"],font,line_height,
-                mouse_state)
-
-            if act != None:
-                if act[0] == "select": 
-                    signal_editor_params["current"] = act[1]
-                    signal_editor_params["editor_name"] = signal_editor_params["current"]
-                    signal_editor_params["next"] = signals[signal_editor_params["current"]]["next"]
-                    signal_editor_params["speed"] = signals[signal_editor_params["current"]]["speed"]
-                elif act[0] == "scroll_down" and len(list(signals.keys()))-signal_editor_params["scroll"]-max_lines+6 > 0: signal_editor_params["scroll"]+=1
-                elif act[0] == "scroll_up" and signal_editor_params["scroll"] > 0: signal_editor_params["scroll"]-=1
-
-            
-            button_width = (toolbar_width-16-10)/2 #(toolbar_width-16-20)/3
-
-            act = leitmotif.draw_button(screen,(toolbar_left_pos+8,height_margin+line_height*(max_lines-4),button_width,line_height),
-                "center",fetch_line("base","add"),font,mouse_state)
-            
-            if act != None: 
-                if signal_editor_params["current"] != None and signal_editor_params["next"] != "" and signal_editor_params["next"] not in signals:
-                    signals[signal_editor_params["next"]] = {"tiles":[],"next":"","speed":""}
-                    signal_editor_params["current"] = signal_editor_params["next"]
+            if signal_placer_window.get_state("button_add"): 
+                if (current_signal != "" and 
+                    signal_placer_window.states["textbox_next"] != "" and 
+                    signal_placer_window.states["textbox_next"] not in signals):
+                    
+                    last_speed = signals[current_signal]["speed"]
+                    current_signal = signal_placer_window.states["textbox_next"]
+                    last_signal = current_signal
                 else:
                     base_id = 0
                     while f"SIG{base_id}" in signals:
                         base_id+=1
-                    signals[f"SIG{base_id}"] = {"tiles":[],"next":"","speed":""}
-                    signal_editor_params["current"] = f"SIG{base_id}"
-                signal_editor_params["editor_name"] = signal_editor_params["current"]
-                signal_editor_params["next"] = signals[signal_editor_params["current"]]["next"]
-                signal_editor_params["speed"] = signals[signal_editor_params["current"]]["speed"]
-                signal_editor_params["scroll"] = list(signals.keys()).index(signal_editor_params["current"])
+                    current_signal = f"SIG{base_id}"
+                    last_speed = ""
+                    last_signal = ""
                 
-            
-            act = leitmotif.draw_button(screen,(toolbar_left_pos+8+10+button_width,height_margin+line_height*(max_lines-4),button_width,line_height),"center",fetch_line("base","remove"),font,mouse_state)
-            
-            if act != None: 
-                if signal_editor_params["current"] != None:
-                    signals.pop(signal_editor_params["current"])
-                    signal_editor_params["current"] = None
 
-            if signal_editor_params["current"] != None:
-                leitmotif.draw_label(screen,(toolbar_left_pos+8,height_margin+line_height*(max_lines-3), toolbar_width/4,line_height),"left",fetch_line("base","editor_name"),font)
-                act = leitmotif.draw_textbox(screen,(toolbar_left_pos+8+toolbar_width/4,height_margin+line_height*(max_lines-3), 3*toolbar_width/4-24,line_height),signal_editor_params["editor_name"],font,mouse_state, signal_editor_params["active"] == "editor_name")
-                if act != None:
-                    signal_editor_params["active"] = "editor_name"
+                signals[current_signal] = {"tiles":[],"next":last_signal,"speed":last_speed}
+                signal_placer_window.states["textbox_name"] = current_signal
+                signal_placer_window.states["textbox_next"] = signals[current_signal]["next"]
+                signal_placer_window.states["textbox_speed"] = signals[current_signal]["speed"]
+                signal_placer_window.states["list_signals"][0] = current_signal
+                signal_placer_window.states["list_signals"][1] = list(signals.keys()).index(current_signal)
+                
+            if signal_placer_window.get_state("button_remove") and signal_placer_window.get_state("list_signals") != "":
+                signals.pop(signal_placer_window.get_state("list_signals"))
+                signal_placer_window.states["list_signals"][0] = ""
 
-                leitmotif.draw_label(screen,(toolbar_left_pos+8,height_margin+line_height*(max_lines-2), toolbar_width/4,line_height),"left",fetch_line("base","editor_next_signal"),font)
-                act = leitmotif.draw_textbox(screen,(toolbar_left_pos+8+toolbar_width/4,height_margin+line_height*(max_lines-2), 3*toolbar_width/4-24,line_height),signal_editor_params["next"],font,mouse_state, signal_editor_params["active"] == "next")
-                if act != None:
-                    signal_editor_params["active"] = "next"
+            signal_placer_window.objects["label_signame"]["active"] = current_signal not in ("", None, '')
+            signal_placer_window.objects["label_next"]["active"] = current_signal not in ("", None, '')
+            signal_placer_window.objects["label_speed"]["active"] = current_signal not in ("", None, '')
+            signal_placer_window.objects["textbox_name"]["active"] = current_signal not in ("", None, '')
+            signal_placer_window.objects["textbox_next"]["active"] = current_signal not in ("", None, '')
+            signal_placer_window.objects["textbox_speed"]["active"] = current_signal not in ("", None, '')
+            signal_placer_window.active_textbox = signal_placer_window.active_textbox if current_signal not in ("", None, '') else None
 
-                leitmotif.draw_label(screen,(toolbar_left_pos+8,height_margin+line_height*(max_lines-1), toolbar_width/4,line_height),"left",fetch_line("base","editor_speed"),font)
-                act = leitmotif.draw_textbox(screen,(toolbar_left_pos+8+toolbar_width/4,height_margin+line_height*(max_lines-1), 3*toolbar_width/4-24,line_height),signal_editor_params["speed"],font,mouse_state, signal_editor_params["active"] == "speed")
-                if act != None:
-                    signal_editor_params["active"] = "speed"
-
-                if unicode["chars"] != "" or unicode["backspace"] or unicode["return"] or unicode["escape"]:
-                    part_name_new = signal_editor_params[signal_editor_params["active"]]
-                    if unicode["backspace"]:
-                        part_name_new=part_name_new[:-1]
-                    elif unicode["return"] or unicode["escape"]:
-                        signal_editor_params["active"] = None
-                    
-                    part_name_new += unicode["chars"]
-
-                    if unicode["return"] and signal_editor_params["active"] == "editor_name":
-                        tmp = signals[signal_editor_params["current"]]
-                        signals.pop(signal_editor_params["current"])
-                        signal_editor_params["current"] = part_name_new
-                        signals[signal_editor_params["current"]] = tmp
-                        signal_editor_params["scroll"] = list(signals.keys()).index(signal_editor_params["current"])
-
-                    if signal_editor_params["active"] == "speed": 
-                        signals[signal_editor_params["current"]]["speed"] = part_name_new
-                        signal_editor_params["speed"] = part_name_new
-                    elif signal_editor_params["active"] == "next": 
-                        signals[signal_editor_params["current"]]["next"] = part_name_new
-                        signal_editor_params["next"] = part_name_new
-                    elif signal_editor_params["active"] == "editor_name":
-                        signal_editor_params["editor_name"] = part_name_new
-
-            if (m_btn[0] + m_btn[1] + m_btn[2]) and signal_editor_params["current"] != None: 
-                if m_pos[0] < toolbar_left_pos:
+            if mouse_clicked and current_signal not in ("", None, ''): 
+                if m_pos[0] < signal_placer_window.rect[0] and not clicked_on_menu_entry:
                     m_world_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,
                                 player_pos[1]+m_pos[1]-screen_size[1]/2)
-                    m_block_pos = (int(m_world_pos[0]//editor_block_size[0]),int(m_world_pos[1]//editor_block_size[1]))
-                    if m_btn[0] and m_block_pos not in signals[signal_editor_params["current"]]["tiles"]:
-                            signals[signal_editor_params["current"]]["tiles"].append(m_block_pos)
-                    elif m_btn[2] and m_block_pos in signals[signal_editor_params["current"]]["tiles"]:
-                        signals[signal_editor_params["current"]]["tiles"].remove(m_block_pos)
+                    m_block_pos = [int(m_world_pos[0]//editor_block_size[0]),int(m_world_pos[1]//editor_block_size[1])]
+                    if m_btn[0] and m_block_pos not in signals[current_signal]["tiles"]:
+                        signals[current_signal]["tiles"].append(m_block_pos)
+                    elif m_btn[2] and m_block_pos in signals[current_signal]["tiles"]:
+                        signals[current_signal]["tiles"].remove(m_block_pos)
+
+
+        #редактор автоведения
+        if sdk_params["editor_mode"] == "autodrive" or sdk_editor_mode_timers["signals"] > 0:
+            autodrive_window.rect[0] = screen_size[0]/4*(3+(1-sdk_editor_mode_timers["autodrive"])**2)
+            autodrive_window.update(screen, mouse_state, unicode)
+
+            if mouse_clicked: 
+                if m_pos[0] < autodrive_window.rect[0] and not clicked_on_menu_entry:
+                    m_world_pos = (player_pos[0]+m_pos[0]-screen_size[0]/2,
+                                player_pos[1]+m_pos[1]-screen_size[1]/2)
+                    m_block_pos = [int(m_world_pos[0]//editor_block_size[0]),int(m_world_pos[1]//editor_block_size[1])]
+                    m_block_pos = f"{m_block_pos[0]}:{m_block_pos[1]}"
+                    if m_btn[0] and m_block_pos not in autodrive_map and autodrive_window.get_state("list_markers") != "":
+                        autodrive_map[m_block_pos] = autodrive_window.get_state("list_markers")
+                    elif m_btn[2] and m_block_pos in autodrive_map:
+                        autodrive_map.pop(m_block_pos)
 
         # дефайнер/указатель графики для приборной панели
         if sdk_params["editor_mode"] == "graph_define" or sdk_editor_mode_timers["graph_define"] > 0:
-            menu_height = main_font_height+menu_bar_vert_offset_bottom+menu_bar_vert_offset_top
-            element_rect = (screen_size[0]/4*(3+(1-sdk_editor_mode_timers["graph_define"])**2),screen_size[1]/2+10,screen_size[0]/4-10,screen_size[1]/2-menu_height-10)
-            max_lines = int(consist_rect[3]/line_height)
-            height_margin = (consist_rect[3]-max_lines*line_height)/2
-            button_width = (element_rect[2]-16-10)/2
+            selected_sprite = graphics_definer_params_window.get_state("list_sprites")
+            if "panel" in sdk_loaded_pack["graphics"]:
 
-            mouse_state = [m_pos[0], m_pos[1], mouse_clicked,(m_btn[0] or m_btn[2])]
+                if not clicked_on_menu_entry:
+                    if pg.K_EQUALS in keydowns and graphics_definer_params_window.active_textbox in ("",None):
+                        sdk_params["scale"]+=1
+                    elif pg.K_MINUS in keydowns and graphics_definer_params_window.active_textbox in ("",None) and sdk_params["scale"] > 1:
+                        sdk_params["scale"]-=1
 
-            leitmotif.draw_window(screen,element_rect)
+                    if graphics_definer_image_window.get_state("image_box")[0] and m_btn[1]:
+                        sdk_loaded_pack["pos"][0] += m_pos[0] - old_m_pos[0]
+                        sdk_loaded_pack["pos"][1] += m_pos[1] - old_m_pos[1]
 
+                    if graphics_definer_image_window.get_state("image_box")[0] and mouse_clicked:
+                        if "panel" in sdk_loaded_pack["graphics"] and selected_sprite != "":
+                            selection = graphics_definer_image_window.get_state("image_box")[1]
+                            sp_scale = sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][selected_sprite]["scale"]
+                            sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][selected_sprite] = {"x":selection[0],"y":selection[1],"w":selection[2],"h":selection[3],"scale":sp_scale}
+
+            graphics_definer_params_window.rect[0] = screen_size[0]/4*(3+(1-sdk_editor_mode_timers["graph_define"])**2)
+            graphics_definer_image_window.rect[0] = 20+screen_size[0]*(-(1-sdk_editor_mode_timers["graph_define"])**2)
             items = list(sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].keys()) if sdk_params["editor_mode"] == "graph_define" else []
+            graphics_definer_params_window.objects["list_sprites"]["items"] = items
 
-            leitmotif.draw_label(screen,(element_rect[0]+8,element_rect[1]+height_margin,element_rect[2]-16,line_height),"center",fetch_line("base","editor_consist_locator"),font)
+            if unicode["return"] and graphics_definer_params_window.active_textbox == "textbox_name":
+                new_name = graphics_definer_params_window.get_state("textbox_name")
+                tmp = sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][selected_sprite]
+                sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].pop(selected_sprite)
+                sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][new_name] = tmp
+                graphics_definer_params_window.states["list_sprites"][0] = graphics_definer_params_window.get_state("textbox_name")
+                graphics_definer_params_window.states["list_sprites"][1] = list(sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].keys()).index(new_name)
 
-            act = leitmotif.draw_itemlist(screen,(element_rect[0]+8,element_rect[1]+height_margin+line_height,element_rect[2]-16,0),items,max_lines-3,sdk_params["element_scroll"],sdk_params["element_pointer"],font,line_height,mouse_state)
-            
-            if act != None:
-                if act[0] == "select": 
-                    sdk_params["element_pointer"] = act[1]
-                    sdk_params["element_name"] = act[1]
-                elif act[0] == "scroll_down" and len(items)-sdk_params["element_scroll"]-max_lines+3 > 0: sdk_params["element_scroll"]+=1
-                elif act[0] == "scroll_up" and sdk_params["element_scroll"] > 0: sdk_params["element_scroll"]-=1
+            graphics_definer_params_window.update(screen, mouse_state, unicode)
+            if graphics_definer_params_window.get_state("list_sprites") != selected_sprite:
+                selected_sprite = graphics_definer_params_window.get_state("list_sprites")
+                graphics_definer_params_window.states["textbox_name"] = selected_sprite
 
-            add_button = leitmotif.draw_button(screen,(element_rect[0]+8,element_rect[1]+height_margin+line_height*(max_lines-2)+1,button_width,line_height-2),"center",fetch_line("base","add"),font,mouse_state)
-            rm_button = leitmotif.draw_button(screen,(element_rect[0]+18+button_width,element_rect[1]+height_margin+line_height*(max_lines-2)+1,button_width,line_height-2),"center",fetch_line("base","remove"),font,mouse_state)
-            leitmotif.draw_label(screen,(element_rect[0]+8,element_rect[1]+height_margin+line_height*(max_lines-1),(element_rect[2]-16)/3,line_height),"left",fetch_line("base","editor_name"),font)
-            rename_btn = leitmotif.draw_textbox(screen,(element_rect[0]+8+(element_rect[2]-16)/3,element_rect[1]+height_margin+line_height*(max_lines-1),(element_rect[2]-16)/3*2,line_height),sdk_params["element_name"],font,mouse_state,sdk_params["editing"])
-
-            if sdk_params["editing"]:
-                element_name = sdk_params["element_name"]
-                if unicode["return"]:
-                        tmp = sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][sdk_params["element_pointer"]]
-                        sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].pop(sdk_params["element_pointer"])
-                        sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][element_name] = tmp
-                        sdk_params["element_pointer"] = element_name
-                elif unicode["escape"]: sdk_params["editing"] = False
-                elif unicode["backspace"]: element_name = element_name[:-1]
-                else: element_name += unicode["chars"]
-                
-                sdk_params["element_name"] = element_name
-
-            if add_button != None and mouse_clicked:
+            if graphics_definer_params_window.get_state("button_add"):
                 sprite_id = 0
                 while f"sprite_{sprite_id}" in sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"]:
                     sprite_id+=1
                 sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"][f"sprite_{sprite_id}"] = {"x":0,"y":0,"w":1, "h":1,"scale":1}
-                sdk_params["element_pointer"] = f"sprite_{sprite_id}"
-                sdk_params["element_name"] = f"sprite_{sprite_id}"
-                sdk_params["element_scroll"] = max(0,list(sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].keys()).index(sdk_params["element_pointer"])-max_lines+4)
-            elif rm_button and sdk_params["element_pointer"] != -1 and mouse_clicked:
-                sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].pop(sdk_params["element_pointer"])
-                sdk_params["element_pointer"] = -1
-                sdk_params["element_scroll"] = min(sdk_params["element_scroll"],len(sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"])-max_lines+3)
-            elif rename_btn and sdk_params["element_pointer"] != -1 and mouse_clicked:
-                sdk_params["editing"] = True
+                graphics_definer_params_window.states["list_sprites"][0] = f"sprite_{sprite_id}"
+                graphics_definer_params_window.states["list_sprites"][1] = list(sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].keys()).index(f"sprite_{sprite_id}")
+                graphics_definer_params_window.states["textbox_name"] = f"sprite_{sprite_id}"
+            elif graphics_definer_params_window.get_state("button_remove") and selected_sprite not in ("", None):
+                sdk_loaded_pack["info"]["consists"][sdk_params["consist_id"]]["control_panel_info"].pop(selected_sprite)
+                graphics_definer_params_window.states["list_sprites"][0] = ""
+                graphics_definer_params_window.states["textbox_name"] = ""
 
     elif screen_state == "playing":
         opacity = (100-transition_timer if transition_act in ["appear",""] else transition_timer)
@@ -1722,6 +1545,8 @@ while working:
         # двухочерёдная система отрисовки
         # в первую очередь ложатся гарантированные тайлы уровня земли
         # во вторую очередь ложатся вагоны + тайлы, которые могут их перекрыть (пилоны, скамьи, иная шняга.)
+
+        draw_player_pos = (player_pos[0],player_pos[1])
 
         prima_object_draw_queue = []
         object_draw_queue = []
@@ -1761,8 +1586,8 @@ while working:
         for object in sorted(prima_object_draw_queue,key= lambda z:(z[1][1],-z[1][0])):
             if object[0] == "world":
                 w, h = ground_sprites[object[2]][world_angle].get_size()
-                x_offset = object[3][0]+block_size[0]/2-player_pos[0]%(block_size[0])
-                y_offset = object[3][1]+block_size[1]/2-player_pos[1]%(block_size[1])
+                x_offset = object[3][0]+block_size[0]/2-draw_player_pos[0]%(block_size[0])
+                y_offset = object[3][1]+block_size[1]/2-draw_player_pos[1]%(block_size[1])
                 blit_surface.blit(
                     ground_sprites[object[2]][world_angle]
                     ,(round(screen_size[0]/2+x_offset*math.cos(math.radians(360-world_angle))-y_offset*math.sin(math.radians(360-world_angle))-w/2,0),
@@ -1770,6 +1595,7 @@ while working:
                     )
                 )
                 x_offset = object[3][0]-player_pos[0]%(block_size[0])+block_size[0]/2
+                x_offset_a = object[3][0]-player_pos[0]%(block_size[0])+block_size[0]/2
                 x_offset1 = object[3][0]-player_pos[0]%(block_size[0])
                 x_offset2 = object[3][0]-player_pos[0]%(block_size[0])
                 x_offset3 = object[3][0]-player_pos[0]%(block_size[0])+block_size[0]
@@ -1788,24 +1614,18 @@ while working:
                     elif signal_states[reverse_signals[object[4]]["cur"]]["aspect"] == "yellow_green": color = (128,255,0)
                     elif signal_states[reverse_signals[object[4]]["cur"]]["aspect"] == "green": color = (0,255,0)
 
-                    pg.draw.polygon(blit_surface,color,(
+                    pg.draw.line(blit_surface,color,
                         (
-                            screen_size[0]/2+x_offset1*math.cos(math.radians(360-world_angle))-y_offset1*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2+(x_offset1*math.sin(math.radians(360-world_angle))+y_offset1*math.cos(math.radians(360-world_angle)))/compression 
+                            screen_size[0]/2+x_offset_a*math.cos(math.radians(360-world_angle))-y_offset1*math.sin(math.radians(360-world_angle)),
+                            screen_size[1]/2+(x_offset_a*math.sin(math.radians(360-world_angle))+y_offset1*math.cos(math.radians(360-world_angle)))/compression 
                         ),(
-                            screen_size[0]/2+x_offset2*math.cos(math.radians(360-world_angle))-y_offset2*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2+(x_offset2*math.sin(math.radians(360-world_angle))+y_offset2*math.cos(math.radians(360-world_angle)))/compression 
-                        ),(
-                            screen_size[0]/2+x_offset3*math.cos(math.radians(360-world_angle))-y_offset3*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2+(x_offset3*math.sin(math.radians(360-world_angle))+y_offset3*math.cos(math.radians(360-world_angle)))/compression 
-                        ),(
-                            screen_size[0]/2+x_offset4*math.cos(math.radians(360-world_angle))-y_offset4*math.sin(math.radians(360-world_angle)),
-                            screen_size[1]/2+(x_offset4*math.sin(math.radians(360-world_angle))+y_offset4*math.cos(math.radians(360-world_angle)))/compression 
-                        )
-                    ))
+                            screen_size[0]/2+x_offset_a*math.cos(math.radians(360-world_angle))-y_offset2*math.sin(math.radians(360-world_angle)),
+                            screen_size[1]/2+(x_offset_a*math.sin(math.radians(360-world_angle))+y_offset2*math.cos(math.radians(360-world_angle)))/compression 
+                        ),4
+                    )
 
 
-                if mouse_block_pos[0] == object[4][0] and mouse_block_pos[1] == object[4][1] and object[2][-4:-1] in ["tsa","tsb","tsx"]:
+                if mouse_block_pos[0] == object[4][0] and mouse_block_pos[1] == object[4][1] and object[2][-4:-1] in ["tsa","tsb","tsx","tsy"]:
                     pg.draw.polygon(blit_surface,((0,0,255) if switches[mouse_block_pos] else (0,255,0)),(
                         (
                             screen_size[0]/2+x_offset1*math.cos(math.radians(360-world_angle))-y_offset1*math.sin(math.radians(360-world_angle)),
@@ -1844,8 +1664,8 @@ while working:
         for object in sorted(object_draw_queue,key= lambda z:(z[1][1]-z[1][0])):
             if object[0] == "world":
                 w, h = ground_sprites[object[2]][object[3]].get_size()
-                x_offset = object[4][0]+block_size[0]/2-player_pos[0]%(block_size[0])
-                y_offset = object[4][1]+block_size[1]/8-player_pos[1]%(block_size[1])
+                x_offset = object[4][0]+block_size[0]/2-draw_player_pos[0]%(block_size[0])
+                y_offset = object[4][1]+block_size[1]/8-draw_player_pos[1]%(block_size[1])
                 blit_surface.blit(
                     #pg.transform.scale(
                     ground_sprites[object[2]][object[3]]#,block_size)
@@ -1858,9 +1678,9 @@ while working:
                 r_height = train_sprites["sprites"][object[2]][object[5]["r" if object[6] else "l"]]["height"]
                 l_train_sprite = train_sprites["sprites"][object[2]][object[5]["l" if object[6] else "r"]][object[3]]["l"]
                 l_height = train_sprites["sprites"][object[2]][object[5]["l" if object[6] else "r"]]["height"]
+                x_offset = round(-draw_player_pos[0]+object[1][0]-object[4][0],0)
+                y_offset = round(-draw_player_pos[1]+object[1][1]-object[4][1],0)
                 if 0 <= object[3] < 90 or 270 <= object[3] < 360:
-                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
-                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
                     blit_surface.blit(
                         r_train_sprite,
                         (
@@ -1868,8 +1688,6 @@ while working:
                             round(screen_size[1]/2-r_train_sprite.get_height()/2-r_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6,0)
                         )
                     )
-                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
-                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
                     blit_surface.blit(
                         l_train_sprite,
                         (
@@ -1878,8 +1696,6 @@ while working:
                         )
                     )
                 else:
-                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
-                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
                     blit_surface.blit(
                         l_train_sprite,
                         (
@@ -1887,8 +1703,6 @@ while working:
                             round(screen_size[1]/2-l_train_sprite.get_height()/2-l_height/compression+(x_offset*math.sin(math.radians(360-world_angle))+y_offset*math.cos(math.radians(360-world_angle)))/compression-6,0)
                         )
                     )
-                    x_offset = -player_pos[0]+object[1][0]-object[4][0]
-                    y_offset = -player_pos[1]+object[1][1]-object[4][1]
                     blit_surface.blit(
                         r_train_sprite,
                         (
@@ -1976,7 +1790,7 @@ while working:
                     ch_id = 0
                     while ch_id in roll_channels_occupied: ch_id +=1
                     roll_channels_occupied.append(ch_id)
-                    channel_dict[linked_consist] = {"roll_channel":pg.mixer.Channel(ch_id*2),"ambient_channel":pg.mixer.Channel(ch_id*2+1),"new":None,"cur":None,"alive":False,"id":ch_id,"dist":dist}
+                    channel_dict[linked_consist] = {"roll_channel":pg.mixer.Channel(ch_id*4),"ambient_channel":pg.mixer.Channel(ch_id*4+1),"door_right_channel":pg.mixer.Channel(ch_id*4+2),"door_left_channel":pg.mixer.Channel(ch_id*4+3),"new":None,"cur":None,"alive":False,"id":ch_id,"dist":dist}
                     if "ambient" in sounds[consists[linked_consist].train_type]: 
                         channel_dict[linked_consist]["ambient_channel"].play(sounds[consists[linked_consist].train_type]["ambient"],-1)
                 channel_dict[linked_consist]["dist"] = min(channel_dict[linked_consist]["dist"],dist)
@@ -1994,8 +1808,35 @@ while working:
                 removal_list.append(linked_consist)
                 id_removal_list.append(channel_dict[linked_consist]["id"])
             else:
-                channel_dict[linked_consist]["roll_channel"].set_volume(round(volume*0.5*(1600-channel_dict[linked_consist]["dist"])/1600,3))
-                channel_dict[linked_consist]["ambient_channel"].set_volume(round(volume*0.5*(1600-channel_dict[linked_consist]["dist"])/1600,3))
+                ch_vlm = round(volume*0.5*(1600-channel_dict[linked_consist]["dist"])/1600,3)
+                channel_dict[linked_consist]["roll_channel"].set_volume(ch_vlm)
+                channel_dict[linked_consist]["ambient_channel"].set_volume(ch_vlm)
+                channel_dict[linked_consist]["door_right_channel"].set_volume(ch_vlm)
+                channel_dict[linked_consist]["door_left_channel"].set_volume(ch_vlm)
+
+                if "door_roll" in sounds[consists[linked_consist].train_type] and "door_open" in sounds[consists[linked_consist].train_type] and "door_close" in sounds[consists[linked_consist].train_type]:
+                    if consists[linked_consist].doors["l"] not in ["open","closed"] and not channel_dict[linked_consist]["door_left_channel"].get_busy():
+                        channel_dict[linked_consist]["door_left_channel"].play(sounds[consists[linked_consist].train_type]["door_roll"],-1)
+                    elif consists[linked_consist].doors["l"] == "open" and "open" in consists[linked_consist].doors["sound_l"]: 
+                        channel_dict[linked_consist]["door_left_channel"].play(sounds[consists[linked_consist].train_type]["door_open"]) 
+                        consists[linked_consist].doors["sound_l"] = ""
+                    elif consists[linked_consist].doors["l"] == "closed" and "close" in consists[linked_consist].doors["sound_l"]: 
+                        channel_dict[linked_consist]["door_left_channel"].play(sounds[consists[linked_consist].train_type]["door_close"]) 
+                        consists[linked_consist].doors["sound_l"] = ""
+                    #elif consists[linked_consist].doors["sound_l"] == "":
+                    #    channel_dict[linked_consist]["door_left_channel"].stop()
+
+                    if consists[linked_consist].doors["r"] not in ["open","closed"] and not channel_dict[linked_consist]["door_right_channel"].get_busy():
+                        channel_dict[linked_consist]["door_right_channel"].play(sounds[consists[linked_consist].train_type]["door_roll"],-1)
+                    elif consists[linked_consist].doors["r"] == "open" and "open" in consists[linked_consist].doors["sound_r"]:
+                        channel_dict[linked_consist]["door_right_channel"].play(sounds[consists[linked_consist].train_type]["door_open"]) 
+                        consists[linked_consist].doors["sound_r"] = ""
+                    elif consists[linked_consist].doors["r"] == "closed" and "close" in consists[linked_consist].doors["sound_r"]: 
+                        channel_dict[linked_consist]["door_right_channel"].play(sounds[consists[linked_consist].train_type]["door_close"])
+                        consists[linked_consist].doors["sound_r"] = ""
+                #elif consists[linked_consist].doors["sound_r"] == "":
+                #    channel_dict[linked_consist]["door_right_channel"].stop() 
+
                 channel_dict[linked_consist]["dist"] = sound_radius+1
                 if channel_dict[linked_consist]["cur"] != channel_dict[linked_consist]["new"]:
                     channel_dict[linked_consist]["cur"] = channel_dict[linked_consist]["new"]
@@ -2081,7 +1922,7 @@ while working:
         if controlling != -1:
             panel = train_sprites["controls"][consists[controlling_consist].train_type]["panel"]
 
-            if "underlay_draw_params" in consists[controlling_consist].consist_info:
+            if "underlay_draw_params" in consists[controlling_consist].consist_info and "underlay" in train_sprites["controls"][consists[controlling_consist].train_type]:
                 underlay = train_sprites["controls"][consists[controlling_consist].train_type]["underlay"]
                 x,y,scale = consists[controlling_consist].consist_info["underlay_draw_params"]
                 blit_surface.blit(underlay,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
@@ -2103,21 +1944,20 @@ while working:
                         x,y = info[0], info[1]
                         scale = info[2]
                         blit_surface.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
-                    elif info[3] != None: print(f"Check sprite definitons! No {info[3]} found in {consists[controlling_consist].train_type}")
+                    elif str(info[3]) != "None": print(f"Check sprite definitons! No {info[3]} found in {consists[controlling_consist].train_type}")
                 else:
                     info = element["draw_mappings"][0]
+                    x,y = info[0], info[1]
+                    scale = info[2]
                     if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
                         sprite = train_sprites["controls"][consists[controlling_consist].train_type][info[3]] 
-                        x,y = info[0], info[1]
-                        scale = info[2]
                         blit_surface.blit(sprite,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
                     
                     info = element["draw_mappings"][1]
                     if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
                         sprite = pg.transform.rotate(train_sprites["controls"][consists[controlling_consist].train_type][info[3]],round(element["base_angle"]-element["multiplier"]*element["angle"],5))
                         local_x,local_y = info[0], info[1]
-                        local_scale = info[2]
-                        blit_surface.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x*scale+local_x*local_scale)-sprite.get_width()/2,2),float(screen_size[1]-panel.get_height()+(int(y*scale+local_y*local_scale)+0.5)-sprite.get_height()/2)))
+                        blit_surface.blit(sprite,(round(screen_size[0]/2-panel.get_width()/2+(x+local_x)*scale-sprite.get_width()/2,2),round(screen_size[1]-panel.get_height()+((y+local_y)*scale)-sprite.get_height()/2,2)))
 
                     info = element["draw_mappings"][2]
                     if info[3] in train_sprites["controls"][consists[controlling_consist].train_type]:
@@ -2137,8 +1977,9 @@ while working:
             scale = consists[controlling_consist].consist_info["tk_draw_mapouts"]["scale"]
             blit_surface.blit(tk,(screen_size[0]/2-panel.get_width()/2+x*scale,screen_size[1]-panel.get_height()+y*scale))
             
-            overlay = train_sprites["controls"][consists[controlling_consist].train_type]["overlay"]
-            blit_surface.blit(overlay,(screen_size[0]/2-overlay.get_width()/2,screen_size[1]-overlay.get_height()))
+            if "overlay" in train_sprites["controls"][consists[controlling_consist].train_type]:
+                overlay = train_sprites["controls"][consists[controlling_consist].train_type]["overlay"]
+                blit_surface.blit(overlay,(screen_size[0]/2-overlay.get_width()/2,screen_size[1]-overlay.get_height()))
 
             loco_light_base = pg.transform.scale(misc_sprites["loco_light_base"],(
                 misc_sprites["loco_light_base"].get_width()*5,
@@ -2290,7 +2131,7 @@ while working:
                 if mouse_clicked and m_btn[0]:
                     consist_key = random.randint(0,999)
                     while consist_key in consists: consist_key = random.randint(0,999)
-                    consists[consist_key] = Consist(spawn_menu[2],spawn_menu[3],train_types[spawn_menu[2]],consists_info[spawn_menu[2]],consist_key,world,reverse_signals,[256*mouse_block_pos[0]+128,player_pos[1]+world_mouse_coord[1]])
+                    consists[consist_key] = Consist(spawn_menu[2],spawn_menu[3],train_types[spawn_menu[2]],consists_info[spawn_menu[2]],consist_key,world,autodrive_map,reverse_signals,[256*mouse_block_pos[0]+128,player_pos[1]+world_mouse_coord[1]])
                 elif mouse_clicked and m_btn[2]:
                     wipe_list = []
                     wipe_list_consists = []
@@ -2310,8 +2151,8 @@ while working:
                         trains.pop(link)           
 
         if controlling == -1:
-            speed = 8 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 2
-            if (pressed[pg.K_LALT] or pressed[pg.K_RALT]): speed = 32
+            speed = 16 if pressed[pg.K_RSHIFT] or pressed[pg.K_LSHIFT] else 8
+            if (pressed[pg.K_LALT] or pressed[pg.K_RALT]): speed = 64
             if pressed[pg.K_DOWN]: 
                 player_pos[1]+=speed*clock.get_fps()/60
             if pressed[pg.K_UP]: 
@@ -2385,8 +2226,10 @@ while working:
                 controlling = -1
                 controlling_consist = -1
 
+        if pg.K_z in keydowns: print(switches)
+
         info_blit_list = []
-        info_blit_list.append(font.render("alphen's subway simulator "+version,True,text_color))
+        info_blit_list.append(font.render("aims "+version,True,text_color))
         info_blit_list.append(font.render("fps: "+str(int(clock.get_fps())), False, ((255 if clock.get_fps() < 45 else 0), (255 if clock.get_fps() > 15 else 0), 0)))
         if debug > 0:
             info_blit_list.append(font.render(f"tramcars: {len(trains)}",True,text_color))
@@ -2462,6 +2305,7 @@ while working:
         sprite_thread = threading.Thread(target=sprite_load_routine,daemon=True) #,args=[world]
         sprite_thread.start()
 
+
     elif screen_state == "sdk_load": #техническое состояние для прогрузки пакетов в SDK
         player_pos = [0,0]
 
@@ -2478,6 +2322,18 @@ while working:
             folder_contents = os.listdir(os.path.join(current_dir,"paks",folder))
             if "pack.json" in folder_contents:
                 sdk_params["folder_list"].append(folder)
+
+        opener_window = windows["opener"]
+        render_window = windows["render"]
+        postrender_window = windows["postrender"]
+        tile_select_window = windows["tile_select"]
+        consist_select_window = windows["consist_select"]
+        world_select_window = windows["world_select"]
+        tile_placer_window = windows["tile_placer"]
+        signal_placer_window = windows["signal_placer"]
+        autodrive_window = windows["ad_marker_placer"]
+        graphics_definer_image_window = windows["graphic_selector_image"]
+        graphics_definer_params_window = windows["graphic_selector_params"]
         screen_state = "sdk"
 
     elif screen_state == "pack_chooser_open": #техническое состояние для открытия селектора пакетов
@@ -2509,6 +2365,24 @@ while working:
                             world_chooser_params["worlds"] += [w]
         screen_state = "world_chooser"
 
+    elif screen_state == "postload":
+        screen_state = "title"
+        windows = {}
+
+        with open(f"res\window_info.json") as world_file:
+            info = json.loads(world_file.read())
+            for window in info:
+                win_rect = []
+                obj_list = {}
+                for dim in info[window]["rect"]: win_rect.append(eval(dim))
+                for obj_name in info[window]["objects"]:
+                    temp_obj = info[window]["objects"][obj_name]
+                    if "text" in temp_obj and type(temp_obj["text"]) == list: temp_obj["text"] = fetch_line(*temp_obj["text"])
+                    obj_list[obj_name] = temp_obj
+                
+                windows[window] = leitmotifplus.Window(win_rect, font, main_font_height+8, obj_list)
+ 
+
     elif screen_state == "play_load": # техническое состояние для загрузки сигналки перед игрой
 
         with open(f"paks\{world_pack}\pack.json") as world_file:
@@ -2523,6 +2397,12 @@ while working:
             for key in info["switches"]:
                 x,y = map(int,key.split(":"))
                 switches[(x,y)] = info["switches"][key]
+
+            autodrive_map = {}
+            for key in info["autodrive"]:
+                x,y = map(int,key.split(":"))
+                autodrive_map[(x,y)] = info["autodrive"][key]
+
 
             signals = {}
             for key in info["signals"]:

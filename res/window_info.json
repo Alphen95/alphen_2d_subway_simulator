@@ -1,0 +1,218 @@
+{
+    "opener":{
+        "rect":["screen_size[0]/4-2","screen_size[1]/3-2","screen_size[0]/2+4","screen_size[1]/3+4"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["base","editor_open_long"],
+                "rect":[0,"indent","w","line_height"]},
+            "file_list": {
+                "active":true,"type":"item_list","items":[],
+                "rect":[0,"indent+line_height","w","(max_lines-2)*line_height"]},
+            "button_close": {
+                "active":true,"type":"button","align":"center","text":["base","editor_close_menu"],
+                "rect":[0,"indent+line_height*(max_lines-1)","w/4","line_height"]},
+            "button_load": {
+                "active":true,"type":"button","align":"center","text":["base","editor_load_pack"],
+                "rect":["w/4*3","indent+line_height*(max_lines-1)","w/4","line_height"]}
+        }
+    },
+    "render":{
+        "rect":["screen_size[0]/4-2","screen_size[1]/3-2","screen_size[0]/2+4","screen_size[1]/3+4"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_long"],
+                "rect":[0,"indent","w","line_height"]},
+            "label_text1": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_desc1"],
+                "rect":[0,"indent+line_height*(max_lines/2-2)","w","line_height"]},
+            "label_text2": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_desc2"],
+                "rect":[0,"indent+line_height*(max_lines/2-1)","w","line_height"]},
+            "label_confirm": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_proceed"],
+                "rect":[0,"indent+line_height*(max_lines/2)","w","line_height"]},
+            "label_progress": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_progress"],
+                "rect":[0,"indent+line_height*(max_lines-1)","w","line_height"]},
+            "text_render": {
+                "active":true,"type":"multitext","align":"center","lines":[],
+                "rect":[0,"indent+line_height","w","line_height*(max_lines-2)"]},
+            "button_close": {
+                "active":true,"type":"button","align":"center","text":["base","editor_render_no"],
+                "rect":["w/4-5","indent+line_height*(max_lines/2+1)","w/4","line_height"]},
+            "button_render": {
+                "active":true,"type":"button","align":"center","text":["base","editor_render_yes"],
+                "rect":["w/4*2+5","indent+line_height*(max_lines/2+1)","w/4","line_height"]}
+        }
+
+    },
+    "postrender":{
+        "rect":["screen_size[0]/4-2","screen_size[1]/3-2","screen_size[0]/2+4","screen_size[1]/3+4"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_long"],
+                "rect":[0,"indent","w","line_height"]},
+            "label_text": {
+                "active":true,"type":"label","align":"center","text":["base","editor_render_complete"],
+                "rect":[0,"indent+line_height*(max_lines/2-0.5)","w","line_height"]},
+            "button_close": {
+                "active":true,"type":"button","align":"center","text":["base","editor_render_no"],
+                "rect":["w/4*1.5","indent+line_height*(max_lines-1)","w/4","line_height"]}
+        }
+    },
+    "tile_select":{
+        "rect":["0","main_font_height+10","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["base","editor_tile_mode"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_tiles": {
+                "active":true,"type":"item_list","items":[],
+                "rect":[0,"indent+line_height","w","line_height*(max_lines-1)"]}
+        }
+    },
+    "consist_select":{
+        "rect":["0","main_font_height+10","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["editor_consist_select","title"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_consists": {
+                "active":true,"type":"item_list","items":[],
+                "rect":[0,"indent+line_height","w","line_height*(max_lines-3)"]},
+            "button_add": {
+                "active":true,"type":"button","text":["base","add"],"align":"center",
+                "rect":[0,"indent+line_height*(max_lines-2)","w/2-2","line_height"]},
+            "button_remove": {
+                "active":true,"type":"button","text":["base","remove"],"align":"center",
+                "rect":["w/2+4","indent+line_height*(max_lines-2)","w/2-2","line_height"]},
+            "label_worldname": {
+                "active":true,"type":"label","align":"left","text":["base","editor_name"],
+                "rect":[0,"indent+line_height*(max_lines-1)","w/4","line_height"]},
+            "textbox_name": {
+                "active":true,"type":"textbox",
+                "rect":["w/4","indent+line_height*(max_lines-1)","w/4*3","line_height"]}
+        }
+    },
+    "world_select":{
+        "rect":["0","main_font_height+10","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["base","editor_map_mode"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_maps": {
+                "active":true,"type":"item_list","items":[],
+                "rect":[0,"indent+line_height","w","line_height*(max_lines-3)"]},
+            "button_add": {
+                "active":true,"type":"button","text":["base","add"],"align":"center",
+                "rect":[0,"indent+line_height*(max_lines-2)","w/2-2","line_height"]},
+            "button_remove": {
+                "active":true,"type":"button","text":["base","remove"],"align":"center",
+                "rect":["w/2+4","indent+line_height*(max_lines-2)","w/2-2","line_height"]},
+            "label_worldname": {
+                "active":true,"type":"label","align":"left","text":["base","editor_name"],
+                "rect":[0,"indent+line_height*(max_lines-1)","w/4","line_height"]},
+            "textbox_name": {
+                "active":true,"type":"textbox",
+                "rect":["w/4","indent+line_height*(max_lines-1)","w/4*3","line_height"]}
+        }
+    },
+    "tile_placer":{
+        "rect":["0","screen_size[1]/2","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["base","editor_map_tiles"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_tiles": {
+                "active":true,"type":"item_sel","items":[],
+                "rect":[14,"indent+line_height","w-28","line_height*(max_lines-3)"]},
+            "textbox_custom1": {
+                "active":true,"type":"textbox",
+                "rect":["0","indent+line_height*(max_lines-2)","w","line_height"]},
+            "textbox_custom2": {
+                "active":true,"type":"textbox",
+                "rect":["0","indent+line_height*(max_lines-1)","w","line_height"]}
+        }
+    },
+    "ad_marker_placer":{
+        "rect":["0","screen_size[1]/2","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["editor_auto","title"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_markers": {
+                "active":true,"type":"item_list",
+                "items":["down_brake_doorL","down_brake_doorR","down_reverse","up_brake_doorL","up_brake_doorR","up_reverse"],
+                "rect":[14,"indent+line_height","w-28","line_height*(max_lines-1)"]}
+        }
+    },
+    "signal_placer":{
+        "rect":["0","screen_size[1]/2","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["editor_signals","title"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_signals": {
+                "active":true,"type":"item_list","items":[],
+                "rect":[0,"indent+line_height","w","line_height*(max_lines-5)"]},
+            "button_add": {
+                "active":true,"type":"button","text":["editor_common","add"],"align":"center",
+                "rect":[0,"indent+line_height*(max_lines-4)","w/2-2","line_height"]},
+            "button_remove": {
+                "active":true,"type":"button","text":["editor_common","remove"],"align":"center",
+                "rect":["w/2+4","indent+line_height*(max_lines-4)","w/2-2","line_height"]},
+            "label_signame": {
+                "active":true,"type":"label","align":"left","text":["editor_signals","name"],
+                "rect":[0,"indent+line_height*(max_lines-3)","w/4","line_height"]},
+            "textbox_name": {
+                "active":true,"type":"textbox",
+                "rect":["w/4","indent+line_height*(max_lines-3)","w/4*3","line_height"]},
+            "label_next": {
+                "active":true,"type":"label","align":"left","text":["editor_signals","next"],
+                "rect":[0,"indent+line_height*(max_lines-2)","w/4","line_height"]},
+            "textbox_next": {
+                "active":true,"type":"textbox",
+                "rect":["w/4","indent+line_height*(max_lines-2)","w/4*3","line_height"]},
+            "label_speed": {
+                "active":true,"type":"label","align":"left","text":["editor_signals","speed"],
+                "rect":[0,"indent+line_height*(max_lines-1)","w/4","line_height"]},
+            "textbox_speed": {
+                "active":true,"type":"textbox",
+                "rect":["w/4","indent+line_height*(max_lines-1)","w/4*3","line_height"]}
+        }
+    },
+    "graphic_selector_image":{
+        "rect":["20","main_font_height+10","screen_size[0]/4*3-40","screen_size[1]-(main_font_height+10)*2"],
+        "objects":{
+            "image_box":{
+                "active":true, "type": "imagebox_selection", "img":null, "scale":1, "offset":[0,0], "selection":[0,0,0,0],
+                "rect":["0","0","w","h"]
+            }
+        }  
+    },
+    "graphic_selector_params":{
+        "rect":["0","screen_size[1]/2","screen_size[0]/4-10","screen_size[1]/2-main_font_height-20"],
+        "objects":{
+            "label_name": {
+                "active":true,"type":"label","align":"center","text":["editor_graph_define","title"],
+                "rect":[0,"indent","w","line_height"]},
+            "list_sprites": {
+                "active":true,"type":"item_list","items":[],
+                "rect":[0,"indent+line_height","w","line_height*(max_lines-3)"]},
+            "button_add": {
+                "active":true,"type":"button","text":["editor_common","add"],"align":"center",
+                "rect":[0,"indent+line_height*(max_lines-2)","w/2-2","line_height"]},
+            "button_remove": {
+                "active":true,"type":"button","text":["editor_common","remove"],"align":"center",
+                "rect":["w/2+4","indent+line_height*(max_lines-2)","w/2-2","line_height"]},
+            "label_sprname": {
+                "active":true,"type":"label","align":"left","text":["editor_common","name"],
+                "rect":[0,"indent+line_height*(max_lines-1)","w/4","line_height"]},
+            "textbox_name": {
+                "active":true,"type":"textbox",
+                "rect":["w/4","indent+line_height*(max_lines-1)","w/4*3","line_height"]}
+        }
+
+    }
+
+}
